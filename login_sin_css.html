@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viaje Bolivia - Iniciar Sesión</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="css/login.css" />
+
+  <!-- Configuración Tailwind -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1313ec",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101022",
+            "text-light": "#1e293b",
+            "text-dark": "#e2e8f0",
+            "subtle-light": "#64748b",
+            "subtle-dark": "#94a3b8",
+            "border-light": "#cbd5e1",
+            "border-dark": "#334155",
+            "input-light": "#ffffff",
+            "input-dark": "#1e293b"
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+</head>
+
+<body class="font-display bg-background-light dark:bg-background-dark">
+
+  <div class="flex min-h-screen">
+
+    <!-- Imagen lateral -->
+    <div class="relative hidden lg:flex w-1/2 items-center justify-center bg-gray-900">
+      <div class="background-image"></div>
+      <div class="background-overlay"></div>
+      <div class="relative z-10 text-center text-white px-12">
+        <h1 class="text-5xl font-bold mb-4">Planifica tu próxima aventura boliviana</h1>
+        <p class="text-xl">Colabora, explora y crea recuerdos inolvidables con tus amigos.</p>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12">
+      <div class="w-full max-w-md">
+        <div class="text-center mb-10">
+          <div class="inline-flex items-center justify-center w-16 h-16 mb-4">
+            <svg class="text-primary h-12 w-12" fill="none" viewBox="0 0 49 48" xmlns="http://www.w3.org/2000/svg">
+              <path d="M4.00015 4.6001C4.00015 4.6001 10.3637 14.6963 5.26886 24.6001C-0.42436 35.6665 4.23075 44.6001 4.23075 44.6001H45.0002C45.0002 44.6001 38.6366 34.5039 43.7315 24.6001C49.4247 13.5337 44.7694 4.6001 44.7694 4.6001H4.00015Z" fill="#D20000"></path>
+              <path d="M4.00015 4.6001H14.5807L9.63661 14.6393C7.58789 18.7303 6.27513 22.4287 5.26886 24.6001C-0.42436 35.6665 4.23075 44.6001 4.23075 44.6001H14.5807L12.5694 40.528L24.8902 24.6001L14.5807 4.6001H4.00015Z" fill="#F79E1B"></path>
+              <path d="M14.5807 4.6001H24.8902L24.8902 24.6001L12.5694 40.528L14.5807 44.6001H24.8902L24.8902 24.6001L14.5807 4.6001Z" fill="#FFEF00"></path>
+              <path d="M24.8902 4.6001H34.7246L24.8902 24.6001V44.6001H24.8902L24.8902 4.6001Z" fill="#007934"></path>
+              <path d="M34.7246 4.6001H44.7694V24.6001C49.4247 13.5337 44.7694 4.6001 44.7694 4.6001H34.7246Z" fill="#0052A5"></path>
+              <path d="M44.7694 24.6001V44.6001H34.7246L36.7359 40.528L24.8902 24.6001H44.7694Z" fill="#6C247A"></path>
+            </svg>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-text-light dark:text-text-dark">Bienvenido de Nuevo</h1>
+          <p class="text-subtle-light dark:text-subtle-dark mt-2">Inicia sesión para continuar tu aventura</p>
+        </div>
+
+        <form class="space-y-6">
+          <div>
+            <label for="email" class="block text-sm font-medium text-text-light dark:text-text-dark">Correo Electrónico</label>
+            <div class="mt-1">
+              <input id="email" name="email" type="email" autocomplete="email" required
+                placeholder="tu@email.com"
+                class="form-input input-field" />
+            </div>
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium text-text-light dark:text-text-dark">Contraseña</label>
+            <div class="mt-1">
+              <input id="password" name="password" type="password" autocomplete="current-password" required
+                placeholder="••••••••"
+                class="form-input input-field" />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="text-sm">
+              <a href="#" class="font-medium text-primary hover:text-primary/80">¿Olvidaste tu contraseña?</a>
+            </div>
+          </div>
+
+          <div>
+            <button type="submit" class="submit-btn">Iniciar Sesión</button>
+          </div>
+        </form>
+
+        <p class="mt-8 text-center text-sm text-subtle-light dark:text-subtle-dark">
+          ¿No tienes una cuenta?
+          <a href="creacion_cuenta.html" class="font-medium text-primary hover:text-primary/80">Regístrate</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
