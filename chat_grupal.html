@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Viaje Bolivia Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1313ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#1313ec",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 24
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200">
+<div class="flex h-screen w-full">
+<main class="flex flex-1 flex-col">
+<header class="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 dark:border-slate-800 px-6">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl">local_florist</span>
+<h1 class="text-lg font-bold text-slate-900 dark:text-slate-50">Viaje Bolivia</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6 text-sm font-medium">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary" href="#">Resumen</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary" href="#">Vuelos</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary" href="#">Alojamiento</a>
+<a class="text-primary font-bold" href="#">Chat</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary" href="#">Actividades</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative rounded-full p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 block h-2 w-2 rounded-full bg-primary"></span>
+</button>
+<img alt="User avatar" class="h-10 w-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAIBPI_T6MTO5vYCD8JggDaTu0l9GcWUREBGld9JI0NYR27rScGCdRzPTWK-Hl7tdgORV476RYDElRwQmL5lXGix3XLm-R_wim20MScP0RTwFiaSw4EkD7u5Q2OEBADg2xHjosHf0becAHkxslvCYTKpMqXwNOg9OHQgkDDHfD9d6RX60pOd1_psYYI7aw6JVcu3Vtqmt9AvASiEnxfWpqbgjp9x1GcWz7EDcyidB5j1coZ7AUF3_q5zWuJVGmohm-4nUGmh_OB1EM"/>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<div class="flex flex-1 flex-col p-4 md:p-6">
+<div class="mb-4">
+<h2 class="text-2xl font-bold text-slate-900 dark:text-slate-50">Chat del viaje: Aventura en los Andes</h2>
+</div>
+<div class="flex-1 space-y-6 overflow-y-auto pr-4">
+<div class="flex items-start gap-4">
+<img alt="Sofia's avatar" class="h-10 w-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-eLvyuLCCwzUDu8rMfLMJk-1JIgrD5oH09KVWopmUkeo9ufkomGmtc_iR4_QMCsfHB98ibLpUll5NSoH-T4sFED5w-6LisDi2dcjBmDS1ymU68nytnsRgebSvKYY4aOqJ6woCBhO3MYgkLhHnpm7Kvr27duE5HSY8YRUsgCGMtf0MgwfWnXg4scWxXu_K_hlYE8Jrn10pFPtePBtOODgs_s_Mli8ReaCOh8kb_7QhYBeqJPEIYIKBmf9AMZ261etMDgAKObJKNzM"/>
+<div class="space-y-1">
+<p class="text-sm font-semibold text-slate-600 dark:text-slate-400">Sofia</p>
+<div class="max-w-md rounded-lg bg-slate-100 dark:bg-slate-800 p-3">
+<p class="text-slate-800 dark:text-slate-200">¡Hola a todos! ¿Están listos para nuestra aventura en los Andes? Estoy muy emocionada por explorar las montañas y descubrir la cultura local.</p>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-4 justify-end">
+<div class="space-y-1 text-right">
+<p class="text-sm font-semibold text-slate-600 dark:text-slate-400">Carlos</p>
+<div class="max-w-md rounded-lg bg-primary p-3 text-white">
+<p>¡Absolutamente, Sofía! He estado investigando algunas rutas de senderismo y creo que la Laguna Verde sería un excelente lugar para comenzar. ¿Qué opinan?</p>
+</div>
+<img alt="Laguna Verde" class="mt-2 w-full max-w-xs rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUJpkJp0QDAHU3I4VwpIYG610cfbc0fTClNPawrZxHFTgeNoyXUbGZp4Cpd-BydiL5y77kTd7zPqWDMCWl821CgS9l4sVku5SObSnlKmEOZhh4lgL5zH46LBwkAvKHGQ9Wk5YqhYTneOSN0k72kquGzaeUA2004Zk9L3wZXueF3LEDji9Lrt2LzvBoN5S0kvnAHA9YioOFQQYl6Tk57Xnho1SxDsDAP5RQjGnWDhnhm2XekFoOBaXwvHAxC1pwPrv8vqthl5LT6U0"/>
+</div>
+<img alt="Carlos's avatar" class="h-10 w-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBM_W8feQeIZgm51djxxlX3WIF4wfMx5RlZ7cBqbQLqRxFuGI_TxeqYvEmJqqWnVngfuWusxNY2SMcO-Hdzb8Hrl_Nk_rpcbmzZVezzwH-EnWaFS9bZASnzo4OmASMAvGwu6ETdG93KV3WGGPc3y_DzKxh-vnzznpnfJPo0X7llbzY7PnMAcryb2Z07joqzFse6tdaYOiKyhVtjnSk_lkOiGTyLqJMzaJFhIeJueB9GvaxAgWcA6ysHpVHfwJdChGQc5DL199EUoAQ"/>
+</div>
+<div class="flex items-start gap-4">
+<img alt="Isabella's avatar" class="h-10 w-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBf3mlN3ELsP0LcepzLBvWyviYClsw88QvMMbM2rP0MIUFjCoG9ysXDDzZZhTEDaLuEvA3h9jGFSxEExg54ncHZrmjBcqngLFpSl1zMmAbxw_Gid3kNyjMGUq2lUmWg6O6CCRrCWBHQRWt8q4FefYqhD8NldUDUqsDr5UaT23f3j-KG5ymwXjcVlFoEC3zlnTUPJpVQX7Ozx5hpahS7rGGsmoKxEHgf_r-y8ORT4VAqu7OVnYDRisOc90iUc2KAWsYb6rwP5lTQvoo"/>
+<div class="space-y-1">
+<p class="text-sm font-semibold text-slate-600 dark:text-slate-400">Isabella</p>
+<div class="max-w-md rounded-lg bg-slate-100 dark:bg-slate-800 p-3">
+<p class="text-slate-800 dark:text-slate-200">Suena increíble, Carlos. ¡La Laguna Verde es un lugar mágico! También me gustaría visitar el Salar de Uyuni, si es posible incluirlo en nuestro itinerario.</p>
+</div>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<img alt="Sofia's avatar" class="h-10 w-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSYUCofe3JQClNsX_d0vzxDYfoiPthfUP9JQsddv2WcjGvJ-NNu9GYxWBTVEzGTDQ0inaGy8o92vKhr1gq3FsU43w0wf4LPw3r74SRJ4bVagVAOMGQCTW8uXq-dAmfOjuwDJfeVEG7IHOLFjwIWMwEyMmZ4sJaFeKaYNv3eGrrEPuW-rTdfcxecWjFWGyiqkOYxt6oYOVUR7uEHuoZAxVKF26a8GiZNb-EMFeEj-N1UNBOOMDXCtYEAIbYSSLI0v9nQZLUJbiZwtA"/>
+<div class="space-y-1">
+<p class="text-sm font-semibold text-slate-600 dark:text-slate-400">Sofia</p>
+<div class="max-w-md rounded-lg bg-slate-100 dark:bg-slate-800 p-3">
+<p class="text-slate-800 dark:text-slate-200">Perfecto. ¿Alguien tiene alguna preferencia sobre el tipo de alojamiento? ¿Hoteles, hostales o algo más rústico?</p>
+</div>
+<img alt="Hotel in Uyuni" class="mt-2 w-full max-w-xs rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqPM8or_lThEgEOQe1iT1TVNLnJzFccZM35xvibs7QV0P2E_lUwUMLIAKulx0tHNebuHiIvBpnd4sDZB0wu9aahKaoqPGgPiHvf9wPrn9j9OtoR953VQTd2n2xG9T2yDVyJZEoaERqq4MRt8W0d7xoSmBwui4dRJXkl4fd_loiQz5YT1eZd6PsyWeINzJDqEoYkWv45xu5SaCAFJIGTwwk5guXluF5ELR0MGyav9DtLBBdxpGphc7AIHa9NCTEKUYXCnSszgtRs_4"/>
+</div>
+</div>
+<div class="flex items-start gap-4 justify-end">
+<div class="space-y-1 text-right">
+<p class="text-sm font-semibold text-slate-600 dark:text-slate-400">Carlos</p>
+<div class="max-w-md rounded-lg bg-primary p-3 text-white">
+<p>Creo que una mezcla sería ideal. Podríamos optar por hoteles en las ciudades y hostales o alojamientos rústicos en las zonas más remotas para una experiencia auténtica.</p>
+</div>
+</div>
+<img alt="Carlos's avatar" class="h-10 w-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBd0V5ewvlk5vtG9PVQSRWMHAW_jiJnZ_8ndn-gODywlzJO1JjP7bg0T-yhPYxDbhC7oMe0Jun2LTT7WCy2he0Unf-xktSpOykP5WNJdW1vWG4x8Qm61aznjrLwigyJwGhtZE9HNiHIhJJ6Y7H98JQeXtv7PDKxYucy1ktIMaLA8YST7LL-dWQMPi8CzZb-pNaLDEEQHGLtvAukCx1YFMV5tmXkm1mukuRVGgtlVzxqIjEa_-uP-yffeNDMuGSYDnalsH4r7P5Jrr0"/>
+</div>
+</div>
+<div class="mt-auto border-t border-slate-200 dark:border-slate-800 pt-4">
+<div class="relative">
+<input class="w-full rounded-lg border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 py-3 pl-4 pr-32 text-slate-800 dark:text-slate-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-primary focus:ring-primary" placeholder="Escribe un mensaje..." type="text"/>
+<div class="absolute inset-y-0 right-0 flex items-center pr-3">
+<button class="p-1 text-slate-500 dark:text-slate-400 hover:text-primary"><span class="material-symbols-outlined">image</span></button>
+<button class="p-1 text-slate-500 dark:text-slate-400 hover:text-primary"><span class="material-symbols-outlined">attach_file</span></button>
+<button class="ml-2 rounded bg-primary px-4 py-1.5 text-sm font-semibold text-white hover:bg-primary/90">Enviar</button>
+</div>
+</div>
+</div>
+</div>
+<aside class="hidden w-80 shrink-0 border-l border-slate-200 dark:border-slate-800 p-6 lg:block">
+<h3 class="text-xl font-bold text-slate-900 dark:text-slate-50">Miembros del viaje</h3>
+<ul class="mt-4 space-y-4">
+<li class="flex items-center gap-4">
+<img alt="Carlos's avatar" class="h-12 w-12 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC5SvCAyD1eEd9J20jYzyMWSYfOzPw-SD1Rj9AF3sPKhtxJDeo8Vd-Vfbb28a4aP9bTebC3MupXHSfnTMPQ5RxP7ogY7cDZpP6s-vVnoHCxj8v3C5aH2d_X8hlzlFcnULyPFgtc6oCmeBykJ7K15rYMkYnevnUxxrs5z2178WOnQ0TprJUCyEn1Q4NYu5lFn2H76y_0V83nqdiCxRe02xQ0l6cXdyBbAsHqblS5g5TXBolFdRqPMxzIjpPIRWXcv6HGkHVjAJrOZ8"/>
+<div>
+<p class="font-semibold text-slate-900 dark:text-slate-50">Carlos</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Organizador</p>
+</div>
+</li>
+<li class="flex items-center gap-4">
+<img alt="Sofia's avatar" class="h-12 w-12 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADFF36IdGIS8ilEYsMYimtN0DkV8IETz9-Xw4XY_ZytxkI7oRCh75lpxCXN-CtMOlaVPDxjxYTfiNYd-JzQ79iWBiFl5LXhFKIn9VHNl9QIMEbrpQaZCJFyx2ZRLvksH3k6DEOnJugHn1fVM6hAVxv4h7e_VBR-ocDrWSJ3XzZRdiVkr4bX95WUwWeEImzXw9ga7VnJL17j4jhqPZrnwzGgD-KoPRDOvBJXF4zg08DR_J8JJltq2NGvU3uOfMHyA-WxuHsZJgsCOM"/>
+<div>
+<p class="font-semibold text-slate-900 dark:text-slate-50">Sofia</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Viajero</p>
+</div>
+</li>
+<li class="flex items-center gap-4">
+<img alt="Isabella's avatar" class="h-12 w-12 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeCuSRGQDzEriRMmEgaQY2iJVS-UzA6MWUoa2yxR-qfaGr7NQ2F_MV6sexKed3CyCNhRf618U_5heDgmAwVehgKdZtmcKA7_Ooat28sFOlTuF6jkqgT9nfEHjFToGe7lyz666kRp5hza53RrmlO0pVnS5AQpIMRsc7oUvr_HmDV4qVkjqx0x_RnlG63ABtJWnOJu-uNcZWdAJUDTcK_moPZYF1bNkXRaG2cf0DvZ5BVID2E0Oz10lg2YaJld92iHWN-EOpDrTlXQo"/>
+<div>
+<p class="font-semibold text-slate-900 dark:text-slate-50">Isabella</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Viajero</p>
+</div>
+</li>
+</ul>
+</aside>
+</div>
+</main>
+</div>
+
+</body></html>

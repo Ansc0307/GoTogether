@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mis Viajes - Explora Bolivia</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1313ec",
+            "background-light": "#f6f7f8",
+            "background-dark": "#101c22",
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="relative flex min-h-screen w-full flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-gray-800 px-10 py-4 bg-background-light dark:bg-background-dark sticky top-0 z-10">
+<div class="flex items-center gap-4">
+<div class="text-primary size-8">
+<svg fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.38,1.62a1,1,0,0,0-1.05-.22L3.57,8.65a1,1,0,0,0,.17,1.82l6.23,1.69,1.69,6.23a1,1,0,0,0,1.82.17l7.25-16.76A1,1,0,0,0,21.38,1.62ZM12.35,12.35,17.44,6.1,11.83,11.71,6.1,17.44l5.61-5.61A1,1,0,0,1,12.35,12.35Z"></path></svg>
+</div>
+<h1 class="text-lg font-bold">Explora Bolivia</h1>
+</div>
+<nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+<a class="hover:text-primary transition-colors" href="#">Inicio</a>
+<a class="text-primary font-bold" href="#">Mis Viajes</a>
+<a class="hover:text-primary transition-colors" href="#">Explorar</a>
+<a class="hover:text-primary transition-colors" href="#">Perfil</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+<span class="material-symbols-outlined">
+            notifications
+          </span>
+</button>
+<div class="size-10 rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBI0UEnmnVQkQ-Rxbouh7gJgrDkK7mlLDJqGInAz7VK2L0bpPfVwoF9caKtt_rXNjr29Sg6f3YtD4cgFA8XJNCeqFecVexJQyzsn2A2Fymg9s7Qsntr_xLTk2zGoHx9A8Ovjs7rY7lA40EjGT8LV9f4AT6XLVLc1DSP2DG-EaZfMbSN9nezNyLe8kdXZSlzKuTyFvknyPUwGDhLmOwlaCK3zLUNyxG9FGkxF0-rCUo1wm-mo7FKf5UrO5hdX_BS6ToDQ_dVk5M5kA0');"></div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
+<h2 class="text-3xl font-extrabold mb-4 sm:mb-0">Mis Viajes</h2>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-background-dark/50 rounded-lg shadow-md overflow-hidden group">
+<div class="relative">
+<div class="w-full h-40 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCcB98M08IIa12fK_K3LchAp-Pzlo8QKq8-BK9m6NxdtmjDC11IpTBAKx3n--i1WtURRueYmXTFkzc6ZmsyxuLTY8_9Dcqgh-56P2EEJ52QieORXuaPjs0-JDJT9bQK_jcbtI8J6fZ_t38QjCrT_ahtH3QV6oQ3SRRlCp4niqRllwW3Mq3N5OwXY0MrqBbdYtclqRsE9i-S2vBsA4kqg6gn_cpx3G4HxBLkFo8Y1sagGcAgGb69TiHLktRqCUhbhxALpcR2XBoYCoU');"></div>
+<div class="absolute top-2 right-2 bg-primary/80 backdrop-blur-sm text-white text-xs font-semibold px-2 py-1 rounded-full">Organizador</div>
+</div>
+<div class="p-4">
+<h3 class="font-bold text-lg mb-1">Aventura en el Salar de Uyuni</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Uyuni, Potosí</p>
+<p class="text-xs text-gray-400 dark:text-gray-500 mb-3">15 Feb - 22 Feb, 2024</p>
+<div class="flex items-center space-x-2">
+<div class="flex -space-x-2">
+<img alt="" class="inline-block size-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHqBsTYiabWrNSrdynxA3iUUmt_vQ6sg5QGa7C0pmQWeKkTUbZQBtIyY_X93YGm_TEr_JXya7wU7Wv6uRmJSKfIznVJpFns2KGJSE_oszJK4a5OHkid1q8QLNYgVsnom0IyeLmtKl3NSsf8SURnAlJpV5D5Z0oMPdyT41zn75a8Fr3rsEpQSJW27ZXBFaJ0tHn7i8QKx0z3vuUsFxGu9Jpo7E_8SYeQEF251MJLRAvzFD2axKk3ira3s7o75V3M3-hZITx0yg9oY"/>
+<img alt="" class="inline-block size-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHqBsTYiabWrNSrdynxA3iUUmt_vQ6sg5QGa7C0pmQWeKkTUbZQBtIyY_X93YGm_TEr_JXya7wU7Wv6uRmJSKfIznVJpFns2KGJSE_oszJK4a5OHkid1q8QLNYgVsnom0IyeLmtKl3NSsf8SURnAlJpV5D5Z0oMPdyT41zn75a8Fr3rsEpQSJW27ZXBFaJ0tHn7i8QKx0z3vuUsFxGu9Jpo7E_8SYeQEF251MJLRAvzFD2axKk3ira3s7o75V3M3-hZITx0yg9oY"/>
+<img alt="" class="inline-block size-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHqBsTYiabWrNSrdynxA3iUUmt_vQ6sg5QGa7C0pmQWeKkTUbZQBtIyY_X93YGm_TEr_JXya7wU7Wv6uRmJSKfIznVJpFns2KGJSE_oszJK4a5OHkid1q8QLNYgVsnom0IyeLmtKl3NSsf8SURnAlJpV5D5Z0oMPdyT41zn75a8Fr3rsEpQSJW27ZXBFaJ0tHn7i8QKx0z3vuUsFxGu9Jpo7E_8SYeQEF251MJLRAvzFD2axKk3ira3s7o75V3M3-hZITx0yg9oY"/>
+</div>
+<span class="text-xs text-gray-500 dark:text-gray-400">+2 más</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-background-dark/50 rounded-lg shadow-md overflow-hidden group">
+<div class="w-full h-40 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDB7EzpkXhoSgpcCh2fqWAXGU8oPglQRFdiL8DhiTW91FeG3KD3olJh6N-_7Bv5plNHB0EvzgRGIlOXSs_xezWM-TsRiqSjQxKI7EW-VRIDUMO8qGr40-onRiFgl6_4XoZYiOYYV4YbnQNmuYDqV7zGxTX-FzeY93BsMeNDTwLt_mVosIn7FC_kySYXi-m0X9m-4SPx1B_0lmmtRrBbsM5kJLGmSuz-7DC3qCTnICNr_3YAA3eS_fruj1wdzbmj5lbGhiz-xnN7VaM');"></div>
+<div class="p-4">
+<h3 class="font-bold text-lg mb-1">Explorando La Paz</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-2">La Paz</p>
+<p class="text-xs text-gray-400 dark:text-gray-500 mb-3">01 Mar - 05 Mar, 2024</p>
+<div class="flex items-center space-x-2">
+<div class="flex -space-x-2">
+<img alt="" class="inline-block size-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHqBsTYiabWrNSrdynxA3iUUmt_vQ6sg5QGa7C0pmQWeKkTUbZQBtIyY_X93YGm_TEr_JXya7wU7Wv6uRmJSKfIznVJpFns2KGJSE_oszJK4a5OHkid1q8QLNYgVsnom0IyeLmtKl3NSsf8SURnAlJpV5D5Z0oMPdyT41zn75a8Fr3rsEpQSJW27ZXBFaJ0tHn7i8QKx0z3vuUsFxGu9Jpo7E_8SYeQEF251MJLRAvzFD2axKk3ira3s7o75V3M3-hZITx0yg9oY"/>
+<img alt="" class="inline-block size-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHqBsTYiabWrNSrdynxA3iUUmt_vQ6sg5QGa7C0pmQWeKkTUbZQBtIyY_X93YGm_TEr_JXya7wU7Wv6uRmJSKfIznVJpFns2KGJSE_oszJK4a5OHkid1q8QLNYgVsnom0IyeLmtKl3NSsf8SURnAlJpV5D5Z0oMPdyT41zn75a8Fr3rsEpQSJW27ZXBFaJ0tHn7i8QKx0z3vuUsFxGu9Jpo7E_8SYeQEF251MJLRAvzFD2axKk3ira3s7o75V3M3-hZITx0yg9oY"/>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-background-dark/50 rounded-lg shadow-md overflow-hidden group">
+<div class="w-full h-40 bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDST-BREIMDXlEuYGBrdfk29zc07QkJzhk2KGNKf5OJZ5fA3hp8SjcCNuF4-Q1e7xlucZd8UZuEFgtSDOi90fF7scZyU7flCkDGYcWfcgHpJwPZ8-ZrM9jgKxRCUSbye5j_-ZXGwQSflcJVE2aQLkx9zl6AOn6Vy0hoA3fndRLU5NVPzVIT_km97yTIsGdUUUoDq5U2dzB05gv9H7onHt0fwkQDUoofbykso1OKFH73wer9b9aef00XiUfX0tdDalWOJzhhp1KrG7g');"></div>
+<div class="p-4">
+<h3 class="font-bold text-lg mb-1">Ruta de los Vinos en Tarija</h3>
+<p class="text-sm text-gray-500 dark:text-gray-400 mb-2">Tarija</p>
+<p class="text-xs text-gray-400 dark:text-gray-500 mb-3">10 Abr - 14 Abr, 2024</p>
+<div class="flex items-center space-x-2">
+<div class="flex -space-x-2">
+<img alt="" class="inline-block size-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHqBsTYiabWrNSrdynxA3iUUmt_vQ6sg5QGa7C0pmQWeKkTUbZQBtIyY_X93YGm_TEr_JXya7wU7Wv6uRmJSKfIznVJpFns2KGJSE_oszJK4a5OHkid1q8QLNYgVsnom0IyeLmtKl3NSsf8SURnAlJpV5D5Z0oMPdyT41zn75a8Fr3rsEpQSJW27ZXBFaJ0tHn7i8QKx0z3vuUsFxGu9Jpo7E_8SYeQEF251MJLRAvzFD2axKk3ira3s7o75V3M3-hZITx0yg9oY"/>
+<img alt="" class="inline-block size-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHqBsTYiabWrNSrdynxA3iUUmt_vQ6sg5QGa7C0pmQWeKkTUbZQBtIyY_X93YGm_TEr_JXya7wU7Wv6uRmJSKfIznVJpFns2KGJSE_oszJK4a5OHkid1q8QLNYgVsnom0IyeLmtKl3NSsf8SURnAlJpV5D5Z0oMPdyT41zn75a8Fr3rsEpQSJW27ZXBFaJ0tHn7i8QKx0z3vuUsFxGu9Jpo7E_8SYeQEF251MJLRAvzFD2axKk3ira3s7o75V3M3-hZITx0yg9oY"/>
+<img alt="" class="inline-block size-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHqBsTYiabWrNSrdynxA3iUUmt_vQ6sg5QGa7C0pmQWeKkTUbZQBtIyY_X93YGm_TEr_JXya7wU7Wv6uRmJSKfIznVJpFns2KGJSE_oszJK4a5OHkid1q8QLNYgVsnom0IyeLmtKl3NSsf8SURnAlJpV5D5Z0oMPdyT41zn75a8Fr3rsEpQSJW27ZXBFaJ0tHn7i8QKx0z3vuUsFxGu9Jpo7E_8SYeQEF251MJLRAvzFD2axKk3ira3s7o75V3M3-hZITx0yg9oY"/>
+<img alt="" class="inline-block size-8 rounded-full ring-2 ring-white dark:ring-gray-800" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfHqBsTYiabWrNSrdynxA3iUUmt_vQ6sg5QGa7C0pmQWeKkTUbZQBtIyY_X93YGm_TEr_JXya7wU7Wv6uRmJSKfIznVJpFns2KGJSE_oszJK4a5OHkid1q8QLNYgVsnom0IyeLmtKl3NSsf8SURnAlJpV5D5Z0oMPdyT41zn75a8Fr3rsEpQSJW27ZXBFaJ0tHn7i8QKx0z3vuUsFxGu9Jpo7E_8SYeQEF251MJLRAvzFD2axKk3ira3s7o75V3M3-hZITx0yg9oY"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<button class="fixed bottom-8 right-8 bg-primary text-white rounded-full p-4 shadow-lg hover:bg-primary/90 transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark">
+<span class="material-symbols-outlined">
+        add
+      </span>
+<span class="sr-only">Crear Nuevo Viaje</span>
+</button>
+</div>
+
+</body></html>

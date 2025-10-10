@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>GoTogether - Crear Votación</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1313ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101022",
+                        "foreground-light": "#101022",
+                        "foreground-dark": "#f6f6f8",
+                        "subtle-light": "#e7e7f3",
+                        "subtle-dark": "#2a2a46",
+                        "muted-light": "#6b6b80",
+                        "muted-dark": "#a0a0b8",
+                        "border-light": "#dcdceb",
+                        "border-dark": "#3c3c5a"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "0.75rem",
+                        "xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .bolivian-wiphala-bg {
+            background: linear-gradient(45deg, #FF0000 14.28%, #FF7F00 14.28% 28.56%, #FFFF00 28.56% 42.84%, #00FF00 42.84% 57.12%, #0000FF 57.12% 71.4%, #4B0082 71.4% 85.68%, #9400D3 85.68%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-foreground-light dark:text-foreground-dark">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-border-light dark:border-border-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-4">
+<div class="bolivian-wiphala-bg p-1 rounded-full">
+<div class="bg-background-light dark:bg-background-dark rounded-full p-0.5">
+<svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z" fill="currentColor"></path>
+</svg>
+</div>
+</div>
+<h1 class="text-xl font-bold text-foreground-light dark:text-foreground-dark">GoTogether</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-muted-light dark:text-muted-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Inicio</a>
+<a class="text-sm font-medium text-muted-light dark:text-muted-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Mis Viajes</a>
+<a class="text-sm font-medium text-muted-light dark:text-muted-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Explorar</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="relative rounded-full p-2 text-muted-light dark:text-muted-dark hover:bg-subtle-light dark:hover:bg-subtle-dark hover:text-primary dark:hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+</button>
+<button>
+<img alt="User avatar" class="w-10 h-10 rounded-full border-2 border-border-light dark:border-border-dark" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCH8B4ijnNa1UFwZOCnaPLUKQmTeHoOzQLPHY8PrKdg8-Oc3aFeBuX5jWbxteSmhpl4KonNPNvB8H0zc_FO80Y4qUM-mkI-MK6JSVnavpOc53cmm835pAzTuD6d6aPq5qB1uTG8WdhinXHQEyUhVmn8VoUQqXRJ6QiThVZxwI2vsjCB2dDzWLzcyWtUvJes95gMU-VHadXTImQXwh6v0SNgxDsR-cfv1T17cPttWTU0ywafqUWkaByIN0LKQnIrzDyy6n-BaJhZ3og"/>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-2xl mx-auto">
+<div class="text-center mb-8">
+<h2 class="text-3xl font-extrabold text-foreground-light dark:text-foreground-dark tracking-tight sm:text-4xl">Crear Nueva Votación</h2>
+<p class="mt-4 text-lg text-muted-light dark:text-muted-dark">Planifica con tu grupo tomando las mejores decisiones.</p>
+</div>
+<form class="space-y-8 bg-background-light dark:bg-background-dark p-6 sm:p-8 rounded-lg shadow-sm border border-border-light dark:border-border-dark">
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="vote-topic">Tema o Pregunta</label>
+<input class="block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-subtle-dark placeholder:text-muted-light dark:placeholder:text-muted-dark focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" id="vote-topic" placeholder="Ej: ¿Qué día visitamos el Salar de Uyuni?" type="text"/>
+</div>
+<div>
+<h3 class="text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2">Opciones de Respuesta</h3>
+<div class="space-y-3" id="options-container">
+<div class="flex items-center gap-3">
+<input class="block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-subtle-dark placeholder:text-muted-light dark:placeholder:text-muted-dark focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" placeholder="Opción 1: Ej: Sábado" type="text"/>
+<button class="text-muted-light dark:text-muted-dark hover:text-red-500 dark:hover:text-red-400 transition-colors p-1.5 rounded-full hover:bg-red-500/10" type="button">
+<span class="material-symbols-outlined text-base">delete</span>
+</button>
+</div>
+<div class="flex items-center gap-3">
+<input class="block w-full rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-subtle-dark placeholder:text-muted-light dark:placeholder:text-muted-dark focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" placeholder="Opción 2: Ej: Domingo" type="text"/>
+<button class="text-muted-light dark:text-muted-dark hover:text-red-500 dark:hover:text-red-400 transition-colors p-1.5 rounded-full hover:bg-red-500/10" type="button">
+<span class="material-symbols-outlined text-base">delete</span>
+</button>
+</div>
+</div>
+<button class="mt-4 flex items-center gap-2 text-sm font-medium text-primary hover:text-white bg-primary/10 hover:bg-primary/90 dark:bg-primary/20 dark:hover:bg-primary px-4 py-2 rounded-lg transition-all duration-200" type="button">
+<span class="material-symbols-outlined text-base">add_circle</span>
+                                Agregar otra opción
+                            </button>
+</div>
+<div>
+<label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="close-date">Fecha y Hora de Cierre</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-muted-light dark:text-muted-dark">calendar_today</span>
+</div>
+<input class="block w-full pl-10 rounded-lg border-border-light dark:border-border-dark bg-background-light dark:bg-subtle-dark placeholder:text-muted-light dark:placeholder:text-muted-dark focus:ring-2 focus:ring-primary focus:border-primary transition-shadow" id="close-date" type="datetime-local"/>
+</div>
+</div>
+</div>
+<div class="pt-4 border-t border-border-light dark:border-border-dark">
+<button class="w-full flex justify-center items-center gap-2 bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-background-light dark:focus:ring-offset-background-dark transition-all duration-200 shadow-lg shadow-primary/30" type="submit">
+<span class="material-symbols-outlined">how_to_vote</span>
+                            Crear Votación
+                        </button>
+</div>
+</form>
+</div>
+</main>
+</div>
+
+</body></html>

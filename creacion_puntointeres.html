@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<title>GoTogether - Nuevo Punto de Interés</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1313ec",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101022",
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="flex flex-col min-h-screen">
+<header class="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-10 border-b border-primary/10 dark:border-primary/20">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-4 text-primary">
+<span class="material-symbols-outlined text-3xl">
+              stars
+            </span>
+<h2 class="text-xl font-bold text-gray-900 dark:text-white">GoTogether</h2>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Mis viajes</a>
+<a class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Explorar</a>
+<a class="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Perfil</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full text-gray-600 dark:text-gray-400 hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors">
+<span class="material-symbols-outlined">
+                notifications
+              </span>
+</button>
+<div class="w-10 h-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCqdcYHLxRLkpClD5sB8WEGS4oqQpzzYCi4J8eyCx-HHQL56LOXOctlcQyhS6q_SQk9FP9nrAtN5lnEMlbCqgTd0XiFWaDiQrKzsZdfYFncGOSVQM1GteiQLmwGt3oK6OSH_UMFza3uDGyU3Rn_VspDZ0hoT3-ChEF9SM83QI-0Z_smnfIEPNIDu9QNdm9czT_4Hm5oU45bKcEFSqkcYrP3ejnQKPLP9c-puXC_577HzAJE8OPa77UHLTETAFB__Qww7TSvwRHa33s");'></div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+<div class="w-full max-w-2xl space-y-8 bg-background-light/50 dark:bg-background-dark/50 p-8 rounded-xl border border-primary/10 dark:border-primary/20 shadow-lg">
+<div>
+<h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">Agregar un nuevo punto de interés</h2>
+<p class="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+            Comparte un lugar increíble con tu grupo de viaje.
+          </p>
+</div>
+<form action="#" class="mt-8 space-y-6" method="POST">
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-gray-800 dark:text-gray-200" for="place-name">Nombre del lugar</label>
+<div class="mt-1">
+<input class="appearance-none block w-full px-4 py-3 rounded-lg bg-primary/5 dark:bg-primary/10 border-2 border-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" id="place-name" name="place-name" placeholder="Ej. Salar de Uyuni" required="" type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-800 dark:text-gray-200" for="location">Dirección/Ubicación en el mapa</label>
+<div class="mt-1">
+<input class="appearance-none block w-full px-4 py-3 rounded-lg bg-primary/5 dark:bg-primary/10 border-2 border-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" id="location" name="location" placeholder="Ej. Cerca de Colchani, Potosí" required="" type="text"/>
+</div>
+</div>
+<div class="w-full h-64 rounded-lg bg-cover bg-center border-2 border-dashed border-primary/20 dark:border-primary/30 flex items-center justify-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA5Ek2ISKHOXG0Yt_hwudE8DZ-ILZ9LXmX2aiskO2mQaBvb9-KT0N_LOEQF4tKqeOVYncfICnv_BVooFeK1A78VreR_1QpjkPhNLeDzycFDEEVuc9yw95PgCl1TWIcYqWmX2PIqtnWAxiJZVBxPdUrExJVLimotltlWkxFmtoRRg01fynPP_W9UtjiSupTSgtBL0RomJvhFfyv1V1GtCAMAb_qhJ7Bddr6nBpAd9_UiU42CqMKUux5WErhGPZQ3j8h-EykHj0mSeKw");'>
+<button class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50" type="button">
+<span class="material-symbols-outlined mr-2 -ml-1">
+                    add_location_alt
+                  </span>
+                  Cambiar ubicación en el mapa
+               </button>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-800 dark:text-gray-200" for="description">Descripción</label>
+<div class="mt-1">
+<textarea class="appearance-none block w-full px-4 py-3 rounded-lg bg-primary/5 dark:bg-primary/10 border-2 border-transparent focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400" id="description" name="description" placeholder="Ej. El desierto de sal más grande del mundo, una maravilla natural de Bolivia." rows="4"></textarea>
+</div>
+</div>
+</div>
+<div>
+<button class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary/50 transition-colors" type="submit">
+<span class="absolute left-0 inset-y-0 flex items-center pl-3">
+<span class="material-symbols-outlined h-5 w-5 text-white">
+                    add_circle
+                </span>
+</span>
+              Agregar Punto de Interés
+            </button>
+</div>
+</form>
+</div>
+</main>
+</div>
+
+</body></html>

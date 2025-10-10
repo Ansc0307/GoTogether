@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Explora Bolivia - Mis Viajes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1313ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .bolivian-motif {
+            background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="p" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M0 80L80 0ZM40 80L80 40Z M0 40L40 0Z" stroke="%23e0e0e0" stroke-width="1" fill="none" opacity="0.3"></path></pattern></defs><rect width="100%" height="100%" fill="url(%23p)"></rect></svg>');
+        }
+        .dark .bolivian-motif {
+             background-image: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="p" width="80" height="80" patternUnits="userSpaceOnUse"><path d="M0 80L80 0ZM40 80L80 40Z M0 40L40 0Z" stroke="%23374151" stroke-width="1" fill="none" opacity="0.2"></path></pattern></defs><rect width="100%" height="100%" fill="url(%23p)"></rect></svg>');
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex flex-col min-h-screen">
+<header class="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-50 border-b border-gray-200 dark:border-gray-700">
+<nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+<div class="flex items-center gap-3">
+<svg class="h-8 w-8 text-primary" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 0L48 24L24 48L0 24L24 0Z" fill="#DC2626"></path>
+<path d="M24 9.42859L41.1429 24L24 38.5714L6.85714 24L24 9.42859Z" fill="#FFC700"></path>
+<path d="M24 18.8571L32.5714 24L24 29.1429L15.4286 24L24 18.8571Z" fill="#007A33"></path>
+</svg>
+<h1 class="text-xl font-bold text-gray-900 dark:text-white">Explora Bolivia</h1>
+</div>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Inicio</a>
+<a class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Destinos</a>
+<a class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Comunidad</a>
+<a class="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors" href="#">Ayuda</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute -top-1 -right-1 flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDyLzLYddid3hvrfE_PRGPt_E9rRmVVHsh0k7MFiO5HRr1RAndP8VmhwXLOUpf1lw_c-13UGhtN_-adRgzxp_CprbcYiCK_5xBR-l3UlDoHQo5p1GnIpvdRrIMtQ-FxZu8bWDLSWieBeC9z_LRbDhWVMcdFWNwD6pefHP4wjy6XkSeaDveYE97KX8FQVeyOAEZWZDR02UV2HmN6JiZzMi_EvdeEQTV9stRHd1BoFFKrrn280nZG2yoEKZ2vViiaEGWlTR_Vx5rnhyA");'></div>
+</div>
+</nav>
+</header>
+<main class="flex-grow flex flex-col items-center justify-center container mx-auto px-6 py-12 text-center relative">
+<div class="absolute inset-0 bolivian-motif z-0"></div>
+<div class="relative z-10 flex flex-col items-center">
+<div class="mb-8">
+<img alt="Ilustración de una maleta y un mapa" class="h-64 w-auto drop-shadow-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt0yzzEpu2MPWOCeCrhInSXTD-PT5mGGzZk5Vu8g5FrxT4Km9gbaY3BB_GcUq8qN3rqO6e90yyt0VC3M5_KnrkkIezN77HZdW8c3Z2Knth6LU_gCMs6BGNw2PN6NRm638Vzr6RmZIvRhI66YbDgPTeVE3DX95o-4EPromlXzx_EWjcn9QnGKBkX2d5wxruF5J6c2JtZr8p4Sv_Hwy-0h9lwZWOzp8tv2kYMpFmhvGQysXT03BSo10nCfFu1EM4JDDAtqxeE24aNjI"/>
+</div>
+<h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Aún no tienes ningún viaje planificado.</h2>
+<p class="text-lg text-gray-600 dark:text-gray-300 mb-8 max-w-md">¡Anímate a crear el primero y comienza a planificar tu próxima aventura con amigos y familiares!</p>
+<button class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300 ease-in-out flex items-center gap-2">
+<span class="material-symbols-outlined">add_circle</span>
+                    Crear Nuevo Viaje
+                </button>
+</div>
+</main>
+<footer class="bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-gray-800">
+<div class="container mx-auto px-6 py-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+                © 2024 Explora Bolivia. Todos los derechos reservados.
+            </div>
+</footer>
+</div>
+
+</body></html>

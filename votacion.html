@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Votaciones del Grupo</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1313ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101022",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .bolivian-flag-bg {
+            background: linear-gradient(to right, #dc2626 33.3%, #facc15 33.3%, #facc15 66.6%, #22c55e 66.6%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="relative flex h-auto min-h-screen w-full flex-col">
+<div class="flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-gray-200 dark:border-gray-800 px-10 py-3">
+<div class="flex items-center gap-4">
+<div class="h-8 w-8 bolivian-flag-bg rounded-full"></div>
+<h2 class="text-xl font-bold">Viaje Bolivia</h2>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary" href="#">Inicio</a>
+<a class="text-sm font-medium hover:text-primary" href="#">Mis Viajes</a>
+<a class="text-sm font-medium hover:text-primary" href="#">Explorar</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center rounded-full h-10 w-10 bg-gray-200/50 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-800">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDw5iATAihWOAt-3aTI4trdS0mjVC34cMH-WDJneogJ_PokRpI_Lam_yYqnkqvUChnpfAsxIe_Yieac1He5VJsORMNsWGPWC6u7N_3A_j_aL2f7Nd5C2CXvMWmw8H94rXsWeAV3-q-Y5gLGL7MGc-UvEsHfAjxUWTAtydzXTJE4mWDwtpz2Rc0sG4leFfHdG62R_A7r5ceBBZX9jdRqfOzGQxZRAr19xodXbxOE2WekLSpQw2ap4H1QZxw5dRyr0dgfHHUDI8jS49s");'></div>
+</div>
+</header>
+<main class="flex-1 px-4 sm:px-6 lg:px-8 xl:px-40 py-8">
+<div class="max-w-5xl mx-auto">
+<div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+<h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Votaciones del Grupo</h1>
+<button class="flex items-center justify-center gap-2 rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold shadow-lg hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined">add</span>
+<span class="truncate">Crear Votación</span>
+</button>
+</div>
+<div class="space-y-10">
+<div>
+<h2 class="text-2xl font-bold pb-4 border-b border-gray-200 dark:border-gray-800 mb-6">Activas</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-md overflow-hidden transition-shadow hover:shadow-xl">
+<div class="md:flex">
+<div class="md:flex-shrink-0">
+<img alt="Destino de viaje La Paz" class="h-48 w-full object-cover md:w-48" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGifuBo5txj9DhdCXZe3OM-RtK3NhdjTsVGWMLQPlWfmChcHplYyhrvWEkljEvBmJOqyJDYDK8WjHbskWix6GrgoLwbKOvQP9WwvIKfbZCf-KQVQ_XO2c3TsZo_6mIu1ryQ1lsLimMzA1_UsYFhchzdGRgKtFpnaBl9vgNzQ0HMR0o957_OpNja-5ro2bemiXfI8-kLHTwtbeBLM0ul48c9e52GfNEkoji5ZJsCNWVMWZCJJ4v2xSyAxnKzQw8hD6CSRFcidor83o"/>
+</div>
+<div class="p-6 flex flex-col justify-between">
+<div>
+<p class="text-lg font-bold">¿Dónde deberíamos ir primero?</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Opciones: La Paz, Sucre, Cochabamba</p>
+<p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Votaron: Ana, Juan</p>
+</div>
+<button class="mt-4 w-full sm:w-auto self-start flex items-center justify-center gap-2 rounded-lg h-9 px-4 bg-primary/10 dark:bg-primary/20 text-primary text-sm font-bold hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-base">how_to_vote</span>
+<span>Votar</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-md overflow-hidden transition-shadow hover:shadow-xl">
+<div class="md:flex">
+<div class="md:flex-shrink-0">
+<img alt="Tipo de alojamiento" class="h-48 w-full object-cover md:w-48" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjWeYnKMIJeI4y9bObZZ-NPZYUvQVP1JnuvxtxPgr9OhQAXemH5iaGijUm1RPSqYKEnPOQDNZ4pIA5_CahNc62zWGFtcRjIgvrLlVR5cGk9UYVeEU-Hhfbzl6kOMfHOnnJ6xjtaUXE7qNDpWpw0AH-CZRaz9qUqUeVP7lDDfdyp158Ru7_HIIOQyTt-xxGGgH8PeTNNUznOvL50UwIDoNq9fBdxPRLdpvanDZMpT8fkPwccZnvW120SbIr58Jth5dhqnFJoqbTpQs"/>
+</div>
+<div class="p-6 flex flex-col justify-between">
+<div>
+<p class="text-lg font-bold">¿Qué tipo de alojamiento preferimos?</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Opciones: Hostal, Hotel, Airbnb</p>
+<p class="text-xs text-gray-400 dark:text-gray-500 mt-2">Votaron: Carlos</p>
+</div>
+<button class="mt-4 w-full sm:w-auto self-start flex items-center justify-center gap-2 rounded-lg h-9 px-4 bg-primary/10 dark:bg-primary/20 text-primary text-sm font-bold hover:bg-primary/20 dark:hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-base">how_to_vote</span>
+<span>Votar</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h2 class="text-2xl font-bold pb-4 border-b border-gray-200 dark:border-gray-800 mb-6">Finalizadas</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-md overflow-hidden transition-shadow hover:shadow-xl opacity-70">
+<div class="md:flex">
+<div class="md:flex-shrink-0">
+<img alt="Presupuesto de viaje" class="h-48 w-full object-cover md:w-48" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYahEwjRU1k5JbTPykK3LndNU3LwrSOivbPD2JdMOY08qz0FTXf4IlEaO8Ogmoj3rhrufq2kPfMkQCusLLhJEsF6qdXcasoDDXKqWYXMP5m3vG-dhurwNB1rna5wLNYgsf0lcerv1xBO725WVOvZ6oyL1m0iEAvH_hUaTDLUW0y70iuQMossAPZdCW10mVESoUXYwLkdAufQYaYfE6iqBd8fkIg2o735FPIn4uVcZJ57J1vXKyqTf2n2ApYb0TxKN_iL1T1oL_QO4"/>
+</div>
+<div class="p-6 flex flex-col justify-between">
+<div>
+<p class="text-lg font-bold">¿Cuál es nuestro presupuesto por día?</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Resultados: 50 USD (45%), 75 USD (30%), 100 USD (25%)</p>
+</div>
+<button class="mt-4 w-full sm:w-auto self-start flex items-center justify-center gap-2 rounded-lg h-9 px-4 bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm font-bold cursor-not-allowed">
+<span class="material-symbols-outlined text-base">assessment</span>
+<span>Ver Resultados</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-gray-900/50 rounded-xl shadow-md overflow-hidden transition-shadow hover:shadow-xl opacity-70">
+<div class="md:flex">
+<div class="md:flex-shrink-0">
+<img alt="Fechas de viaje" class="h-48 w-full object-cover md:w-48" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvSF5Y1PqmsyL3G10VqCp6-KiJY01vI__lRW0GLE9ORXc0S9rULsaXrPT9dNf8ETQwnHgCK3nmjuwbVbFS8ZmsNPfWI94K2K1ixEIyQD-GrwNRZgbWD5QwmgC5tx3zEh3zt5HNJ70NiEYw0qob11TvFwPLs8g25aVI0PMqIdbeo_yYn2X2A1oyVn-CoQITYN0uTuLT9rZrGfl3Y0lbsPk4GDx51fS0i3qxLg6OF-OSIRAGqWp7HnDaNKLmZaVUyTjLYMe5C4LAf6M"/>
+</div>
+<div class="p-6 flex flex-col justify-between">
+<div>
+<p class="text-lg font-bold">¿Cuándo deberíamos viajar?</p>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Resultados: Julio (60%), Agosto (25%), Septiembre (15%)</p>
+</div>
+<button class="mt-4 w-full sm:w-auto self-start flex items-center justify-center gap-2 rounded-lg h-9 px-4 bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-sm font-bold cursor-not-allowed">
+<span class="material-symbols-outlined text-base">assessment</span>
+<span>Ver Resultados</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+</body></html>

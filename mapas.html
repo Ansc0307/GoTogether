@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Explora Bolivia</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1313ec",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101022",
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-neutral-800 dark:text-neutral-200">
+<div class="flex flex-col min-h-screen">
+<header class="flex items-center justify-between px-6 sm:px-10 py-3 border-b border-primary/20 dark:border-primary/30">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_6_535)">
+<path clip-rule="evenodd" d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z" fill="currentColor" fill-rule="evenodd"></path>
+</g>
+<defs>
+<clipPath id="clip0_6_535">
+<rect fill="white" height="48" width="48"></rect>
+</clipPath>
+</defs>
+</svg>
+</div>
+<h1 class="text-xl font-bold text-neutral-900 dark:text-white">Explora Bolivia</h1>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<nav class="flex items-center gap-6">
+<a class="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-primary" href="#">Inicio</a>
+<a class="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-primary" href="#">Mis Viajes</a>
+<a class="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-primary" href="#">Explorar</a>
+<a class="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-primary dark:hover:text-primary" href="#">Comunidad</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-primary/10 dark:hover:bg-primary/20 text-neutral-600 dark:text-neutral-300">
+<svg fill="currentColor" height="20px" viewBox="0 0 256 256" width="20px" xmlns="http://www.w3.org/2000/svg">
+<path d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"></path>
+</svg>
+</button>
+<div class="w-10 h-10 bg-center bg-no-repeat bg-cover rounded-full" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDi4k1Jk-ibmd4WyMlc6V54lWal-ZJl4cYtbv-KFoT1t5rT5KtNelrxJUWjFXxGLZq19nXNp12UYZvMb_Kq8GujOhMlq57Do1D29HmhYuunCvmJveFrpHRprpnlKa-UY0d5SrDzn7PKtNtnPwXo4OefROmoGdrhwAmG0okNL-UyXP0boGHEBtiMOU8OULDQx3lpTfaeGMh53xO0QTWv0UIqNBdabjnZjzpXYAuj-Dkt6maTVej0ZRBG0CDuSElrQZBf02TJ0EJCuSE");'></div>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col lg:flex-row gap-6 p-4 sm:p-6">
+<div class="flex-1 flex flex-col">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-2xl sm:text-3xl font-bold text-neutral-900 dark:text-white">Mapa de Puntos de Interés</h2>
+</div>
+<div class="flex-1 flex flex-col rounded-xl overflow-hidden bg-background-light dark:bg-background-dark shadow-md border border-primary/20 dark:border-primary/30">
+<div class="relative flex-1 bg-cover bg-center" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDxi93lqkiowjL_ow1kdUbacisKZkT47fimWIBHwNHk74usPUWSs3sEAxtWDdGFOOxou1sqDXsHm8kVQpx0LD5RPzGiBT--vT0qYD8fLfvngkV4v45AQQSrbbJWeYEmnOsq3Lxx2lCRrbt_1Qo5vWP_syL5DZdFDTL7Kes-wCbD88ucSdzDog8oCsKO-B-OiHLKzE6drwDGXpoQfHP9jiamXgjn5xwu9EASRXxdgQjfonioNrEaR17gPIn9boWl455ynEQEbq-1oic");'>
+<div class="absolute top-4 left-4 right-4 sm:max-w-xs">
+<label class="relative">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500 dark:text-neutral-400">
+<svg fill="currentColor" height="20" viewBox="0 0 256 256" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+</div>
+<input class="w-full h-12 pl-10 pr-4 rounded-lg bg-background-light/90 dark:bg-background-dark/90 text-neutral-800 dark:text-neutral-200 placeholder:text-neutral-500 dark:placeholder:text-neutral-400 border border-primary/20 dark:border-primary/40 focus:ring-2 focus:ring-primary focus:outline-none" placeholder="Buscar lugares" value=""/>
+</label>
+</div>
+<div class="absolute bottom-4 right-4 flex flex-col gap-2">
+<div class="flex flex-col rounded-lg overflow-hidden bg-background-light/90 dark:bg-background-dark/90 shadow-lg border border-primary/20 dark:border-primary/40">
+<button class="p-2.5 text-neutral-800 dark:text-neutral-200 hover:bg-primary/10 dark:hover:bg-primary/20">
+<svg fill="currentColor" height="20" viewBox="0 0 256 256" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path></svg>
+</button>
+<hr class="border-primary/20 dark:border-primary/40"/>
+<button class="p-2.5 text-neutral-800 dark:text-neutral-200 hover:bg-primary/10 dark:hover:bg-primary/20">
+<svg fill="currentColor" height="20" viewBox="0 0 256 256" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128Z"></path></svg>
+</button>
+</div>
+<button class="p-2.5 rounded-lg bg-background-light/90 dark:bg-background-dark/90 shadow-lg border border-primary/20 dark:border-primary/40 text-neutral-800 dark:text-neutral-200 hover:bg-primary/10 dark:hover:bg-primary/20">
+<svg fill="currentColor" height="20" transform="scale(-1, 1)" viewBox="0 0 256 256" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M229.33,98.21,53.41,33l-.16-.05A16,16,0,0,0,32.9,53.25a1,1,0,0,0,.05.16L98.21,229.33A15.77,15.77,0,0,0,113.28,240h.3a15.77,15.77,0,0,0,15-11.29l23.56-76.56,76.56-23.56a16,16,0,0,0,.62-30.38ZM224,113.3l-76.56,23.56a16,16,0,0,0-10.58,10.58L113.3,224h0l-.06-.17L48,48l175.82,65.22.16.06Z"></path></svg>
+</button>
+</div>
+</div>
+<div class="p-4 flex justify-end">
+<button class="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-primary text-white font-bold text-sm shadow-lg hover:bg-primary/90 transition-colors">
+<svg fill="currentColor" height="20" viewBox="0 0 256 256" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path></svg>
+<span>Agregar Punto de Interés</span>
+</button>
+</div>
+</div>
+</div>
+<aside class="w-full lg:w-96 flex-shrink-0 flex flex-col gap-4">
+<h3 class="text-2xl font-bold text-neutral-900 dark:text-white">Puntos Guardados</h3>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-background-dark hover:bg-primary/5 dark:hover:bg-primary/10 border border-primary/20 dark:border-primary/30 transition-colors cursor-pointer">
+<div class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"></path></svg>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="font-bold text-neutral-900 dark:text-white truncate">Mirador Killi Killi</p>
+<p class="text-sm text-neutral-600 dark:text-neutral-400 truncate">Ubicación: La Paz</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-background-dark hover:bg-primary/5 dark:hover:bg-primary/10 border border-primary/20 dark:border-primary/30 transition-colors cursor-pointer">
+<div class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"></path></svg>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="font-bold text-neutral-900 dark:text-white truncate">Isla Incahuasi</p>
+<p class="text-sm text-neutral-600 dark:text-neutral-400 truncate">Ubicación: Salar de Uyuni</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-background-dark hover:bg-primary/5 dark:hover:bg-primary/10 border border-primary/20 dark:border-primary/30 transition-colors cursor-pointer">
+<div class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"></path></svg>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="font-bold text-neutral-900 dark:text-white truncate">Isla del Sol</p>
+<p class="text-sm text-neutral-600 dark:text-neutral-400 truncate">Ubicación: Lago Titicaca</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-3 rounded-lg bg-background-light dark:bg-background-dark hover:bg-primary/5 dark:hover:bg-primary/10 border border-primary/20 dark:border-primary/30 transition-colors cursor-pointer">
+<div class="flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg bg-primary/10 text-primary">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"></path></svg>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="font-bold text-neutral-900 dark:text-white truncate">Rurrenabaque</p>
+<p class="text-sm text-neutral-600 dark:text-neutral-400 truncate">Ubicación: Parque Nacional Madidi</p>
+</div>
+</div>
+</div>
+</aside>
+</main>
+</div>
+
+</body></html>

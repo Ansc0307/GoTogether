@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Stitch Design</title>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1313ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                        "foreground-light": "#0d171b",
+                        "foreground-dark": "#e7eff3",
+                        "subtle-light": "#e7eff3",
+                        "subtle-dark": "#2a3b43",
+                        "placeholder-light": "#4c809a",
+                        "placeholder-dark": "#8f9ca3"
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .bolivian-motif {
+            background-image: url('data:image/svg+xml,%3Csvg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M12.5 0L0 12.5V37.5L12.5 50H37.5L50 37.5V12.5L37.5 0H12.5ZM62.5 0L50 12.5V37.5L62.5 50H87.5L100 37.5V12.5L87.5 0H62.5ZM12.5 50L0 62.5V87.5L12.5 100H37.5L50 87.5V62.5L37.5 50H12.5ZM62.5 50L50 62.5V87.5L62.5 100H87.5L100 87.5V62.5L87.5 50H62.5Z" fill="%2313a4ec" fill-opacity="0.05"/%3E%3C/svg%3E');
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative min-h-screen flex flex-col">
+<div class="absolute inset-0 bolivian-motif"></div>
+<main class="relative z-10 flex-grow flex items-center justify-center p-4">
+<div class="w-full max-w-lg bg-background-light dark:bg-background-dark rounded-xl shadow-2xl overflow-hidden border border-subtle-light dark:border-subtle-dark">
+<div class="p-8">
+<div class="text-center mb-8">
+<h1 class="text-3xl font-bold text-foreground-light dark:text-foreground-dark">Organiza un nuevo viaje</h1>
+<p class="text-placeholder-light dark:text-placeholder-dark mt-2">Planifica tu próxima aventura en Bolivia.</p>
+</div>
+<form class="space-y-6">
+<div>
+<label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="trip-name">Nombre del viaje</label>
+<input class="form-input w-full rounded-lg border-0 bg-subtle-light dark:bg-subtle-dark text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary h-12 px-4" id="trip-name" placeholder="Ej. Aventura en los Andes" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="destination">Destino</label>
+<select class="form-select w-full rounded-lg border-0 bg-subtle-light dark:bg-subtle-dark text-foreground-light dark:text-foreground-dark focus:ring-2 focus:ring-primary h-12 px-4" id="destination">
+<option>Selecciona un departamento</option>
+<option>La Paz</option>
+<option>Cochabamba</option>
+<option>Santa Cruz</option>
+<option>Oruro</option>
+<option>Potosí</option>
+<option>Chuquisaca</option>
+<option>Tarija</option>
+<option>Beni</option>
+<option>Pando</option>
+</select>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="start-date">Fecha de inicio</label>
+<div class="relative">
+<input class="form-input w-full rounded-lg border-0 bg-subtle-light dark:bg-subtle-dark text-foreground-light dark:text-foreground-dark focus:ring-2 focus:ring-primary h-12 px-4 pr-10" id="start-date" type="date"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-placeholder-light dark:text-placeholder-dark pointer-events-none">calendar_today</span>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="end-date">Fecha de fin</label>
+<div class="relative">
+<input class="form-input w-full rounded-lg border-0 bg-subtle-light dark:bg-subtle-dark text-foreground-light dark:text-foreground-dark focus:ring-2 focus:ring-primary h-12 px-4 pr-10" id="end-date" type="date"/>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-placeholder-light dark:text-placeholder-dark pointer-events-none">calendar_today</span>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-foreground-light dark:text-foreground-dark mb-2" for="budget">Presupuesto base (opcional)</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-placeholder-light dark:text-placeholder-dark font-bold">Bs.</span>
+<input class="form-input w-full rounded-lg border-0 bg-subtle-light dark:bg-subtle-dark text-foreground-light dark:text-foreground-dark placeholder-placeholder-light dark:placeholder-placeholder-dark focus:ring-2 focus:ring-primary h-12 px-4 pl-12" id="budget" placeholder="0.00" type="number"/>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:ring-offset-background-light dark:focus:ring-offset-background-dark transition-colors duration-300 flex items-center justify-center gap-2" type="submit">
+<span class="material-symbols-outlined">add_location_alt</span>
+                                Crear Viaje
+                            </button>
+</div>
+</form>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

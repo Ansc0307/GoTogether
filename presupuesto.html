@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Manrope:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700;900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<title>Stitch Design</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1313ec",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101022",
+          },
+          fontFamily: {
+            "display": ["Manrope"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden text-black dark:text-white">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-primary/20 dark:border-primary/30 px-10 py-3">
+<div class="flex items-center gap-4">
+<div class="size-6">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z" fill="#ff4d4d"></path>
+<path d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z" stroke="#000000" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M36.1992 4H12.8992" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M24.5 4V44" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold tracking-[-0.015em]">Viaje Bolivia</h2>
+</div>
+<div class="flex flex-1 justify-end gap-6">
+<div class="flex items-center gap-8">
+<a class="text-sm font-medium" href="#">Inicio</a>
+<a class="text-sm font-medium" href="#">Viajes</a>
+<a class="text-sm font-medium" href="#">Destinos</a>
+<a class="text-sm font-medium" href="#">Comunidad</a>
+</div>
+<button class="flex size-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-background-light dark:bg-primary/20">
+<svg fill="currentColor" height="20px" viewBox="0 0 256 256" width="20px" xmlns="http://www.w3.org/2000/svg">
+<path d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"></path>
+</svg>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDGNl61ip_5GhdScNYH3ZVaCfeugDwFBz5yEuGp6xYIJAATNOppeUIZBe1TB48xjt_ovHGz0VxvLQtR0apyDDr3wEWPGJLP8OdshVLlTII1tqweqFzGNQeHSsDxlabztRSe02NkIvp3G7QlUOcylFowGGNOhyUzxZFZH4phP2mMLizUk5mTTa72Df9qGhGzFdvbJEMjV_X_ywOk2gDoI_JlGJ11xK-rbpcdY4wf2Y-X7JfTIxQ3ApGjgr-alj7RnQckUYtEB6q9tqg");'></div>
+</div>
+</header>
+<main class="flex-1 px-40 py-10">
+<div class="layout-content-container flex flex-col max-w-[960px] mx-auto w-full">
+<div class="flex flex-wrap justify-between items-center gap-3 p-4">
+<div class="flex flex-col gap-2">
+<h1 class="text-3xl font-bold tracking-tight">Presupuesto y Gastos</h1>
+<p class="text-sm text-black/60 dark:text-white/60">Gestiona los gastos del viaje y mantén el presupuesto bajo control.</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+<div class="flex flex-col gap-2 rounded-lg p-6 bg-primary/10 dark:bg-primary/20">
+<p class="text-base font-medium">Presupuesto Total</p>
+<p class="text-2xl font-bold tracking-tight">Bs 15,000</p>
+</div>
+<div class="flex flex-col gap-2 rounded-lg p-6 bg-primary/10 dark:bg-primary/20">
+<p class="text-base font-medium">Gastos Totales</p>
+<p class="text-2xl font-bold tracking-tight">Bs 8,500</p>
+</div>
+<div class="flex flex-col gap-2 rounded-lg p-6 bg-primary/10 dark:bg-primary/20">
+<p class="text-base font-medium">Saldo Restante</p>
+<p class="text-2xl font-bold tracking-tight">Bs 6,500</p>
+</div>
+</div>
+<div class="px-4 pt-8 pb-4">
+<h2 class="text-xl font-bold tracking-tight">Balances</h2>
+</div>
+<div class="px-4 py-3">
+<div class="overflow-hidden rounded-lg border border-primary/20 dark:border-primary/30">
+<table class="w-full text-left">
+<thead class="bg-background-light dark:bg-primary/20">
+<tr>
+<th class="px-6 py-3 text-sm font-medium">Participante</th>
+<th class="px-6 py-3 text-sm font-medium">Debe</th>
+<th class="px-6 py-3 text-sm font-medium">Recibe</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/20 dark:divide-primary/30">
+<tr>
+<td class="h-[64px] px-6 py-2 text-sm">Ana</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Bs 500</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">-</td>
+</tr>
+<tr>
+<td class="h-[64px] px-6 py-2 text-sm">Carlos</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">-</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Bs 300</td>
+</tr>
+<tr>
+<td class="h-[64px] px-6 py-2 text-sm">Sofia</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Bs 200</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">-</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="px-4 pt-8 pb-4">
+<h2 class="text-xl font-bold tracking-tight">Gastos</h2>
+</div>
+<div class="px-4 py-3">
+<div class="overflow-hidden rounded-lg border border-primary/20 dark:border-primary/30">
+<table class="w-full text-left">
+<thead class="bg-background-light dark:bg-primary/20">
+<tr>
+<th class="px-6 py-3 text-sm font-medium">Descripción</th>
+<th class="px-6 py-3 text-sm font-medium">Monto</th>
+<th class="px-6 py-3 text-sm font-medium">Pagado por</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/20 dark:divide-primary/30">
+<tr>
+<td class="h-[64px] px-6 py-2 text-sm">Alojamiento en La Paz</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Bs 3,000</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Ana</td>
+</tr>
+<tr>
+<td class="h-[64px] px-6 py-2 text-sm">Transporte en Uyuni</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Bs 2,500</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Carlos</td>
+</tr>
+<tr>
+<td class="h-[64px] px-6 py-2 text-sm">Comidas en Cochabamba</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Bs 1,500</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Sofia</td>
+</tr>
+<tr>
+<td class="h-[64px] px-6 py-2 text-sm">Actividades en Santa Cruz</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Bs 1,500</td>
+<td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">Ana</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="flex px-4 py-6 justify-end">
+<button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+<span class="truncate">+ Registrar Gasto</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</div>
+
+</body></html>

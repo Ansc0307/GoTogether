@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Viaje Bolivia - Lista de Tareas</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#1313ec",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101022",
+            "card-light": "#ffffff",
+            "card-dark": "#1a1a32",
+            "text-light-primary": "#101022",
+            "text-dark-primary": "#f6f6f8",
+            "text-light-secondary": "#6b6b78",
+            "text-dark-secondary": "#a0a0b0",
+            "border-light": "#e5e5e5",
+            "border-dark": "#33334d"
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-10 bg-card-light/80 dark:bg-card-dark/80 backdrop-blur-sm border-b border-border-light dark:border-border-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z" fill="currentColor"></path>
+</svg>
+</div>
+<h1 class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">Viaje Bolivia</h1>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary transition-colors" href="#">Resumen</a>
+<a class="text-sm font-bold text-primary dark:text-primary" href="#">Tareas</a>
+<a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary transition-colors" href="#">Votaciones</a>
+<a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary transition-colors" href="#">Chat</a>
+<a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary dark:hover:text-primary transition-colors" href="#">Gastos</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full text-text-light-secondary dark:text-text-dark-secondary hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCLkT3QoBuBgmE-juzh_WrAwLFC3xiaY1YPWvUkV11WUjmFcLQJe11yWnf8SzL3kHm7tTtG0VGmX7qt4upeBmw5HpZG-dfLbtnIb1SuAHFHnKJSD-WJXOprdDrfQWzqTVRzkF3tXiIlPRcUBvMlMhX-cdkYa8EO6IhNcDL7NuoM0S5dZDylLW26wjBiUHd_Hn6pHmJq4QDKw5XvcVqVSZJ3AXygcIsigWo-MMACp9P82oEH913S6XvcQ5kwcQt_jRrAmYcfeKqJAvs');"></div>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-4xl mx-auto">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+<h2 class="text-3xl font-bold text-text-light-primary dark:text-text-dark-primary">Lista de Tareas</h2>
+<button class="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-bold text-sm shadow-lg hover:bg-opacity-90 transition-all duration-300">
+<span class="material-symbols-outlined text-base">add_circle</span>
+<span>Nueva Tarea</span>
+</button>
+</div>
+<div class="space-y-8">
+<div>
+<h3 class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary mb-4 border-b-2 border-primary/20 pb-2">Pendientes</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-4 p-4 bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark">
+<div class="flex-grow flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-cover bg-center flex-shrink-0" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCBabhu5--mA_IlYkPF0dEHjzdoBKoOYiiiezeygIDq8bENhGgEDPca16x4a9qiqZajgedNUaGSSR-DwZDn3Ssde8iSh5ppHvYwTvw-WQj0-W9brFFH58CSWKS8LYXiF_1_EuyaRrSu5SJNLCV99zLThdIh8gnYyNlix-6G_a41t_z1J4PFqqIioR3iuTGwAk9FfRvlwe-u-3-l1wnLzSwyUTim9MJcgMVZzx28sfm5MI6kbDgH3IRNe1lkXqBDi-202NqEbd_qPo4');"></div>
+<div>
+<p class="font-medium text-text-light-primary dark:text-text-dark-primary">Reservar alojamiento en La Paz</p>
+<p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">Responsable: Sofia</p>
+</div>
+</div>
+<input class="h-5 w-5 rounded border-2 border-border-light dark:border-border-dark bg-transparent text-primary focus:ring-primary focus:ring-offset-background-light dark:focus:ring-offset-background-dark checked:bg-primary checked:border-primary" type="checkbox"/>
+</div>
+<div class="flex items-center gap-4 p-4 bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark">
+<div class="flex-grow flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-cover bg-center flex-shrink-0" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAkUGDv8WfOWxXwlHizWsuvoE-e8XR_0w2ipvwSrQRMpm4SeCccZL9ts3RkRPp4xdeSqTTTxWtZMJPkcD3ykKZtO1BVHaodeqPl4c15b72Q1gmHsDrQUBnQP0-fVO_w_xwjmJNXeFxp8rktnLnbhbeOp3J3J-I8cda84M6sqyDJS_2XwoeymKOqesp6Yo8PosOcnMR4PZXWfhzWDSrQiq2k7rlZWrDiYKXBuFzUgzJHvtU35CKC-q5O-1smFYvmcP7g95jhSHCcEd0');"></div>
+<div>
+<p class="font-medium text-text-light-primary dark:text-text-dark-primary">Comprar boletos de avión</p>
+<p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">Responsable: Mateo</p>
+</div>
+</div>
+<input class="h-5 w-5 rounded border-2 border-border-light dark:border-border-dark bg-transparent text-primary focus:ring-primary focus:ring-offset-background-light dark:focus:ring-offset-background-dark checked:bg-primary checked:border-primary" type="checkbox"/>
+</div>
+<div class="flex items-center gap-4 p-4 bg-card-light dark:bg-card-dark rounded-xl shadow-sm border border-border-light dark:border-border-dark">
+<div class="flex-grow flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-cover bg-center flex-shrink-0" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBe70YJoujj9ApYNoPeWHCIja6sSQIixDhTSLtjGIgt6JeglnChAoBFckUDx1Kuc2SpU3AJy7o8Y1ouGJMBW2QitxWhwEsczxpOZD5kX7n35f9l1QJImsoBPBoan6RGmA9n-2yvHLucVDNQJnjU8DbDWlvp7R913-4y4fmZ62kgkebvd0HtxgTZoem8-hcNyTyZQY-6hIs3dUi4XOTl_dZ4k5noDJ_X76rXl_nTAewKCE6rJ2hpLP2D-UZW_HZ92QeaTZ_PSOGi2wo');"></div>
+<div>
+<p class="font-medium text-text-light-primary dark:text-text-dark-primary">Planificar itinerario en el Salar de Uyuni</p>
+<p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">Responsable: Camila</p>
+</div>
+</div>
+<input class="h-5 w-5 rounded border-2 border-border-light dark:border-border-dark bg-transparent text-primary focus:ring-primary focus:ring-offset-background-light dark:focus:ring-offset-background-dark checked:bg-primary checked:border-primary" type="checkbox"/>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary mb-4 border-b-2 border-primary/20 pb-2">Completadas</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-4 p-4 bg-card-light/50 dark:bg-card-dark/50 rounded-xl border border-border-light dark:border-border-dark">
+<div class="flex-grow flex items-center gap-4 opacity-60">
+<div class="w-10 h-10 rounded-full bg-cover bg-center flex-shrink-0" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD2jgM-06zgWX7psRQ-e777ASr-J1MoWXLVda2Bdm3K2kxJ1dKqA3Ko4ZcTOz_IsQ5YeH8kL2oLhRtkkJpzaZ6rdADwrSxCKCLPZmOQ4OAjb4PGf8XPHm3vcpEiXvo24hYakWcQ9zSvJA3gECWOHvTiKLriPLefMixq5qD_xJcgxTgepCltqog4VRqBbwB8GcpaH9I-x903cHnQfuynP199UdGUGWyzfsYE57GlCWXQ2gPofo7WdwcgxhoJo6nxHaQAgk6MnmB0QfA');"></div>
+<div>
+<p class="font-medium text-text-light-primary dark:text-text-dark-primary line-through">Investigar opciones de transporte</p>
+<p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">Responsable: Alejandro</p>
+</div>
+</div>
+<input checked="" class="h-5 w-5 rounded border-2 border-border-light dark:border-border-dark bg-transparent text-primary focus:ring-primary focus:ring-offset-background-light dark:focus:ring-offset-background-dark checked:bg-primary checked:border-primary" type="checkbox"/>
+</div>
+<div class="flex items-center gap-4 p-4 bg-card-light/50 dark:bg-card-dark/50 rounded-xl border border-border-light dark:border-border-dark">
+<div class="flex-grow flex items-center gap-4 opacity-60">
+<div class="w-10 h-10 rounded-full bg-cover bg-center flex-shrink-0" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCR2uxRf_O7NbUzW2K6oO6ljt-PB3nSPe0SwBRgTWv3xD6xejScsHEvrkd2ZKi4DZpXg4BpD2oyi8_rECylHHjtTwR4W698m6Rgfg9YDzXp4cTf-lEGzFY0ZV9sK-BYzuL_2VuADeRe-NSgkAgD2c6cVxlHOTe6fmOOhklbw7yZeRgNrBUSC83FYNhfpflPcHoRsXsxuTq1QuiuayFiQx4oTYxKaLfKfzh0dIzPExuDu6o7OEmi5knGBgDfCrPudJ_yPHReQshjSKc');"></div>
+<div>
+<p class="font-medium text-text-light-primary dark:text-text-dark-primary line-through">Crear lista de empaque</p>
+<p class="text-sm text-text-light-secondary dark:text-text-dark-secondary">Responsable: Isabella</p>
+</div>
+</div>
+<input checked="" class="h-5 w-5 rounded border-2 border-border-light dark:border-border-dark bg-transparent text-primary focus:ring-primary focus:ring-offset-background-light dark:focus:ring-offset-background-dark checked:bg-primary checked:border-primary" type="checkbox"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>
