@@ -20,7 +20,11 @@
           
           <!-- Link temporal para ver las votaciones -->
           <div class="dev-links">
+<<<<<<< HEAD
             <p class="dev-note">Para iniciar sesión simulado</p>
+=======
+            <p class="dev-note">🚧 Enlaces de desarrollo:</p>
+>>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
             <router-link to="/voting" class="dev-link">
               Ver Sistema de Votaciones
             </router-link>
