@@ -34,4 +34,8 @@ Aplicación web colaborativa para organizar y gestionar viajes grupales. Incluye
 
 - `/frontend` - Plantillas HTML de referencia
 - `/gotogether` - Proyecto Vue principal
+<<<<<<< HEAD
 - `/gotogether/src/firebase` - Configuración Firebase
+=======
+- `/gotogether/src/firebase` - Configuración Firebase
+>>>>>>> origin/main
