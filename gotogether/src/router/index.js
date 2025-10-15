@@ -8,6 +8,9 @@ import Presupuesto from '../components/Presupuesto.vue'
 import Home from '../views/Home.vue'
 import VotingList from '../views/VotingList.vue'
 
+// tareas 
+import TasksView from '../views/TasksView.vue'
+
 const routes = [
   // Ruta por defecto - Home público
   {
@@ -36,6 +39,15 @@ const routes = [
     meta: {
       requiresAuth: true,
       section: 'voting'
+    }
+  },
+  {
+    path: '/tareas',
+    name: 'Tareas',
+    component: TasksView,
+    meta: {
+      requiresAuth: true,
+      section: 'tasks'
     }
   }
 ]
