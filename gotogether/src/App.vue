@@ -76,8 +76,7 @@ const handleNavigation = (section) => {
       router.push('/presupuesto')
       break
     case 'tasks':
-      // Temporal: Lista de tareas (próximamente)
-      alert('Lista de tareas - Próximamente')
+      router.push('/tareas')
       break
     case 'itinerary':
       // Temporal: Itinerario (próximamente)
