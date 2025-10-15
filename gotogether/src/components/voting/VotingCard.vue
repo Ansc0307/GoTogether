@@ -44,7 +44,19 @@
           @click="handleAction"
           :disabled="!isActive && !voting.results"
         >
-          <span class="btn-icon">{{ isActive ? '🗳️' : '📊' }}</span>
+          <span class="btn-icon">
+            <!-- Icono de Votar -->
+            <svg v-if="isActive" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            <!-- Icono de Ver Resultados -->
+            <svg v-else xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </span>
           <span class="btn-text">{{ isActive ? 'Votar' : 'Ver Resultados' }}</span>
         </button>
       </div>
@@ -131,12 +143,11 @@ const handleAction = () => {
   background: #ffffff;
   border-radius: 0.875rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  overflow: hidden;
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 100%;
 }
 
 .voting-card:hover {
@@ -153,6 +164,7 @@ const handleAction = () => {
 .card-layout {
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 /* Image Section */
@@ -160,6 +172,7 @@ const handleAction = () => {
   width: 100%;
   height: 12rem;
   overflow: hidden;
+  border-radius: 0.875rem 0.875rem 0 0;
 }
 
 .voting-image {
@@ -208,12 +221,15 @@ const handleAction = () => {
 
 .voters-info {
   margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
 }
 
 .voters-text {
   color: #94a3b8;
   font-size: 0.75rem;
-  margin: 0 0 0.375rem 0;
+  margin: 0;
   line-height: 1.4;
 }
 
@@ -226,6 +242,8 @@ const handleAction = () => {
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   display: inline-block;
+  white-space: nowrap;
+  overflow: visible;
 }
 
 /* Action Button */
@@ -271,11 +289,21 @@ const handleAction = () => {
 }
 
 .btn-icon {
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.btn-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 .btn-text {
   font-size: 0.875rem;
+  font-weight: 500;
 }
 
 /* Responsive Design */
