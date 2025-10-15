@@ -16,7 +16,9 @@
             <td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">
               Bs {{ formatCurrency(gasto.monto) }}
             </td>
-            <td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">{{ gasto.pagadoPor }}</td>
+            <td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">
+              {{ typeof gasto.pagadoPor === 'string' ? gasto.pagadoPor : gasto.pagadoPor.name }}
+            </td>
             <td class="h-[64px] px-6 py-2 text-sm">
               <button 
                 @click="$emit('edit-expense', index)"

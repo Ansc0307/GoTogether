@@ -67,8 +67,8 @@
                   v-model="nuevoGasto.pagadoPor"
                   class="block w-full rounded-lg border-0 bg-subtle-light p-4 text-foreground-light focus:ring-2 focus:ring-inset focus:ring-primary dark:bg-subtle-dark dark:text-foreground-dark"
                 >
-                  <option>Tú (Usuario)</option>
-                  <option v-for="miembro in miembros" :key="miembro">{{ miembro }}</option>
+                  <option value="">Seleccionar...</option>
+                  <option v-for="miembro in miembros" :key="miembro.id" :value="miembro">{{ miembro.name }}</option>
                 </select>
               </div>
             </div>
@@ -80,16 +80,16 @@
               ¿A quiénes corresponde pagar?
             </h3>
             <fieldset class="mt-4 space-y-4">
-              <div v-for="miembro in miembros" :key="miembro" class="relative flex items-start">
+              <div v-for="miembro in miembros" :key="miembro.id" class="relative flex items-start">
                 <div class="flex h-6 items-center">
                   <input
                     type="checkbox"
                     class="form-checkbox h-5 w-5 rounded border-muted-light bg-subtle-light text-primary focus:ring-primary dark:border-muted-dark dark:bg-subtle-dark"
-                    v-model="nuevoGasto.corresponde[miembro]"
+                    v-model="nuevoGasto.corresponde[miembro.name]"
                   />
                 </div>
                 <div class="ml-3 text-sm leading-6">
-                  <label class="font-medium text-foreground-light dark:text-foreground-dark">{{ miembro }}</label>
+                  <label class="font-medium text-foreground-light dark:text-foreground-dark">{{ miembro.name }}</label>
                 </div>
               </div>
             </fieldset>
@@ -149,14 +149,14 @@ export default {
     const nuevoGasto = ref({
       descripcion: "",
       monto: 0,
-      pagadoPor: "Tú (Usuario)",
+      pagadoPor: "",
       corresponde: {},
     });
 
     // Inicializar corresponde con todos los miembros seleccionados
     onMounted(() => {
       miembros.value.forEach(miembro => {
-        nuevoGasto.value.corresponde[miembro] = true;
+        nuevoGasto.value.corresponde[miembro.name] = true;
       });
     });
 
@@ -174,8 +174,15 @@ export default {
     });
 
     const guardarGasto = () => {
-      if (!nuevoGasto.value.descripcion || nuevoGasto.value.monto <= 0) {
+      if (!nuevoGasto.value.descripcion || nuevoGasto.value.monto <= 0 || !nuevoGasto.value.pagadoPor) {
         alert('Por favor completa todos los campos correctamente.');
+        return;
+      }
+
+      // Verificar que al menos una persona esté seleccionada para pagar
+      const participantes = Object.values(nuevoGasto.value.corresponde).some(v => v);
+      if (!participantes) {
+        alert('Debe seleccionar al menos una persona que participe en el gasto');
         return;
       }
 
@@ -183,7 +190,8 @@ export default {
       agregarGasto({
         descripcion: nuevoGasto.value.descripcion,
         monto: nuevoGasto.value.monto,
-        pagadoPor: nuevoGasto.value.pagadoPor
+        pagadoPor: nuevoGasto.value.pagadoPor, // Ya es objeto {id, name}
+        corresponde: nuevoGasto.value.corresponde
       });
 
       alert(`Gasto de Bs. ${nuevoGasto.value.monto} registrado correctamente.`);
@@ -191,7 +199,12 @@ export default {
       // Reiniciar formulario
       nuevoGasto.value.descripcion = "";
       nuevoGasto.value.monto = 0;
-      Object.keys(nuevoGasto.value.corresponde).forEach(key => nuevoGasto.value.corresponde[key] = true);
+      nuevoGasto.value.pagadoPor = "";
+      // Reinicializar corresponde
+      nuevoGasto.value.corresponde = {};
+      miembros.value.forEach(miembro => {
+        nuevoGasto.value.corresponde[miembro.name] = true;
+      });
       
       // Volver a la vista de presupuesto después de guardar
       router.push('/presupuesto');
