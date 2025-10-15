@@ -14,70 +14,26 @@
         </div>
 
         <!-- Tarjetas resumen -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-          <div class="flex flex-col gap-2 rounded-lg p-6 bg-primary/10 dark:bg-primary/20">
-            <p class="text-base font-medium">Presupuesto Total</p>
-            <p class="text-2xl font-bold tracking-tight">Bs 15,000</p>
-          </div>
-          <div class="flex flex-col gap-2 rounded-lg p-6 bg-primary/10 dark:bg-primary/20">
-            <p class="text-base font-medium">Gastos Totales</p>
-            <p class="text-2xl font-bold tracking-tight">Bs 8,500</p>
-          </div>
-          <div class="flex flex-col gap-2 rounded-lg p-6 bg-primary/10 dark:bg-primary/20">
-            <p class="text-base font-medium">Saldo Restante</p>
-            <p class="text-2xl font-bold tracking-tight">Bs 6,500</p>
-          </div>
-        </div>
+        <BudgetSummary 
+          :presupuesto-total="presupuestoTotal"
+          :gastos-totales="gastosTotales"
+        />
 
         <!-- Balances -->
         <div class="px-4 pt-8 pb-4">
           <h2 class="text-xl font-bold tracking-tight">Balances</h2>
         </div>
-        <div class="px-4 py-3">
-          <div class="overflow-hidden rounded-lg border border-primary/20 dark:border-primary/30">
-            <table class="w-full text-left">
-              <thead class="bg-background-light dark:bg-primary/20">
-                <tr>
-                  <th class="px-6 py-3 text-sm font-medium">Participante</th>
-                  <th class="px-6 py-3 text-sm font-medium">Debe</th>
-                  <th class="px-6 py-3 text-sm font-medium">Recibe</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-primary/20 dark:divide-primary/30">
-                <tr v-for="(balance, index) in balances" :key="index">
-                  <td class="h-[64px] px-6 py-2 text-sm">{{ balance.nombre }}</td>
-                  <td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">{{ balance.debe }}</td>
-                  <td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">{{ balance.recibe }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <BalanceTable :balances="balances" />
 
         <!-- Gastos -->
         <div class="px-4 pt-8 pb-4">
           <h2 class="text-xl font-bold tracking-tight">Gastos</h2>
         </div>
-        <div class="px-4 py-3">
-          <div class="overflow-hidden rounded-lg border border-primary/20 dark:border-primary/30">
-            <table class="w-full text-left">
-              <thead class="bg-background-light dark:bg-primary/20">
-                <tr>
-                  <th class="px-6 py-3 text-sm font-medium">Descripción</th>
-                  <th class="px-6 py-3 text-sm font-medium">Monto</th>
-                  <th class="px-6 py-3 text-sm font-medium">Pagado por</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-primary/20 dark:divide-primary/30">
-                <tr v-for="(gasto, index) in gastos" :key="index">
-                  <td class="h-[64px] px-6 py-2 text-sm">{{ gasto.descripcion }}</td>
-                  <td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">{{ gasto.monto }}</td>
-                  <td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">{{ gasto.pagadoPor }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <ExpenseTable 
+          :gastos="gastos"
+          @edit-expense="editarGasto"
+          @delete-expense="eliminarGasto"
+        />
 
         <!-- Botón -->
         <div class="flex px-4 py-6 justify-end">
@@ -95,26 +51,47 @@
 </template>
 
 <script>
+import { BudgetSummary, BalanceTable, ExpenseTable } from '../components/budget';
+import { useBudget } from '../composables/useBudget';
+
 export default {
   name: "Presupuesto",
-  data() {
+  components: {
+    BudgetSummary,
+    BalanceTable,
+    ExpenseTable
+  },
+  setup() {
+    const {
+      presupuestoTotal,
+      gastos,
+      gastosTotales,
+      balances,
+      eliminarGasto: eliminarGastoComposable,
+      editarGasto: editarGastoComposable
+    } = useBudget();
+
     return {
-      balances: [
-        { nombre: "Ana", debe: "Bs 500", recibe: "-" },
-        { nombre: "Carlos", debe: "-", recibe: "Bs 300" },
-        { nombre: "Sofia", debe: "Bs 200", recibe: "-" },
-      ],
-      gastos: [
-        { descripcion: "Alojamiento en La Paz", monto: "Bs 3,000", pagadoPor: "Ana" },
-        { descripcion: "Transporte en Uyuni", monto: "Bs 2,500", pagadoPor: "Carlos" },
-        { descripcion: "Comidas en Cochabamba", monto: "Bs 1,500", pagadoPor: "Sofia" },
-        { descripcion: "Actividades en Santa Cruz", monto: "Bs 1,500", pagadoPor: "Ana" },
-      ],
+      presupuestoTotal,
+      gastos,
+      gastosTotales,
+      balances,
+      eliminarGastoComposable,
+      editarGastoComposable
     };
   },
   methods: {
     irARegistrarGasto() {
       this.$router.push('/presupuesto/agregar-gasto');
+    },
+    eliminarGasto(index) {
+      if (confirm('¿Estás seguro de que quieres eliminar este gasto?')) {
+        this.eliminarGastoComposable(index);
+      }
+    },
+    editarGasto(index) {
+      // Por ahora solo mostrar alerta, después se puede implementar modal de edición
+      alert(`Editar gasto: ${this.gastos[index].descripcion}`);
     }
   }
 };

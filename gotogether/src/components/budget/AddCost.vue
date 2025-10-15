@@ -136,51 +136,78 @@
 </template>
 
 <script>
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { useBudget } from '../../composables/useBudget';
+
 export default {
   name: "RegistrarGasto",
-  data() {
-    return {
-      miembros: ["Ana", "Carlos", "Sofía"],
-      nuevoGasto: {
-        descripcion: "",
-        monto: 0,
-        pagadoPor: "Tú (Usuario)",
-        corresponde: {
-          Ana: true,
-          Carlos: true,
-          Sofía: true,
-        },
-      },
-    };
-  },
-  computed: {
-    repartoAutomático() {
-      const seleccionados = Object.entries(this.nuevoGasto.corresponde)
+  setup() {
+    const router = useRouter();
+    const { miembros, agregarGasto } = useBudget();
+    
+    const nuevoGasto = ref({
+      descripcion: "",
+      monto: 0,
+      pagadoPor: "Tú (Usuario)",
+      corresponde: {},
+    });
+
+    // Inicializar corresponde con todos los miembros seleccionados
+    onMounted(() => {
+      miembros.value.forEach(miembro => {
+        nuevoGasto.value.corresponde[miembro] = true;
+      });
+    });
+
+    const repartoAutomático = computed(() => {
+      const seleccionados = Object.entries(nuevoGasto.value.corresponde)
         .filter(([_, v]) => v)
         .map(([k]) => k);
       const count = seleccionados.length;
-      const montoPorPersona = count > 0 ? this.nuevoGasto.monto / count : 0;
+      const montoPorPersona = count > 0 ? nuevoGasto.value.monto / count : 0;
       const reparto = {};
       seleccionados.forEach(miembro => {
         reparto[miembro] = montoPorPersona;
       });
       return reparto;
-    },
-  },
-  methods: {
-    guardarGasto() {
-      console.log("Gasto guardado:", this.nuevoGasto);
-      alert(`Gasto de Bs. ${this.nuevoGasto.monto} registrado correctamente.`);
+    });
+
+    const guardarGasto = () => {
+      if (!nuevoGasto.value.descripcion || nuevoGasto.value.monto <= 0) {
+        alert('Por favor completa todos los campos correctamente.');
+        return;
+      }
+
+      // Agregar el gasto usando el composable
+      agregarGasto({
+        descripcion: nuevoGasto.value.descripcion,
+        monto: nuevoGasto.value.monto,
+        pagadoPor: nuevoGasto.value.pagadoPor
+      });
+
+      alert(`Gasto de Bs. ${nuevoGasto.value.monto} registrado correctamente.`);
+      
       // Reiniciar formulario
-      this.nuevoGasto.descripcion = "";
-      this.nuevoGasto.monto = 0;
-      Object.keys(this.nuevoGasto.corresponde).forEach(key => this.nuevoGasto.corresponde[key] = true);
+      nuevoGasto.value.descripcion = "";
+      nuevoGasto.value.monto = 0;
+      Object.keys(nuevoGasto.value.corresponde).forEach(key => nuevoGasto.value.corresponde[key] = true);
+      
       // Volver a la vista de presupuesto después de guardar
-      this.$router.push('/presupuesto');
-    },
-    volver() {
-      this.$router.push('/presupuesto');
-    }
-  },
+      router.push('/presupuesto');
+    };
+
+    const volver = () => {
+      router.push('/presupuesto');
+    };
+    
+    return {
+      miembros,
+      nuevoGasto,
+      repartoAutomático,
+      guardarGasto,
+      volver
+    };
+  }
 };
 </script>
