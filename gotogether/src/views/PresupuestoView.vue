@@ -82,6 +82,7 @@
         <!-- Botón -->
         <div class="flex px-4 py-6 justify-end">
           <button
+            @click="irARegistrarGasto"
             class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]"
           >
             <span class="truncate">+ Registrar Gasto</span>
@@ -111,5 +112,10 @@ export default {
       ],
     };
   },
+  methods: {
+    irARegistrarGasto() {
+      this.$router.push('/presupuesto/agregar-gasto');
+    }
+  }
 };
 </script>
