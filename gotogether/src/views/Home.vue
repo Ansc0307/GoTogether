@@ -20,7 +20,7 @@
           
           <!-- Link temporal para ver las votaciones -->
           <div class="dev-links">
-            <p class="dev-note">🚧 Enlaces de desarrollo:</p>
+            <p class="dev-note">Para iniciar sesión simulado</p>
             <router-link to="/voting" class="dev-link">
               Ver Sistema de Votaciones
             </router-link>
