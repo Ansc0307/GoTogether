@@ -50,12 +50,12 @@ src/
 
 | Persona | Módulo |
 |---------|--------|
-| **Ayana Siegle** | Chat Grupal |
+| **Ayana Siegle** | Tareas |
 | **Daniela Guzmán** | Presupuesto |
 | **Josué Nisthaus** | Votaciones |
-| **Gabriela Barrios** | Tareas |
+| **Gabriela Barrios** | Viajes |
 | **Andrea Fernández** | Autenticación |
-| **Ezequiel Gómez** | Viajes |
+| **Ezequiel Gómez** | Mapas |
 
 Cada persona trabaja en su carpeta: `components/{su-modulo}/` y `views/{su-modulo}/`
 
