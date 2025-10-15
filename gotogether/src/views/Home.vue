@@ -21,10 +21,14 @@
           <!-- Link temporal para ver las votaciones -->
           <div class="dev-links">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <p class="dev-note">Para iniciar sesión simulado</p>
 =======
             <p class="dev-note">🚧 Enlaces de desarrollo:</p>
 >>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
+=======
+            <p class="dev-note">Para iniciar sesión simulado</p>
+>>>>>>> 43376be (docs: Crear estructura del proyecto y mejorar README - Estructura de carpetas para todo el equipo (components/ y views/ por módulo) - Mejorar TestFirebase: mostrar solo últimos 3 documentos - README.md simplificado con arquitectura y asignación del equipo - Carpetas: auth, chat, voting, budget, tasks, trips, composables, utils)
             <router-link to="/voting" class="dev-link">
               Ver Sistema de Votaciones
             </router-link>
