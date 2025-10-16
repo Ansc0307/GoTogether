@@ -83,8 +83,7 @@ const handleNavigation = (section) => {
       alert('Itinerario - Próximamente')
       break
     case 'maps':
-      // Temporal: Mapas (próximamente)
-      alert('Mapas - Próximamente')
+      router.push('/maps')
       break
     case 'overview':
       // Para cuando estés dentro de un viaje específico

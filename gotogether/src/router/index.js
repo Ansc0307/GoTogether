@@ -12,6 +12,9 @@ import VotingList from '../views/VotingList.vue'
 // tareas 
 import TasksView from '../views/TasksView.vue'
 
+// mapas
+import MapasView from '../views/MapasView.vue'
+
 const routes = [
   // Ruta por defecto - Home público
   {
@@ -54,6 +57,15 @@ const routes = [
     meta: {
       requiresAuth: true,
       section: 'tasks'
+    }
+  },
+  {
+    path: '/maps',
+    name: 'Mapas',
+    component: MapasView,
+    meta: {
+      requiresAuth: true,
+      section: 'maps'
     }
   }
 ]
