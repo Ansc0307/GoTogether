@@ -22,12 +22,12 @@
     </main>
     
     <!-- Componente de prueba para Firebase (temporal) -->
-    <div class="dev-section">
+    <!-- <div class="dev-section">
       <details>
         <summary>🧪 Pruebas de Firebase (Dev)</summary>
         <TestFirebase />
       </details>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -62,8 +62,7 @@ const handleNavigation = (section) => {
       router.push('/')
       break
     case 'trips':
-      // Temporal: redirigir a una lista de viajes (próximamente)
-      alert('Lista de viajes - Próximamente')
+      router.push('/misviajes')
       break
     case 'chat':
       // Temporal: Chat grupal (Persona responsable del chat lo implementará)

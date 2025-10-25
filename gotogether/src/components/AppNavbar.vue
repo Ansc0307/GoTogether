@@ -170,7 +170,7 @@ const navigationItems = computed(() => {
 
   return [
     { key: 'home', label: 'Inicio', href: '/' },
-    { key: 'trips', label: 'Mis Viajes', href: '/trips' },
+    { key: 'trips', label: 'Mis Viajes', href: '/misviajes' },
     { key: 'chat', label: 'Chat', href: '/chat' },
     { key: 'voting', label: 'Votaciones', href: '/voting' },
     { key: 'expenses', label: 'Presupuesto', href: '/presupuesto' },

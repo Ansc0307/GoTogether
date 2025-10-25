@@ -12,6 +12,9 @@ import VotingList from '../views/VotingList.vue'
 // tareas 
 import TasksView from '../views/TasksView.vue'
 
+// viajes (RF5)
+import TripsView from '../views/trips/TripsView.vue'
+
 const routes = [
   // Ruta por defecto - Home público
   {
@@ -55,7 +58,10 @@ const routes = [
       requiresAuth: true,
       section: 'tasks'
     }
-  }
+  },
+
+  //rutas para viajes
+  { path: '/misviajes', name: 'Trips', component: TripsView, meta: { requiresAuth: true, section: 'trips' } },
 ]
 
 const router = createRouter({
