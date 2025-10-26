@@ -9,25 +9,35 @@
         <h1 class="title">Detalle de Votación</h1>
       </header>
 
-      <section class="card">
+      <section class="card" v-if="voting">
         <h2 class="question">{{ voting.title || 'Título de la votación' }}</h2>
 
         <img v-if="voting.image" class="cover" :src="voting.image" alt="Imagen de la votación" />
 
         <div class="content">
-          <div v-if="!hasResults" class="options">
+          <!-- Opciones disponibles mientras no esté cerrada -->
+          <div v-if="!isClosed" class="options">
             <button
               v-for="(opt, idx) in (voting.options || [])"
               :key="idx"
               class="option-btn"
+              :class="{ selected: selectedOption === opt, 'voted-animate': justVoted === opt }"
               @click="vote(opt)"
+              :disabled="isClosed"
             >
-              {{ opt }}
+              <span class="opt-check" v-if="selectedOption === opt" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <span>{{ opt }}</span>
             </button>
+            <p v-if="selectedOption && !isClosed" class="confirm-hint">
+              Tu voto fue: <strong>{{ selectedOption }}</strong>. Puedes cambiarlo antes del cierre.
+            </p>
           </div>
 
-          <div v-else class="results">
-            <div v-for="(value, label) in voting.results" :key="label" class="result-row">
+          <!-- Resultados: en dev se muestran en paralelo; si está cerrada, solo verás esto -->
+          <div v-if="displayResults" class="results">
+            <div v-for="(value, label) in resultsForDisplay" :key="label" class="result-row">
               <div class="result-label">{{ label }}</div>
               <div class="bar">
                 <div class="fill" :style="{ width: value + '%' }"></div>
@@ -41,11 +51,21 @@
               <span v-if="voting.deadline">Cierra: {{ formatDeadline(voting.deadline) }}</span>
               <span v-if="voting.voters && voting.voters.length"> • {{ voting.voters.length }} votantes</span>
             </div>
-            <button v-if="hasResults" class="primary" @click="shareResults">
+            <button v-if="displayResults" class="primary" @click="shareResults">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
               <span>Compartir resultados</span>
             </button>
           </footer>
+        </div>
+      </section>
+
+      <!-- Estados: cargando / no encontrado -->
+      <section v-else class="card placeholder">
+        <div class="placeholder-content">
+          <div class="skeleton title"></div>
+          <div class="skeleton line"></div>
+          <div class="skeleton line short"></div>
+          <p class="hint">Cargando votación o no encontrada…</p>
         </div>
       </section>
 
@@ -60,34 +80,47 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { registrarVoto } from '../../composables/useVoting'
+import { DEV_DEFAULT_TRIP_ID, USE_DEV_FAKE_AUTH, DEV_DEFAULT_USER, PUBLIC_SHARE_BASE_URL } from '../../config/devConfig'
+import { db, auth } from '../../firebase/firebaseConfig'
+import { doc, onSnapshot, collection } from 'firebase/firestore'
 
 const route = useRoute()
 const router = useRouter()
 
-// Mock básico: se reemplazará con Firestore más adelante
-const mockById = (id) => {
-  if (id === '3') {
-    return {
-      id: 3,
-      title: '¿Cuál es nuestro presupuesto por día?',
-      results: { '50 USD': 45, '75 USD': 30, '100 USD': 25 },
-      image: 'https://images.unsplash.com/photo-1521540216272-a50305cd4421?q=80&w=1200&auto=format&fit=crop'
-    }
-  }
-  return {
-    id,
-    title: '¿Dónde deberíamos ir primero?',
-    options: ['La Paz', 'Sucre', 'Cochabamba'],
-    voters: ['Ana', 'Juan'],
-    deadline: new Date(Date.now() + 2*24*60*60*1000),
-    image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop'
-  }
-}
+// Estado: documento en tiempo real
+const voting = ref(null)
+// resultados agregados (porcentaje) para votaciones reales
+const aggResults = ref(null)
+const isMock = computed(() => String(route.params.id).startsWith('mock-'))
+const displayResults = computed(() => {
+  if (!voting.value) return false
+  if (isMock.value) return !!voting.value.results
+  // En dev, mostramos resultados (agregados) aunque no esté finished
+  return !!aggResults.value && (voting.value.status === 'finished' || USE_DEV_FAKE_AUTH)
+})
+const selectedOption = ref(null)
+const justVoted = ref('')
 
-const voting = computed(() => mockById(String(route.params.id)))
-const hasResults = computed(() => !!voting.value?.results)
+// Cerrada si: resultados presentes, status finished o deadline pasado
+const isClosed = computed(() => {
+  const v = voting.value
+  if (!v) return false
+  if (v.results) return true
+  if (v.status === 'finished') return true
+  try {
+    const dl = v.deadline
+    if (!dl) return false
+    let d
+    if (typeof dl === 'string' || typeof dl === 'number') d = new Date(dl)
+    else if (dl?.toDate) d = dl.toDate()
+    else if (dl?.seconds != null) d = new Date(dl.seconds * 1000)
+    else d = dl
+    return Date.now() >= d.getTime()
+  } catch { return false }
+})
 
 const goBack = () => router.back()
 
@@ -99,24 +132,130 @@ const showToast = (message) => {
   showToast._t = window.setTimeout(() => (toast.value.show = false), 2500)
 }
 
-const vote = (option) => {
-  // TODO: Integrar guardado en Firebase
-  showToast(`Voto registrado: ${option}`)
+const vote = async (option) => {
+  try {
+    const votacionId = String(route.params.id)
+    if (isMock.value) {
+      selectedOption.value = option
+      showToast('Demo: el voto no se guarda')
+    } else {
+      await registrarVoto(DEV_DEFAULT_TRIP_ID, votacionId, option)
+      showToast(selectedOption.value && selectedOption.value !== option ? `Voto actualizado: ${option}` : `Voto registrado: ${option}`)
+      selectedOption.value = option
+    }
+    // Animación sutil al votar
+    justVoted.value = option
+    window.setTimeout(() => { if (justVoted.value === option) justVoted.value = '' }, 700)
+  } catch (e) {
+    console.error(e)
+    showToast(e?.message || 'Error al registrar voto')
+  }
 }
+
 const shareResults = () => {
-  navigator.clipboard?.writeText(window.location.href)
-  showToast('Enlace de resultados copiado')
+  try {
+    const base = (PUBLIC_SHARE_BASE_URL || '').trim()
+    const path = route.fullPath || window.location.pathname
+    const url = base ? `${base.replace(/\/$/, '')}${path}` : path
+    navigator.clipboard?.writeText(url)
+    showToast('Enlace de resultados copiado')
+  } catch {
+    showToast('No se pudo copiar el enlace')
+  }
 }
 
 const formatDeadline = (date) => {
   try {
-    const d = typeof date === 'string' || typeof date === 'number' ? new Date(date) : date
+    let d
+    if (typeof date === 'string' || typeof date === 'number') d = new Date(date)
+    else if (date?.toDate) d = date.toDate()
+    else if (date?.seconds != null) d = new Date(date.seconds * 1000)
+    else d = date
     return d.toLocaleString('es-BO', {
       day: '2-digit', month: '2-digit', year: 'numeric',
       hour: '2-digit', minute: '2-digit', hour12: false
     })
   } catch { return '' }
 }
+
+// Suscripción al documento
+let unsubDoc
+let unsubVotes
+onMounted(() => {
+  const votacionId = String(route.params.id)
+
+  // Si es mock, leer desde sessionStorage y salir
+  if (isMock.value) {
+    try {
+      const raw = sessionStorage.getItem('mockVoting')
+      if (raw) voting.value = JSON.parse(raw)
+    } catch {}
+    return
+  }
+
+  const ref = doc(db, 'trips', DEV_DEFAULT_TRIP_ID, 'votaciones', votacionId)
+  unsubDoc = onSnapshot(ref, (snap) => {
+    voting.value = snap.exists() ? { id: snap.id, ...snap.data() } : null
+  }, (err) => {
+    console.error('Voting detail snapshot error:', err)
+  })
+
+  // Suscribir el voto del usuario para preseleccionar si ya votó
+  try {
+    const user = auth.currentUser || (USE_DEV_FAKE_AUTH ? DEV_DEFAULT_USER : null)
+    if (user) {
+      const myVoteRef = doc(db, 'trips', DEV_DEFAULT_TRIP_ID, 'votaciones', votacionId, 'votes', user.uid)
+      onSnapshot(myVoteRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data()
+          if (data?.option) selectedOption.value = data.option
+        }
+      })
+    }
+  } catch (e) {
+    console.warn('No se pudo suscribir al voto del usuario:', e)
+  }
+
+  // Suscripción a resultados agregados (conteo de votos por opción)
+  try {
+    const votesRef = collection(db, 'trips', DEV_DEFAULT_TRIP_ID, 'votaciones', votacionId, 'votes')
+    unsubVotes = onSnapshot(votesRef, (snap) => {
+      const counts = Object.create(null)
+      let total = 0
+      snap.forEach(d => {
+        const opt = d.data()?.option
+        if (opt) {
+          counts[opt] = (counts[opt] || 0) + 1
+          total += 1
+        }
+      })
+      if (!voting.value?.options?.length || total === 0) {
+        aggResults.value = null
+        return
+      }
+      const res = {}
+      const options = voting.value.options
+      options.forEach(opt => {
+        const pct = total ? Math.round(((counts[opt] || 0) * 100) / total) : 0
+        res[opt] = pct
+      })
+      aggResults.value = res
+    })
+  } catch (e) {
+    console.warn('No se pudo suscribir a votos para resultados:', e)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (unsubDoc) unsubDoc()
+  if (unsubVotes) unsubVotes()
+})
+
+const resultsForDisplay = computed(() => {
+  if (!voting.value) return null
+  if (isMock.value) return voting.value.results || null
+  return aggResults.value
+})
 </script>
 
 <style scoped>
@@ -133,6 +272,13 @@ const formatDeadline = (date) => {
 .options { display:grid; grid-template-columns:1fr; gap:.75rem; margin-top:1rem; }
 .option-btn { background:#dbeafe; color:#1e3a8a; padding:.75rem 1rem; border:none; border-radius:.5rem; font-weight:600; cursor:pointer; }
 .option-btn:hover { background:#bfdbfe }
+.option-btn.selected { background:#dcfce7; color:#065f46; box-shadow: 0 0 0 2px #86efac inset }
+.option-btn:disabled { opacity:.8; cursor: default }
+.opt-check { display:inline-flex; margin-right:.5rem }
+.voted-animate { animation: pop .3s ease }
+@keyframes pop { 0%{ transform: scale(1) } 50%{ transform: scale(1.03) } 100%{ transform: scale(1) } }
+.confirm-hint { color:#065f46; font-weight:600; margin-top:.5rem }
+/* (no edit mode styles needed) */
 
 .results { display:flex; flex-direction:column; gap:.75rem; margin-top:1rem; }
 .result-row { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:.5rem; }
@@ -150,6 +296,16 @@ const formatDeadline = (date) => {
 .toast { position: fixed; right: 16px; bottom: 16px; background: #0f172a; color:#fff; padding:.6rem .8rem; border-radius:.5rem; box-shadow: 0 8px 16px rgba(0,0,0,.2); font-size:.9rem }
 .toast-fade-enter-active, .toast-fade-leave-active { transition: opacity .2s, transform .2s }
 .toast-fade-enter-from, .toast-fade-leave-to { opacity: 0; transform: translateY(6px) }
+
+/* Placeholder */
+.placeholder { border:1px dashed #e2e8f0; background:#fff }
+.placeholder-content { padding:1rem }
+.skeleton { background: linear-gradient(90deg,#e5e7eb, #f3f4f6, #e5e7eb); height: 12px; border-radius: 999px; margin:.5rem 0; animation: pulse 1.2s infinite }
+.skeleton.title { width: 60%; height: 20px }
+.skeleton.line { width: 100% }
+.skeleton.short { width: 40% }
+.hint { color:#64748b; font-size:.875rem; margin-top:.5rem }
+@keyframes pulse { 0%{opacity:.8} 50%{opacity:1} 100%{opacity:.8} }
 
 @media (min-width: 640px) {
   .options { grid-template-columns: repeat(2, minmax(0,1fr)); }

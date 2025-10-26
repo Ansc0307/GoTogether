@@ -5,7 +5,7 @@
         <h1 class="title">Crear nueva votación</h1>
       </header>
 
-      <form class="form" @submit.prevent="submit">
+  <form v-if="!created" class="form" @submit.prevent="submit">
         <label class="field">
           <span>Título</span>
           <input v-model="form.title" type="text" placeholder="Ej. ¿Dónde vamos el primer día?" required />
@@ -41,13 +41,28 @@
           <button type="submit" class="primary">Crear votación</button>
         </footer>
       </form>
+
+      <!-- Confirmación bonita -->
+      <section v-else class="success-card">
+        <div class="icon-wrap" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 class="success-title">Votación creada</h2>
+        <p class="success-text">Tu votación está lista para usarse.</p>
+        <div class="success-actions">
+          <button class="secondary" @click="goToList">Volver a la lista</button>
+          <button class="primary" @click="goToDetail">Abrir votación</button>
+        </div>
+      </section>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { crearVotacion } from '../../composables/useVoting'
+import { DEV_DEFAULT_TRIP_ID, PUBLIC_SHARE_BASE_URL } from '../../config/devConfig'
 
 const router = useRouter()
 
@@ -58,6 +73,8 @@ const form = reactive({
   deadline: ''
 })
 
+const created = ref(null)
+
 const addOption = () => form.options.push('')
 const removeOption = (idx) => {
   if (form.options.length > 2) form.options.splice(idx, 1)
@@ -65,13 +82,28 @@ const removeOption = (idx) => {
 
 const cancel = () => router.push('/voting')
 
-const submit = () => {
+const submit = async () => {
   if (!form.title.trim()) return alert('El título es obligatorio')
   if (form.options.some(o => !o.trim())) return alert('Completa todas las opciones')
-  // TODO: Guardar en Firestore
-  alert('Votación creada (pendiente integración Firebase)')
-  router.push('/voting')
+  try {
+    const res = await crearVotacion(DEV_DEFAULT_TRIP_ID, {
+      title: form.title,
+      description: form.description,
+      options: form.options,
+      deadline: form.deadline || undefined
+    })
+    const path = `/voting/${res.id}`
+    const base = (PUBLIC_SHARE_BASE_URL || '').trim()
+    const url = base ? `${base.replace(/\/$/, '')}${path}` : path
+    created.value = { id: res.id, url }
+  } catch (e) {
+    console.error(e)
+    alert(e?.message || 'Error al crear la votación')
+  }
 }
+
+const goToList = () => router.push('/voting')
+const goToDetail = () => created.value?.id && router.push(`/voting/${created.value.id}`)
 </script>
 
 <style scoped>
@@ -97,4 +129,11 @@ input:focus, textarea:focus { outline:none; border-color:#2563eb; box-shadow:0 0
 .secondary:hover { background:#e2e8f0 }
 .primary { background:#2563eb; border:none; color:#fff; padding:.6rem .9rem; border-radius:.5rem; cursor:pointer; font-weight:600 }
 .primary:hover { background:#1d4ed8 }
+
+/* Success card */
+.success-card { background:#fff; border:1px solid #e2e8f0; border-radius:.75rem; padding:1.25rem; text-align:center; box-shadow:0 1px 2px rgba(0,0,0,.05); }
+.icon-wrap { width:48px; height:48px; display:flex; align-items:center; justify-content:center; background:#dcfce7; border-radius:999px; margin:0 auto .75rem; }
+.success-title { margin:.25rem 0 .5rem; font-size:1.25rem; font-weight:800; color:#14532d }
+.success-text { color:#0f172a; margin:0 0 .75rem }
+.success-actions { display:flex; gap:.75rem; justify-content:center; margin-top:1rem }
 </style>

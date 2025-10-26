@@ -10,16 +10,16 @@
       
       <!-- Navegación principal (solo si está autenticado) -->
       <nav v-if="showNavigation" class="main-navigation">
-        <a 
+        <router-link 
           v-for="navItem in navigationItems" 
           :key="navItem.key"
-          :href="navItem.href || '#'"
+          :to="navItem.href"
           class="nav-link"
           :class="{ 'active': currentSection === navItem.key }"
-          @click="handleNavClick(navItem.key, $event)"
+          @click.native="handleNavClick(navItem.key, $event)"
         >
           {{ navItem.label }}
-        </a>
+        </router-link>
       </nav>
       
       <!-- Acciones del usuario -->
@@ -80,27 +80,29 @@
       v-if="showNavigation && mobileMenuOpen" 
       class="mobile-navigation"
     >
-      <a 
+      <router-link 
         v-for="navItem in navigationItems" 
         :key="navItem.key"
-        :href="navItem.href || '#'"
+        :to="navItem.href"
         class="mobile-nav-link"
         :class="{ 'active': currentSection === navItem.key }"
-        @click="handleMobileNavClick(navItem.key, $event)"
+        @click.native="handleMobileNavClick(navItem.key, $event)"
       >
         {{ navItem.label }}
-      </a>
+      </router-link>
     </nav>
   </header>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import logoImg from '../assets/logo.png'
+
+const router = useRouter()
 
 // Props
 const props = defineProps({
-  // Información básica
   appName: {
     type: String,
     default: 'GoTogether'
@@ -109,15 +111,10 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  
-  // Estado de autenticación
   userInfo: {
     type: Object,
     default: null
-    // Estructura esperada: { displayName, email, photoURL, role }
   },
-  
-  // Configuración de navegación
   showNavigation: {
     type: Boolean,
     default: false
@@ -128,11 +125,9 @@ const props = defineProps({
   },
   userRole: {
     type: String,
-    default: 'member', // 'organizer', 'member'
+    default: 'member',
     validator: (value) => ['organizer', 'member'].includes(value)
   },
-  
-  // Notificaciones
   showNotifications: {
     type: Boolean,
     default: false
@@ -152,52 +147,38 @@ const emit = defineEmits([
   'signup-click'
 ])
 
-// Estado local
+// Local state
 const mobileMenuOpen = ref(false)
 
-// Computed
 const navigationItems = computed(() => {
   if (!props.showNavigation) return []
-  
-  // Si está en un viaje específico, mostrar navegación del viaje
+
   if (props.tripName) {
     return [
-      { key: 'overview', label: 'Resumen', href: '#' },
-      { key: 'chat', label: 'Chat', href: '#' },
-      { key: 'voting', label: 'Votaciones', href: '#' },
-      { key: 'expenses', label: 'Gastos', href: '#' },
-      { key: 'tasks', label: 'Tareas', href: '#' },
-      { key: 'itinerary', label: 'Itinerario', href: '#' },
-      { key: 'maps', label: 'Mapas', href: '#' },
+      { key: 'overview', label: 'Resumen', href: '/' },
+      { key: 'chat', label: 'Chat', href: '/chat' },
+      { key: 'voting', label: 'Votaciones', href: '/voting' },
+      { key: 'expenses', label: 'Gastos', href: '/presupuesto' },
+      { key: 'tasks', label: 'Tareas', href: '/tareas' },
+      { key: 'itinerary', label: 'Itinerario', href: '/itinerario' },
+      { key: 'maps', label: 'Mapas', href: '/maps' },
       ...(props.userRole === 'organizer' ? [
-        { key: 'manage', label: 'Gestionar', href: '#' }
+        { key: 'manage', label: 'Gestionar', href: '/manage' }
       ] : [])
     ]
   }
-  
-  // Navegación principal (cuando no está en un viaje específico)
+
   return [
-    { key: 'home', label: 'Inicio', href: '#' },
-    { key: 'trips', label: 'Mis Viajes', href: '#' },
-    { key: 'chat', label: 'Chat', href: '#' },
-    { key: 'voting', label: 'Votaciones', href: '#' },
-    { key: 'expenses', label: 'Presupuesto', href: '#' },
-    { key: 'tasks', label: 'Tareas', href: '#' },
-    { key: 'itinerary', label: 'Itinerario', href: '#' },
-    { key: 'maps', label: 'Mapas', href: '#' }
+    { key: 'home', label: 'Inicio', href: '/' },
+    { key: 'trips', label: 'Mis Viajes', href: '/trips' },
+    { key: 'chat', label: 'Chat', href: '/chat' },
+    { key: 'voting', label: 'Votaciones', href: '/voting' },
+    { key: 'expenses', label: 'Presupuesto', href: '/presupuesto' },
+    { key: 'tasks', label: 'Tareas', href: '/tareas' },
+    { key: 'itinerary', label: 'Itinerario', href: '/itinerario' },
+    { key: 'maps', label: 'Mapas', href: '/maps' }
   ]
 })
-
-// Methods
-const getInitials = (name) => {
-  if (!name) return '??'
-  return name
-    .split(' ')
-    .map(word => word.charAt(0))
-    .join('')
-    .substring(0, 2)
-    .toUpperCase()
-}
 
 const getUserAvatar = (user) => {
   if (user.photoURL) return user.photoURL
@@ -205,7 +186,6 @@ const getUserAvatar = (user) => {
   const seed = user.email || user.displayName || 'default'
   return `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(seed)}&backgroundType=gradientLinear&backgroundColor=b6e3f4,c0aede,d1d4f9`
 }
-
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value

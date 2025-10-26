@@ -2,11 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 // Componentes de testing/desarrollo
 import TestFirebase from '../components/TestFirebase.vue'
-import Presupuesto from '../components/Presupuesto.vue'
+import Presupuesto from '../views/PresupuestoView.vue'
+import AddCost from '../components/budget/AddCost.vue'
 
 // Componentes de votaciones (Josh - RF3/RF4)
 import Home from '../views/Home.vue'
 import VotingList from '../views/VotingList.vue'
+
+// tareas 
+import TasksView from '../views/TasksView.vue'
 
 const routes = [
   // Ruta por defecto - Home público
@@ -26,6 +30,11 @@ const routes = [
     path: '/presupuesto',
     name: 'Presupuesto',
     component: Presupuesto
+  },
+  {
+    path: '/presupuesto/agregar-gasto',
+    name: 'AgregarGasto',
+    component: AddCost
   },
   
   // Rutas de votaciones
@@ -48,7 +57,16 @@ const routes = [
     path: '/voting/:id',
     name: 'VotingDetail',
     component: () => import('../views/voting/VotingDetail.vue'),
-    meta: { requiresAuth: true, section: 'voting' }
+    meta: { requiresAuth: true, section: 'voting' },
+  },
+  {
+    path: '/tareas',
+    name: 'Tareas',
+    component: TasksView,
+    meta: {
+      requiresAuth: true,
+      section: 'tasks'
+    }
   }
 ]
 

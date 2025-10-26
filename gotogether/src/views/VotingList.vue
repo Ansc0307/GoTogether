@@ -47,67 +47,108 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+// En modo dev, listamos votaciones desde trips/dev-trip/votaciones sin requerir Auth.
+// Cuando RF6 (Autenticación) esté listo, reemplaza DEV_DEFAULT_TRIP_ID por el trip activo del usuario
+// y mantén exactamente los mismos listeners.
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import VotingCard from '../components/voting/VotingCard.vue'
 import { useRouter } from 'vue-router'
 import { db } from '../firebase/firebaseConfig'
-import { collection, query, where, orderBy, onSnapshot } from 'firebase/firestore'
+import { collection, query, onSnapshot, orderBy } from 'firebase/firestore'
+import { DEV_DEFAULT_TRIP_ID, SHOW_DEV_MOCK_VOTINGS } from '../config/devConfig'
 
 const router = useRouter()
 
 // Estado reactivo
-const activeVotings = ref([])
-const finishedVotings = ref([])
+const allVotings = ref([])
+const nowTick = ref(Date.now())
 const loading = ref(true)
 
-// Datos de ejemplo (luego reemplazar con Firebase)
+// Mock para estética en dev (se mezclan con los reales si SHOW_DEV_MOCK_VOTINGS=true)
 const mockActiveVotings = [
   {
-    id: 1,
-    title: "¿Dónde deberíamos ir primero?",
-    options: ["La Paz", "Sucre", "Cochabamba"],
-    voters: ["Ana", "Juan"],
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBGifuBo5txj9DhdCXZe3OM-RtK3NhdjTsVGWMLQPlWfmChcHplYyhrvWEkljEvBmJOqyJDYDK8WjHbskWix6GrgoLwbKOvQP9WwvIKfbZCf-KQVQ_XO2c3TsZo_6mIu1ryQ1lsLimMzA1_UsYFhchzdGRgKtFpnaBl9vgNzQ0HMR0o957_OpNja-5ro2bemiXfI8-kLHTwtbeBLM0ul48c9e52GfNEkoji5ZJsCNWVMWZCJJ4v2xSyAxnKzQw8hD6CSRFcidor83o",
-    deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // 2 días
+    id: 'mock-a1',
+    title: '¿Dónde deberíamos ir primero?',
+    options: ['La Paz', 'Sucre', 'Cochabamba'],
+    voters: ['Ana', 'Juan'],
+    image:
+      'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=800&auto=format&fit=crop',
+    deadline: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000)
   },
   {
-    id: 2,
-    title: "¿Qué tipo de alojamiento preferimos?",
-    options: ["Hostal", "Hotel", "Airbnb"],
-    voters: ["Carlos"],
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBjWeYnKMIJeI4y9bObZZ-NPZYUvQVP1JnuvxtxPgr9OhQAXemH5iaGijUm1RPSqYKEnPOQDNZ4pIA5_CahNc62zWGFtcRjIgvrLlVR5cGk9UYVeEU-Hhfbzl6kOMfHOnnJ6xjtaUXE7qNDpWpw0AH-CZRaz9qUqUeVP7lDDfdyp158Ru7_HIIOQyTt-xxGGgH8PeTNNUznOvL50UwIDoNq9fBdxPRLdpvanDZMpT8fkPwccZnvW120SbIr58Jth5dhqnFJoqbTpQs",
-    deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // 3 días
+    id: 'mock-a2',
+    title: '¿Qué tipo de alojamiento preferimos?',
+    options: ['Hostal', 'Hotel', 'Airbnb'],
+    voters: ['Carlos'],
+    image:
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop',
+    deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
   }
 ]
 
 const mockFinishedVotings = [
   {
-    id: 3,
-    title: "¿Cuál es nuestro presupuesto por día?",
-    results: {
-      "50 USD": 45,
-      "75 USD": 30,
-      "100 USD": 25
-    },
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBYahEwjRU1k5JbTPykK3LndNU3LwrSOivbPD2JdMOY08qz0FTXf4IlEaO8Ogmoj3rhrufq2kPfMkQCusLLhJEsF6qdXcasoDDXKqWYXMP5m3vG-dhurwNB1rna5wLNYgsf0lcerv1xBO725WVOvZ6oyL1m0iEAvH_hUaTDLUW0y70iuQMossAPZdCW10mVESoUXYwLkdAufQYaYfE6iqBd8fkIg2o735FPIn4uVcZJ57J1vXKyqTf2n2ApYb0TxKN_iL1T1oL_QO4"
+    id: 'mock-f1',
+    title: '¿Cuál es nuestro presupuesto por día?',
+    results: { '50 USD': 45, '75 USD': 30, '100 USD': 25 },
+    image:
+      'https://images.unsplash.com/photo-1521540216272-a50305cd4421?q=80&w=800&auto=format&fit=crop'
   }
 ]
 
-// Métodos
+let unsubAll = null
+let tickId = null
+
+// Suscribir a Firestore en modo dev usando el trip por defecto
 const loadVotings = () => {
-  // Simulamos carga de datos
-  activeVotings.value = mockActiveVotings
-  finishedVotings.value = mockFinishedVotings
-  loading.value = false
+  const base = collection(db, 'trips', DEV_DEFAULT_TRIP_ID, 'votaciones')
+
+  // Mostrar mocks de inmediato para que no se vea vacío si hay error/índice faltante
+  if (SHOW_DEV_MOCK_VOTINGS) {
+    activeVotings.value = [...mockActiveVotings]
+    finishedVotings.value = [...mockFinishedVotings]
+    loading.value = false
+  }
+
+  // Suscripción única a toda la colección; luego se clasifica por deadline/status en el cliente
+  const subscribeAll = (withOrderBy = true) => {
+    try {
+      const q = withOrderBy ? query(base, orderBy('deadline', 'asc')) : query(base)
+      unsubAll = onSnapshot(
+        q,
+        (snap) => {
+          const live = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          allVotings.value = live
+          loading.value = false
+        },
+        (err) => {
+          console.error('All votings snapshot error:', err?.code || err)
+          if (withOrderBy) subscribeAll(false)
+          else loading.value = false
+        }
+      )
+    } catch (e) {
+      console.error('All subscribe exception:', e)
+      loading.value = false
+    }
+  }
+  subscribeAll(true)
 }
 
-const handleVote = (votingId) => {
+const openVoting = (votingId) => {
+  try {
+    const all = [...activeVotings.value, ...finishedVotings.value]
+    const it = all.find(v => v.id === votingId)
+    if (it && String(votingId).startsWith('mock-')) {
+      sessionStorage.setItem('mockVoting', JSON.stringify(it))
+    }
+  } catch {}
   router.push(`/voting/${votingId}`)
 }
 
-const handleViewResults = (votingId) => {
-  router.push(`/voting/${votingId}`)
-}
+const handleVote = (votingId) => openVoting(votingId)
+
+const handleViewResults = (votingId) => openVoting(votingId)
 
 const goToCreateVoting = () => {
   router.push('/voting/create')
@@ -116,6 +157,53 @@ const goToCreateVoting = () => {
 // Lifecycle
 onMounted(() => {
   loadVotings()
+  // tick para que el pase de tiempo recalcule la clasificación (cada 60s)
+  tickId = window.setInterval(() => (nowTick.value = Date.now()), 60000)
+})
+
+onBeforeUnmount(() => {
+  if (unsubAll) unsubAll()
+  if (tickId) window.clearInterval(tickId)
+})
+
+// Helpers comunes
+const parseDeadline = (dl) => {
+  try {
+    if (!dl) return null
+    if (typeof dl === 'string' || typeof dl === 'number') return new Date(dl)
+    if (dl?.toDate) return dl.toDate()
+    if (dl?.seconds != null) return new Date(dl.seconds * 1000)
+    return dl instanceof Date ? dl : null
+  } catch { return null }
+}
+
+// Computed para separar activas/finalizadas según tiempo real
+const activeVotings = computed(() => {
+  const now = nowTick.value
+  const real = allVotings.value.filter(v => {
+    const d = parseDeadline(v.deadline)
+    const expired = d ? now >= d.getTime() : false
+    return v.status !== 'finished' && !expired
+  }).sort((a, b) => {
+    const da = parseDeadline(a.deadline)?.getTime() || 0
+    const db = parseDeadline(b.deadline)?.getTime() || 0
+    return da - db
+  })
+  return (SHOW_DEV_MOCK_VOTINGS ? mockActiveVotings : []).concat(real)
+})
+
+const finishedVotings = computed(() => {
+  const now = nowTick.value
+  const real = allVotings.value.filter(v => {
+    const d = parseDeadline(v.deadline)
+    const expired = d ? now >= d.getTime() : false
+    return v.status === 'finished' || expired
+  }).sort((a, b) => {
+    const da = parseDeadline(a.deadline)?.getTime() || 0
+    const db = parseDeadline(b.deadline)?.getTime() || 0
+    return da - db
+  })
+  return (SHOW_DEV_MOCK_VOTINGS ? mockFinishedVotings : []).concat(real)
 })
 </script>
 

@@ -133,7 +133,17 @@ const avatarBg = (idx = 0) => palette[idx % palette.length]
 
 const formatDeadlineRelative = (deadline) => {
   if (!deadline) return ''
-  const d = typeof deadline === 'string' || typeof deadline === 'number' ? new Date(deadline) : deadline
+  // Soporta Date, string/number y Firestore Timestamp
+  let d
+  if (typeof deadline === 'string' || typeof deadline === 'number') {
+    d = new Date(deadline)
+  } else if (deadline?.toDate) {
+    d = deadline.toDate()
+  } else if (deadline?.seconds != null) {
+    d = new Date(deadline.seconds * 1000)
+  } else {
+    d = deadline
+  }
   const now = new Date()
   const diff = d.getTime() - now.getTime()
   if (diff <= 0) return 'Finalizada'
@@ -146,7 +156,17 @@ const formatDeadlineRelative = (deadline) => {
 }
 
 const formatDeadlineAbsolute = (deadline) => {
-  const d = typeof deadline === 'string' || typeof deadline === 'number' ? new Date(deadline) : deadline
+  // Soporta Date, string/number y Firestore Timestamp
+  let d
+  if (typeof deadline === 'string' || typeof deadline === 'number') {
+    d = new Date(deadline)
+  } else if (deadline?.toDate) {
+    d = deadline.toDate()
+  } else if (deadline?.seconds != null) {
+    d = new Date(deadline.seconds * 1000)
+  } else {
+    d = deadline
+  }
   const date = d.toLocaleDateString('es-BO', { day: '2-digit', month: '2-digit', year: 'numeric' })
   const time = d.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', hour12: false })
   return `${date} ${time}`

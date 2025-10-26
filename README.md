@@ -1,41 +1,78 @@
-# GoTogether
+# 🎒 GoTogether
 
-Aplicación web colaborativa para organizar y gestionar viajes grupales. Incluye funcionalidades de tareas, presupuesto, votaciones, autenticación y mapas interactivos.
+Aplicación web colaborativa para planificación de viajes en grupo.
 
-## Tecnologías
+## 🚀 Comandos
 
-- **Frontend**: Vue.js 3 + Vite
-- **Backend**: Firebase (Firestore + Authentication)
+```bash
+npm install        # Instalar dependencias
+npm run dev        # Iniciar servidor (http://localhost:5173)
+```
 
-## Instalación
+## 📂 Arquitectura
 
-1. **Clonar el repositorio**
-   ```bash
-   git clone https://github.com/Ansc0307/GoTogether.git
-   cd GoTogether/gotogether
-   ```
+```
+src/
+├── components/        # Componentes pequeños y reutilizables
+│   ├── AppNavbar.vue      # Navbar global (compartido)
+│   ├── auth/              # Componentes de autenticación
+│   ├── chat/              # Componentes de chat
+│   ├── voting/            # Componentes de votaciones
+│   ├── budget/            # Componentes de presupuesto
+│   ├── tasks/             # Componentes de tareas
+│   └── trips/             # Componentes de viajes
+│
+├── views/             # Páginas completas (una por URL)
+│   ├── Home.vue           # Página de inicio
+│   ├── auth/              # Páginas de login/registro
+│   ├── chat/              # Páginas de chat
+│   ├── voting/            # Páginas de votaciones
+│   ├── budget/            # Páginas de presupuesto
+│   ├── tasks/             # Páginas de tareas
+│   └── trips/             # Páginas de viajes
+│
+├── router/            # Rutas de navegación (URLs)
+├── firebase/          # Configuración de Firebase
+├── composables/       # Lógica reutilizable (useAuth, useVoting, etc.)
+└── utils/             # Funciones auxiliares (formatear fechas, validaciones)
+```
 
-2. **Instalar dependencias**
-   ```bash
-   npm install
-   ```
+### � ¿Qué va en cada carpeta?
 
-3. **Ejecutar en desarrollo**
-   ```bash
-   npm run dev
-   ```
+- **`components/`**: Piezas pequeñas de UI (botones, cards, formularios)
+- **`views/`**: Páginas completas que se muestran en una URL
+- **`router/`**: Define qué página se muestra en cada URL
+- **`firebase/`**: Conexión con la base de datos
+- **`composables/`**: Lógica que se puede reutilizar (obtener datos, guardar, etc.)
+- **`utils/`**: Funciones auxiliares generales
 
-4. **Abrir en el navegador**
-   ```
-   http://localhost:5173
-   ```
+## 👥 Equipo
 
-## Estructura
+| Persona | Módulo |
+|---------|--------|
+| **Ayana Siegle** | Tareas |
+| **Daniela Guzmán** | Presupuesto |
+| **Josué Nisthaus** | Votaciones |
+| **Gabriela Barrios** | Viajes |
+| **Andrea Fernández** | Autenticación |
+| **Ezequiel Gómez** | Mapas |
 
-- `/frontend` - Plantillas HTML de referencia
-- `/gotogether` - Proyecto Vue principal
-<<<<<<< HEAD
-- `/gotogether/src/firebase` - Configuración Firebase
-=======
-- `/gotogether/src/firebase` - Configuración Firebase
->>>>>>> origin/main
+Cada persona trabaja en su carpeta: `components/{su-modulo}/` y `views/{su-modulo}/`
+
+## �💡 Tips
+
+- ✅ Usa `AppNavbar.vue` (no crees navbars nuevos)
+- ✅ Haz commits frecuentes
+- ✅ Prueba tu código antes de hacer push
+- ✅ Usa las carpetas que te corresponden
+
+## 📦 Tecnologías
+
+- Vue 3 + Vite
+- Firebase (Base de datos)
+- Tailwind CSS
+- Vue Router
+
+---
+
+**Equipo GoTogether** | Octubre 2025
