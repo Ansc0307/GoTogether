@@ -28,12 +28,27 @@
           
           <!-- Voters (for active) or deadline info -->
           <div v-if="isActive" class="voters-info">
-            <p class="voters-text">
-              Votaron: {{ formatVoters(voting.voters) }}
-            </p>
-            <p v-if="voting.deadline" class="deadline-text">
-              Cierra: {{ formatDeadline(voting.deadline) }}
-            </p>
+            <div class="voters-row">
+              <div class="avatars" v-if="(voting.voters || []).length">
+                <span
+                  v-for="(name, idx) in (voting.voters || []).slice(0,3)"
+                  :key="idx"
+                  class="avatar"
+                  :style="{ backgroundColor: avatarBg(idx) }"
+                  :title="name"
+                >{{ initials(name) }}</span>
+                <span v-if="(voting.voters || []).length > 3" class="more">+{{ (voting.voters || []).length - 3 }}</span>
+              </div>
+              <span class="voters-count">{{ (voting.voters || []).length || 0 }} votantes</span>
+            </div>
+            <div v-if="voting.deadline" class="deadline-row">
+              <span class="deadline-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              </span>
+              <span class="deadline-label">Cierra:</span>
+              <time class="deadline-date">{{ formatDeadlineAbsolute(voting.deadline) }}</time>
+              <span class="deadline-remaining">({{ formatDeadlineRelative(voting.deadline) }})</span>
+            </div>
           </div>
         </div>
         
@@ -104,29 +119,37 @@ const formatResults = (results) => {
     .join(', ') + (entries.length > 2 ? '...' : '')
 }
 
-const formatVoters = (voters) => {
-  if (!voters || voters.length === 0) return 'Nadie aún'
-  return voters.slice(0, 3).join(', ') + (voters.length > 3 ? `... +${voters.length - 3}` : '')
+const initials = (name = '') => {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0,2)
+    .map(n => n[0]?.toUpperCase())
+    .join('') || 'U'
 }
 
-const formatDeadline = (deadline) => {
+const palette = ['#DBEAFE', '#FDE68A', '#FBCFE8', '#BBF7D0', '#FCA5A5']
+const avatarBg = (idx = 0) => palette[idx % palette.length]
+
+const formatDeadlineRelative = (deadline) => {
   if (!deadline) return ''
-  
+  const d = typeof deadline === 'string' || typeof deadline === 'number' ? new Date(deadline) : deadline
   const now = new Date()
-  const diff = deadline - now
-  
+  const diff = d.getTime() - now.getTime()
   if (diff <= 0) return 'Finalizada'
-  
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-  
-  if (days > 0) {
-    return `${days}d ${hours}h restantes`
-  } else if (hours > 0) {
-    return `${hours}h restantes`
-  } else {
-    return 'Menos de 1h'
-  }
+  if (days > 0) return `${days}d ${hours}h restantes`
+  if (hours > 0) return `${hours}h restantes`
+  const mins = Math.max(1, Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)))
+  return `${mins}m`
+}
+
+const formatDeadlineAbsolute = (deadline) => {
+  const d = typeof deadline === 'string' || typeof deadline === 'number' ? new Date(deadline) : deadline
+  const date = d.toLocaleDateString('es-BO', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  const time = d.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', hour12: false })
+  return `${date} ${time}`
 }
 
 const handleAction = () => {
@@ -219,32 +242,18 @@ const handleAction = () => {
   line-height: 1.5;
 }
 
-.voters-info {
-  margin-bottom: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
-}
+.voters-info { margin-bottom: 1rem; display:flex; flex-direction:column; gap:.5rem }
+.voters-row { display:flex; align-items:center; gap:.5rem }
+.avatars { display:flex; align-items:center }
+.avatar { width:22px; height:22px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:700; color:#0f172a; border:1px solid #e2e8f0; margin-right:-6px }
+.more { margin-left:8px; font-size:.75rem; color:#475569 }
+.voters-count { font-size:.75rem; color:#64748b }
 
-.voters-text {
-  color: #94a3b8;
-  font-size: 0.75rem;
-  margin: 0;
-  line-height: 1.4;
-}
-
-.deadline-text {
-  color: #dc2626;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin: 0;
-  background: #fee2e2;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  display: inline-block;
-  white-space: nowrap;
-  overflow: visible;
-}
+.deadline-row { display:flex; align-items:center; gap:.4rem; font-size:.8rem }
+.deadline-icon { color:#ef4444; display:inline-flex }
+.deadline-label { color:#ef4444; font-weight:700 }
+.deadline-date { color:#0f172a }
+.deadline-remaining { color:#475569 }
 
 /* Action Button */
 .action-btn {

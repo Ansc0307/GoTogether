@@ -7,7 +7,9 @@
         <div class="page-header">
           <h1 class="page-title">Votaciones del Grupo</h1>
           <button class="create-btn" @click="goToCreateVoting">
-            <span class="icon">➕</span>
+            <span class="icon" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </span>
             <span>Crear Votación</span>
           </button>
         </div>
@@ -100,24 +102,15 @@ const loadVotings = () => {
 }
 
 const handleVote = (votingId) => {
-  console.log('Voting in:', votingId)
-  // Temporal: Solo mostrar alert hasta que creemos la vista
-  alert(`Funcionalidad de votar en votación ${votingId} - En desarrollo`)
-  // router.push(`/voting/${votingId}`)
+  router.push(`/voting/${votingId}`)
 }
 
 const handleViewResults = (votingId) => {
-  console.log('View results for:', votingId)
-  // Temporal: Solo mostrar alert hasta que creemos la vista
-  alert(`Ver resultados de votación ${votingId} - En desarrollo`)
-  // router.push(`/voting/${votingId}`)
+  router.push(`/voting/${votingId}`)
 }
 
 const goToCreateVoting = () => {
-  console.log('Go to create voting')
-  // Temporal: Solo mostrar alert hasta que creemos la vista
-  alert('Crear nueva votación - En desarrollo')
-  // router.push('/voting/create')
+  router.push('/voting/create')
 }
 
 // Lifecycle
