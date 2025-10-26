@@ -14,7 +14,7 @@ import TripCard from "./TripCard.vue";
 const trips = ref([]);
 
 onMounted(() => {
-  onSnapshot(collection(db, "viajes"), (snapshot) => {
+  onSnapshot(collection(db, "trips"), (snapshot) => {
     trips.value = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),

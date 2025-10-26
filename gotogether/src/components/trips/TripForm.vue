@@ -27,9 +27,7 @@
       <form @submit.prevent="crearViaje" class="space-y-4">
         <!-- Nombre del viaje -->
         <div>
-          <label class="block text-gray-700 font-medium mb-1"
-            >Nombre del viaje</label
-          >
+          <label class="block text-gray-700 font-medium mb-1">Nombre del viaje</label>
           <input
             v-model="nuevoViaje.nombre"
             type="text"
@@ -41,9 +39,7 @@
 
         <!-- Destino -->
         <div>
-          <label class="block text-gray-700 font-medium mb-1"
-            >Destino específico</label
-          >
+          <label class="block text-gray-700 font-medium mb-1">Destino específico</label>
           <input
             v-model="nuevoViaje.destinoEspecifico"
             type="text"
@@ -51,33 +47,11 @@
             class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
           />
         </div>
-        <!-- Preguntar, en el mockup está para seleccionar, pero no se si sería mejor ingresar texto -->
-        <!-- <div>
-          <label class="block text-gray-700 font-medium mb-1">Destino</label>
-          <select
-            v-model="nuevoViaje.destino"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-primary focus:outline-none"
-            required
-          >
-            <option value="" disabled>Selecciona un departamento</option>
-            <option>La Paz</option>
-            <option>Cochabamba</option>
-            <option>Santa Cruz</option>
-            <option>Oruro</option>
-            <option>Potosí</option>
-            <option>Tarija</option>
-            <option>Chuquisaca</option>
-            <option>Beni</option>
-            <option>Pando</option>
-          </select>
-        </div> -->
 
         <!-- Fechas -->
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-gray-700 font-medium mb-1"
-              >Fecha de inicio</label
-            >
+            <label class="block text-gray-700 font-medium mb-1">Fecha de inicio</label>
             <input
               v-model="nuevoViaje.fechaInicio"
               type="date"
@@ -87,9 +61,7 @@
           </div>
 
           <div>
-            <label class="block text-gray-700 font-medium mb-1"
-              >Fecha fin</label
-            >
+            <label class="block text-gray-700 font-medium mb-1">Fecha fin</label>
             <input
               v-model="nuevoViaje.fechaFin"
               type="date"
@@ -101,9 +73,7 @@
 
         <!-- Presupuesto -->
         <div>
-          <label class="block text-gray-700 font-medium mb-1"
-            >Presupuesto base (opcional)</label
-          >
+          <label class="block text-gray-700 font-medium mb-1">Presupuesto base (opcional)</label>
           <div class="flex items-center border border-gray-300 rounded-lg px-3 py-2">
             <span class="text-gray-500 mr-2">Bs.</span>
             <input
@@ -132,26 +102,62 @@
 
 <script setup>
 import { ref } from "vue";
+import { db } from "../../firebase/firebaseConfig";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+// 🔒 Para más adelante (cuando haya login):
+// import { getAuth } from "firebase/auth";
 
 const props = defineProps({
   visible: Boolean,
 });
-
 const emit = defineEmits(["close"]);
 
 const nuevoViaje = ref({
   nombre: "",
-  destino: "",
+  destinoEspecifico: "",
   fechaInicio: "",
   fechaFin: "",
   presupuesto: "",
 });
 
-function crearViaje() {
-  // Aquí puedes emitir los datos o conectarlo a tu store/API
-  console.log("Nuevo viaje:", nuevoViaje.value);
-  emit("close");
-}
+const crearViaje = async () => {
+  if (!nuevoViaje.value.nombre.trim()) {
+    return alert("Por favor, ingresa el nombre del viaje.");
+  }
+
+  try {
+    // 🔐 FUTURO: cuando haya login, se obtiene el usuario actual así:
+    // const auth = getAuth();
+    // const user = auth.currentUser;
+    // const userId = user ? user.uid : "default-user";
+
+    const userId = "default-user"; // Valor temporal mientras no hay login
+
+    await addDoc(collection(db, "trips"), {
+      nombre: nuevoViaje.value.nombre,
+      destinoEspecifico: nuevoViaje.value.destinoEspecifico || "",
+      fechaInicio: nuevoViaje.value.fechaInicio,
+      fechaFin: nuevoViaje.value.fechaFin,
+      presupuesto: parseFloat(nuevoViaje.value.presupuesto) || 0,
+      userId, // ✅ se guarda el ID del usuario (por ahora "default-user")
+      fechaCreacion: Timestamp.now(),
+    });
+
+    // Limpia el formulario
+    nuevoViaje.value = {
+      nombre: "",
+      destinoEspecifico: "",
+      fechaInicio: "",
+      fechaFin: "",
+      presupuesto: "",
+    };
+
+    emit("close");
+  } catch (error) {
+    console.error("Error al crear el viaje:", error);
+    alert("Hubo un error al guardar el viaje.");
+  }
+};
 </script>
 
 <style scoped>
