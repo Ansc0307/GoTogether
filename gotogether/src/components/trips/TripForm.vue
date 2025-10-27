@@ -131,19 +131,19 @@ const crearViaje = async () => {
     // const user = auth.currentUser;
     // const userId = user ? user.uid : "default-user";
 
-    const userId = "default-user"; // Valor temporal mientras no hay login
+    const createdBy = "default-user"; // Valor temporal mientras no hay login
 
     await addDoc(collection(db, "trips"), {
-      nombre: nuevoViaje.value.nombre,
-      destinoEspecifico: nuevoViaje.value.destinoEspecifico || "",
-      fechaInicio: nuevoViaje.value.fechaInicio,
-      fechaFin: nuevoViaje.value.fechaFin,
-      presupuesto: parseFloat(nuevoViaje.value.presupuesto) || 0,
-      userId, // ✅ se guarda el ID del usuario (por ahora "default-user")
-      fechaCreacion: Timestamp.now(),
+      name: nuevoViaje.value.nombre,
+      destination: nuevoViaje.value.destinoEspecifico || "",
+      startDate: nuevoViaje.value.fechaInicio,
+      endDate: nuevoViaje.value.fechaFin,
+      budget: parseFloat(nuevoViaje.value.presupuesto) || 0,
+      createdBy, // ✅ se guarda el ID del usuario (por ahora "default-user")
+      createdAt: Timestamp.now(),
     });
 
-    // Limpia el formulario
+    // cerrar el form y resetear campos
     nuevoViaje.value = {
       nombre: "",
       destinoEspecifico: "",
@@ -153,6 +153,9 @@ const crearViaje = async () => {
     };
 
     emit("close");
+
+    alert("¡Viaje creado exitosamente!");
+
   } catch (error) {
     console.error("Error al crear el viaje:", error);
     alert("Hubo un error al guardar el viaje.");

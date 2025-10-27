@@ -4,7 +4,7 @@
     class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all border border-gray-200"
   >
     <img
-      :src="trip.imagen || 'https://via.placeholder.com/400x250?text=Viaje'"
+      src="../../assets/default_trip_image1.jpg"
       alt="Foto del viaje"
       class="h-48 w-full object-cover"
     />
