@@ -1,4 +1,5 @@
 <!-- /components/trips/TripHeader.vue -->
+<!-- /components/trips/TripHeader.vue -->
 <template>
   <div class="relative bg-gray-900 text-white rounded-xl overflow-hidden shadow-md">
     <img
@@ -12,17 +13,20 @@
         {{ formatDate(trip.startDate) }} – {{ formatDate(trip.endDate) }}
       </p>
 
+      <!-- Miembros -->
       <div class="flex items-center mt-3">
         <div class="flex -space-x-2">
           <img
-            v-for="i in 3"
-            :key="i"
-            src="https://i.pravatar.cc/40?img=5"
-            alt="Miembro"
-            class="w-8 h-8 rounded-full border-2 border-white"
+            v-for="member in trip.members"
+            :key="member.id"
+            src="https://simulacionymedicina.es/wp-content/uploads/2015/11/default-avatar-300x300-1.jpg"
+            :alt="member.name"
+            class="w-9 h-9 rounded-full border-2 border-white bg-white object-cover"
           />
         </div>
-        <span class="ml-3 text-sm text-gray-300">+2 más</span>
+        <span class="ml-3 text-sm text-gray-300" v-if="trip.members.length > 1">
+          +{{ trip.members.length - 1 }} más
+        </span>
       </div>
     </div>
   </div>
@@ -48,3 +52,4 @@ const formatDate = (date) => {
   });
 };
 </script>
+
