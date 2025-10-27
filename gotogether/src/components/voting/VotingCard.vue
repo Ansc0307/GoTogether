@@ -28,7 +28,6 @@
           
           <!-- Voters (for active) or deadline info -->
           <div v-if="isActive" class="voters-info">
-<<<<<<< HEAD
             <div class="voters-row">
               <div class="avatars" v-if="(voting.voters || []).length">
                 <span
@@ -50,14 +49,6 @@
               <time class="deadline-date">{{ formatDeadlineAbsolute(voting.deadline) }}</time>
               <span class="deadline-remaining">({{ formatDeadlineRelative(voting.deadline) }})</span>
             </div>
-=======
-            <p class="voters-text">
-              Votaron: {{ formatVoters(voting.voters) }}
-            </p>
-            <p v-if="voting.deadline" class="deadline-text">
-              Cierra: {{ formatDeadline(voting.deadline) }}
-            </p>
->>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
           </div>
         </div>
         
@@ -68,7 +59,6 @@
           @click="handleAction"
           :disabled="!isActive && !voting.results"
         >
-<<<<<<< HEAD
           <span class="btn-icon">
             <!-- Icono de Votar -->
             <svg v-if="isActive" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -82,9 +72,6 @@
               <line x1="6" y1="20" x2="6" y2="14"/>
             </svg>
           </span>
-=======
-          <span class="btn-icon">{{ isActive ? '🗳️' : '📊' }}</span>
->>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
           <span class="btn-text">{{ isActive ? 'Votar' : 'Ver Resultados' }}</span>
         </button>
       </div>
@@ -199,20 +186,11 @@ const handleAction = () => {
   background: #ffffff;
   border-radius: 0.875rem;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-<<<<<<< HEAD
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
   min-height: 100%;
-=======
-  overflow: hidden;
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
->>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
 }
 
 .voting-card:hover {
@@ -229,10 +207,7 @@ const handleAction = () => {
 .card-layout {
   display: flex;
   flex-direction: column;
-<<<<<<< HEAD
   flex: 1;
-=======
->>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
 }
 
 /* Image Section */
@@ -240,10 +215,7 @@ const handleAction = () => {
   width: 100%;
   height: 12rem;
   overflow: hidden;
-<<<<<<< HEAD
   border-radius: 0.875rem 0.875rem 0 0;
-=======
->>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
 }
 
 .voting-image {
@@ -290,7 +262,6 @@ const handleAction = () => {
   line-height: 1.5;
 }
 
-<<<<<<< HEAD
 .voters-info { margin-bottom: 1rem; display:flex; flex-direction:column; gap:.5rem }
 .voters-row { display:flex; align-items:center; gap:.5rem }
 .avatars { display:flex; align-items:center }
@@ -303,29 +274,6 @@ const handleAction = () => {
 .deadline-label { color:#ef4444; font-weight:700 }
 .deadline-date { color:#0f172a }
 .deadline-remaining { color:#475569 }
-=======
-.voters-info {
-  margin-bottom: 1.25rem;
-}
-
-.voters-text {
-  color: #94a3b8;
-  font-size: 0.75rem;
-  margin: 0 0 0.375rem 0;
-  line-height: 1.4;
-}
-
-.deadline-text {
-  color: #dc2626;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin: 0;
-  background: #fee2e2;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.25rem;
-  display: inline-block;
-}
->>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
 
 /* Action Button */
 .action-btn {
@@ -370,7 +318,6 @@ const handleAction = () => {
 }
 
 .btn-icon {
-<<<<<<< HEAD
   display: flex;
   align-items: center;
   justify-content: center;
@@ -381,17 +328,11 @@ const handleAction = () => {
 .btn-icon svg {
   width: 100%;
   height: 100%;
-=======
-  font-size: 1rem;
->>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
 }
 
 .btn-text {
   font-size: 0.875rem;
-<<<<<<< HEAD
   font-weight: 500;
-=======
->>>>>>> f285d93 (feat(voting): Implementar sistema de votaciones con navbar centralizado)
 }
 
 /* Responsive Design */
