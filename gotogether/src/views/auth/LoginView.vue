@@ -3,11 +3,11 @@
     <div class="relative hidden lg:flex w-1/2 items-center justify-center bg-gray-900">
       <div
         class="absolute inset-0 bg-cover bg-center"
-        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBAjFzsMpp3w1YaZ3lKlo_I0UDK0cZE4l2eq_qrSGQDBeUO0LEwThtRWJNP_d0lxNBNrEVoslqaTJrc8rr5vXfTmBUEzK-c0hzovPJMnFtHMMf4I3fUTyhzl3kVTueg9lMZvi11XRoLYtdxthTs1Jc2PuInO7TAS3neYWM9lYd8LUnstZu9DDmQMCWyIfwv2vUYdb7n7ybKkG9jdLS3ZOqbvnVeYc-O1wZQnqIB9Mc0JJmM5vx7om3lQAjWoB3OVu_53ljcJofxQco');"
+        style="background-image: url('https://images.unsplash.com/photo-1528543606781-2f6e6857f318?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1365');"
       ></div>
       <div class="absolute inset-0 bg-primary opacity-60"></div>
       <div class="relative z-10 text-center text-white px-12">
-        <h1 class="text-5xl font-bold mb-4">Planifica tu próxima aventura boliviana</h1>
+        <h1 class="text-5xl font-bold mb-4">Planifica tu próxima aventura</h1>
         <p class="text-xl">Colabora, explora y crea recuerdos inolvidables con tus amigos.</p>
       </div>
     </div>
