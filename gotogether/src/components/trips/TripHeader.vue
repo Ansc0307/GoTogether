@@ -2,7 +2,7 @@
 <template>
   <div class="relative bg-gray-900 text-white rounded-xl overflow-hidden shadow-md">
     <img
-      :src="tripImage"
+      src="../../assets/default_trip_image1.jpg"
       alt="Imagen del viaje"
       class="w-full h-56 object-cover opacity-70"
     />

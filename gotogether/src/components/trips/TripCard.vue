@@ -9,10 +9,10 @@
       class="h-48 w-full object-cover"
     />
     <div class="p-4">
-      <h3 class="font-bold text-lg text-gray-900">{{ trip.titulo }}</h3>
-      <p class="text-gray-600 text-sm">{{ trip.ubicacion }}</p>
+      <h3 class="font-bold text-lg text-gray-900">{{ trip.name }}</h3>
+      <p class="text-gray-600 text-sm">{{ trip.destination }}</p>
       <p class="text-gray-500 text-xs mt-1">
-        {{ trip.fechaInicio }} – {{ trip.fechaFin }}
+        {{ trip.startDate }} – {{ trip.endDate }}
       </p>
     </div>
   </div>

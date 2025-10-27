@@ -1,5 +1,4 @@
 <!-- /views/trips/TripDashboard.vue -->
- <!-- /views/TripDashboard.vue -->
 <template>
   <div class="max-w-6xl mx-auto px-4 py-8">
     <!-- Cabecera del viaje -->
