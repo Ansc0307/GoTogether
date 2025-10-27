@@ -14,6 +14,7 @@ import TasksView from '../views/TasksView.vue'
 
 // viajes (RF5)
 import TripsView from '../views/trips/TripsView.vue'
+import TripDashboard from "../views/trips/TripDashboard.vue";
 
 const routes = [
   // Ruta por defecto - Home público
@@ -62,6 +63,7 @@ const routes = [
 
   //rutas para viajes
   { path: '/misviajes', name: 'Trips', component: TripsView, meta: { requiresAuth: true, section: 'trips' } },
+  { path: "/trip/:id", name: "TripDashboard", component: TripDashboard , meta: { requiresAuth: true, section: 'trips' }},
 ]
 
 const router = createRouter({

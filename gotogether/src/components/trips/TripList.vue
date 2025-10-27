@@ -37,6 +37,8 @@
       v-for="trip in viajes"
       :key="trip.id"
       :trip="trip"
+      class="cursor-pointer"
+      @click="$router.push(`/trip/${trip.id}`)"
     />
   </div>
 </template>
