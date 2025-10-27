@@ -37,18 +37,26 @@
           </span>
         </button>
         
-        <!-- Avatar del usuario (solo si está autenticado) -->
-        <div 
-          v-if="userInfo" 
-          class="user-avatar"
-          @click="$emit('profile-click')"
-        >
-          <img 
-            :src="getUserAvatar(userInfo)" 
-            :alt="userInfo.displayName || 'Usuario'"
-            class="avatar-image"
-          />
-        </div>
+        <details v-if="userInfo" class="user-menu">
+          <summary class="user-avatar-summary">
+            <div class="user-avatar">
+              <img
+                :src="getUserAvatar(userInfo)"
+                :alt="userInfo.displayName || 'Usuario'"
+                class="avatar-image"
+              />
+            </div>
+          </summary>
+          <div class="user-menu-dropdown">
+            <div class="user-info">
+              <strong>{{ userInfo.displayName || 'Usuario' }}</strong>
+              <small>{{ userInfo.email }}</small>
+            </div>
+            <button @click="$emit('logout-click')" class="logout-btn">
+              Cerrar Sesión
+            </button>
+          </div>
+        </details>
         
         <!-- Botones de acceso (solo si NO está autenticado) -->
         <div v-else class="auth-buttons">
@@ -144,7 +152,8 @@ const emit = defineEmits([
   'notifications-click', 
   'profile-click',
   'login-click',
-  'signup-click'
+  'signup-click',
+  'logout-click'
 ])
 
 // Local state
@@ -510,5 +519,63 @@ const handleMobileNavClick = (key, event) => {
     width: 16rem;
     height: 4.5rem;
   }
+}
+.user-menu {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-avatar-summary {
+  list-style: none; /* Oculta la flecha del <details> */
+  display: inline-block;
+}
+.user-avatar-summary::-webkit-details-marker {
+  display: none; /* Oculta la flecha en Chrome */
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+  width: 200px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.user-info {
+  padding: 0.5rem;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+}
+.user-info strong {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+.user-info small {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  width: 100%;
+  text-align: left;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  color: #ef4444; /* Color rojo para logout */
+  transition: background-color 0.2s;
+}
+.logout-btn:hover {
+  background-color: #fee2e2;
 }
 </style>
