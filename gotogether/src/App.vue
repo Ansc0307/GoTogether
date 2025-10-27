@@ -5,7 +5,7 @@
     <!-- Navbar personalizado (reemplaza el header de Tailwind) -->
     <AppNavbar 
       :showNavigation="showFullNavigation"
-      :userInfo="mockUser"
+      :userInfo="user"
       :showNotifications="showFullNavigation"
       :notificationCount="3"
       @navigation-click="handleNavigation"
@@ -13,6 +13,7 @@
       @profile-click="handleProfile"
       @login-click="handleLogin"
       @signup-click="handleSignup"
+      @logout-click="handleLogout"
     />
     
     <main class="flex-1 px-4 md:px-10 py-6 md:py-10 flex justify-center items-start">
@@ -36,21 +37,23 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import AppNavbar from './components/AppNavbar.vue'
 import TestFirebase from './components/TestFirebase.vue'
+import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
 const route = useRoute()
-
-// Usuario mock para pruebas (esto vendrá de Firebase Auth después)
-// null = no autenticado, object = autenticado
+const { user, logout, isLoading } = useAuth()
+/* Usuario mock para pruebas (esto vendrá de Firebase Auth después)
+ null = no autenticado, object = autenticado
 const mockUser = ref({
   displayName: 'Josh Morales',
   email: 'josh@gotogether.com',
   photoURL: null
-})
+})*/
 
 // Determinar si mostrar navegación completa (solo en páginas autenticadas)
 const showFullNavigation = computed(() => {
-  return route.path !== '/' && mockUser.value !== null
+  // Ahora se basa en si el usuario real existe y no está en la página principal
+  return route.path !== '/' && user.value !== null
 })
 
 // Handlers para el navbar
@@ -111,14 +114,17 @@ const handleProfile = () => {
 
 const handleLogin = () => {
   console.log('Login clicked')
-  // Aquí irá la lógica de login con Firebase Auth
-  router.push('/voting') // temporal - simular login
+  router.push('/login')
 }
 
 const handleSignup = () => {
   console.log('Signup clicked')
-  // Aquí irá la lógica de registro con Firebase Auth
-  router.push('/voting') // temporal - simular registro
+  router.push('/register') 
+}
+const handleLogout = async () => {
+  await logout() 
+  alert('Has cerrado sesión.')
+  router.push('/login');
 }
 </script>
 
