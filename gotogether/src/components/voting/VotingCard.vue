@@ -26,7 +26,7 @@
             </p>
           </div>
           
-          <!-- Voters (for active) or deadline info -->
+          <!-- Voters (active: avatars + count, finished: only count) and deadline info -->
           <div v-if="isActive" class="voters-info">
             <div class="voters-row">
               <div class="avatars" v-if="(voting.voters || []).length">
@@ -39,7 +39,7 @@
                 >{{ initials(name) }}</span>
                 <span v-if="(voting.voters || []).length > 3" class="more">+{{ (voting.voters || []).length - 3 }}</span>
               </div>
-              <span class="voters-count">{{ (voting.voters || []).length || 0 }} votantes</span>
+              <span class="voters-count">{{ voterCount }} votantes</span>
             </div>
             <div v-if="voting.deadline" class="deadline-row">
               <span class="deadline-icon" aria-hidden="true">
@@ -50,6 +50,9 @@
               <span class="deadline-remaining">({{ formatDeadlineRelative(voting.deadline) }})</span>
             </div>
           </div>
+          <div v-else class="voters-info finished">
+            <span class="voters-count">{{ voterCount }} votantes</span>
+          </div>
         </div>
         
         <!-- Action Button -->
@@ -57,7 +60,6 @@
           class="action-btn"
           :class="{ 'vote-btn': isActive, 'results-btn': !isActive }"
           @click="handleAction"
-          :disabled="!isActive && !voting.results"
         >
           <span class="btn-icon">
             <!-- Icono de Votar -->
@@ -101,6 +103,8 @@ const emit = defineEmits(['vote', 'viewResults'])
 const defaultImage = computed(() => 
   'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop'
 )
+
+const voterCount = computed(() => props.voting?.votersCount ?? ((props.voting?.voters || []).length))
 
 // Methods
 const formatOptions = (options) => {

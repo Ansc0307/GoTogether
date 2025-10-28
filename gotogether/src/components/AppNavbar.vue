@@ -16,7 +16,7 @@
           :to="navItem.href"
           class="nav-link"
           :class="{ 'active': currentSection === navItem.key }"
-          @click.native="handleNavClick(navItem.key, $event)"
+          @click="handleNavClick(navItem.key, $event)"
         >
           {{ navItem.label }}
         </router-link>
@@ -94,7 +94,7 @@
         :to="navItem.href"
         class="mobile-nav-link"
         :class="{ 'active': currentSection === navItem.key }"
-        @click.native="handleMobileNavClick(navItem.key, $event)"
+        @click="handleMobileNavClick(navItem.key, $event)"
       >
         {{ navItem.label }}
       </router-link>
@@ -104,13 +104,17 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-
 const props = defineProps({
 	showNavigation: { type: Boolean, default: false },
 	userInfo: { type: Object, default: null },
 	showNotifications: { type: Boolean, default: false },
-	notificationCount: { type: Number, default: 0 }
+  notificationCount: { type: Number, default: 0 },
+  tripName: { type: String, default: '' },
+  userRole: { type: String, default: '' },
+  currentSection: { type: String, default: '' }
 })
+// Fallback logo from public folder
+const logoImg = '/logo.png'
 
 // Emits
 const emit = defineEmits([

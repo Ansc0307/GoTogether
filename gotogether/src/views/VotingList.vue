@@ -53,6 +53,9 @@ import { DEV_DEFAULT_TRIP_ID, SHOW_DEV_MOCK_VOTINGS } from '../config/devConfig'
 const router = useRouter()
 
 const allVotings = ref([])
+// Votantes por votación (nombres y conteo) en tiempo real
+const votersMetaMap = ref({}) // { [votingId]: { names: string[], count: number } }
+const votesUnsubs = new Map()
 const nowTick = ref(Date.now())
 const loading = ref(true)
 
@@ -75,6 +78,8 @@ const loadVotings = () => {
 			unsubAll = onSnapshot(q, (snap) => {
 				allVotings.value = snap.docs.map(d => ({ id: d.id, ...d.data() }))
 				loading.value = false
+				// Asegurar suscripciones a subcolecciones de votos para cada votación
+				ensureVotesSubscriptions()
 			}, (err) => {
 				console.error('All votings snapshot error:', err?.code || err)
 				if (withOrderBy) subscribeAll(false)
@@ -88,6 +93,38 @@ const loadVotings = () => {
 	subscribeAll(true)
 }
 
+// Crea/gestiona suscripciones a votes de cada votación para contar votantes y mostrar nombres
+const ensureVotesSubscriptions = () => {
+	const ids = new Set(allVotings.value.map(v => v.id))
+	// Eliminar suscripciones obsoletas
+	for (const [id, un] of votesUnsubs.entries()) {
+		if (!ids.has(id)) { try { un() } catch {} votesUnsubs.delete(id) }
+	}
+	// Agregar suscripciones nuevas
+	allVotings.value.forEach(v => {
+		if (votesUnsubs.has(v.id)) return
+		try {
+			const votesRef = collection(db, 'trips', DEV_DEFAULT_TRIP_ID, 'votaciones', v.id, 'votes')
+			const un = onSnapshot(votesRef, (snap) => {
+				let count = 0
+				const names = []
+				snap.forEach(d => {
+					const data = d.data()
+					count += 1
+					if (names.length < 3) {
+						const name = data?.userName || data?.userEmail || d.id
+						names.push(name)
+					}
+				})
+				votersMetaMap.value = { ...votersMetaMap.value, [v.id]: { names, count } }
+			})
+			votesUnsubs.set(v.id, un)
+		} catch (e) {
+			console.warn('No se pudo suscribir a votes para', v.id, e)
+		}
+	})
+}
+
 onMounted(() => {
 	loadVotings()
 	tickId = window.setInterval(() => (nowTick.value = Date.now()), 60000)
@@ -95,6 +132,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	if (unsubAll) unsubAll()
 	if (tickId) window.clearInterval(tickId)
+	for (const un of votesUnsubs.values()) { try { un() } catch {} }
+	votesUnsubs.clear()
 })
 
 const parseDeadline = (dl) => {
@@ -114,7 +153,12 @@ const activeVotings = computed(() => {
 		const expired = d ? now >= d.getTime() : false
 		return v.status !== 'finished' && !expired
 	}).sort((a,b) => (parseDeadline(a.deadline)?.getTime()||0) - (parseDeadline(b.deadline)?.getTime()||0))
-	return (SHOW_DEV_MOCK_VOTINGS ? mockActiveVotings : []).concat(real)
+	const mapped = real.map(v => ({
+		...v,
+		voters: votersMetaMap.value[v.id]?.names || [],
+		votersCount: votersMetaMap.value[v.id]?.count || 0
+	}))
+	return (SHOW_DEV_MOCK_VOTINGS ? mockActiveVotings : []).concat(mapped)
 })
 
 const finishedVotings = computed(() => {
@@ -124,7 +168,12 @@ const finishedVotings = computed(() => {
 		const expired = d ? now >= d.getTime() : false
 		return v.status === 'finished' || expired
 	}).sort((a,b) => (parseDeadline(a.deadline)?.getTime()||0) - (parseDeadline(b.deadline)?.getTime()||0))
-	return (SHOW_DEV_MOCK_VOTINGS ? mockFinishedVotings : []).concat(real)
+	const mapped = real.map(v => ({
+		...v,
+		voters: votersMetaMap.value[v.id]?.names || [],
+		votersCount: votersMetaMap.value[v.id]?.count || 0
+	}))
+	return (SHOW_DEV_MOCK_VOTINGS ? mockFinishedVotings : []).concat(mapped)
 })
 
 const openVoting = (votingId) => {
