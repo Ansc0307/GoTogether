@@ -1,4 +1,4 @@
-<!-- /components/tareas/TaskList.vue -->
+<!-- components/tareas/TaskList.vue -->
 <template>
   <div class="max-w-4xl mx-auto mt-8 space-y-12">
     <!-- Pendientes -->
@@ -6,7 +6,9 @@
       <h3 class="text-xl font-bold text-gray-800 mb-4 border-b-2 border-primary/20 pb-2">
         Pendientes
       </h3>
-      <div v-if="pendientes.length === 0" class="text-gray-500">No hay tareas pendientes.</div>
+      <div v-if="pendientes.length === 0" class="text-gray-500">
+        No hay tareas pendientes.
+      </div>
 
       <div
         v-for="task in pendientes"
@@ -29,7 +31,20 @@
               :checked="false"
               @change.stop="toggleEstado(task)"
             />
-            <button @click.stop="deleteTask(task.id)" class="text-red-500 hover:text-red-700 text-xl">
+            <!-- ✏️ Editar -->
+            <button
+              @click.stop="openEdit(task)"
+              class="text-blue-500 hover:text-blue-700 text-xl"
+              title="Editar tarea"
+            >
+              ✏️
+            </button>
+            <!-- 🗑️ Eliminar -->
+            <button
+              @click.stop="deleteTask(task.id)"
+              class="text-red-500 hover:text-red-700 text-xl"
+              title="Eliminar tarea"
+            >
               🗑️
             </button>
             <span class="material-symbols-outlined text-gray-400">
@@ -38,6 +53,7 @@
           </div>
         </div>
 
+        <!-- Detalles -->
         <div
           v-if="openTaskId === task.id"
           class="px-4 pb-4 text-sm text-gray-600 bg-gray-50 border-t border-gray-200"
@@ -55,7 +71,9 @@
       <h3 class="text-xl font-bold text-gray-800 mb-4 border-b-2 border-primary/20 pb-2">
         Completadas
       </h3>
-      <div v-if="completadas.length === 0" class="text-gray-500">No hay tareas completadas.</div>
+      <div v-if="completadas.length === 0" class="text-gray-500">
+        No hay tareas completadas.
+      </div>
 
       <div
         v-for="task in completadas"
@@ -74,31 +92,55 @@
               :checked="true"
               @change="toggleEstado(task)"
             />
-            <button @click="deleteTask(task.id)" class="text-red-500 hover:text-red-700 text-xl">
+            <button
+              @click="deleteTask(task.id)"
+              class="text-red-500 hover:text-red-700 text-xl"
+            >
               🗑️
             </button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Modal de edición -->
+    <TaskForm
+      :visible="showEditForm"
+      mode="edit"
+      :task="selectedTask"
+      :tripId="tripId"
+      @close="showEditForm = false"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import { db } from "../../firebase/firebaseConfig";
-import { collection, query, where, onSnapshot, doc, deleteDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
+import TaskForm from "./TaskForm.vue";
 
 const route = useRoute();
+const tripId = ref(route.params.id);
 const tasks = ref([]);
 const openTaskId = ref(null);
 
-const tripId = ref(route.params.id);
+// Modal de edición
+const showEditForm = ref(false);
+const selectedTask = ref(null);
 
-// Esperar a que tripId tenga valor antes de suscribirse
+// 🔹 Suscribirse a las tareas del viaje
 const subscribeTasks = () => {
-  if (!tripId.value) return; // evita error si no hay id
+  if (!tripId.value) return;
 
   const q = query(collection(db, "tareas"), where("tripId", "==", tripId.value));
   return onSnapshot(q, (snapshot) => {
@@ -119,6 +161,7 @@ watch(
   { immediate: true }
 );
 
+// 🔹 Acciones
 const deleteTask = async (id) => {
   await deleteDoc(doc(db, "tareas", id));
 };
@@ -133,9 +176,17 @@ const toggleOpen = (id) => {
   openTaskId.value = openTaskId.value === id ? null : id;
 };
 
-const pendientes = computed(() => tasks.value.filter(t => t.estado === "pendiente"));
-const completadas = computed(() => tasks.value.filter(t => t.estado === "completada"));
+// 🔹 Abrir modal de edición
+const openEdit = (task) => {
+  selectedTask.value = task;
+  showEditForm.value = true;
+};
 
+// 🔹 Computeds
+const pendientes = computed(() => tasks.value.filter((t) => t.estado === "pendiente"));
+const completadas = computed(() => tasks.value.filter((t) => t.estado === "completada"));
+
+// 🔹 Formatear fecha
 const formatFecha = (timestamp) => {
   if (!timestamp || !timestamp.toDate) return "";
   const date = timestamp.toDate();
@@ -144,14 +195,14 @@ const formatFecha = (timestamp) => {
     month: "short",
     year: "numeric",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   });
 };
 </script>
 
 <style scoped>
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
+  font-family: "Material Symbols Outlined";
   font-size: 20px;
   user-select: none;
 }
