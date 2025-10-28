@@ -54,6 +54,18 @@ const routes = [
     }
   },
   {
+    path: '/voting/create',
+    name: 'CreateVoting',
+    component: () => import('../views/voting/CreateVoting.vue'),
+    meta: { requiresAuth: true, section: 'voting' }
+  },
+  {
+    path: '/voting/:id',
+    name: 'VotingDetail',
+    component: () => import('../views/voting/VotingDetail.vue'),
+    meta: { requiresAuth: true, section: 'voting' },
+  },
+  {
     path: '/tareas',
     name: 'Tareas',
     component: TasksView,
