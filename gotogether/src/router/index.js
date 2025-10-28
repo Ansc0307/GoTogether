@@ -104,6 +104,11 @@ const routes = [
         path: "mapa",
         name: "trip-mapa",
         component: MapasView,
+      },
+      {
+      path:"votaciones",
+      name:"trip-votaciones",
+      component: VotingList,
       }
       // futuros tabs:
       // { path: "itinerario", component: ItinerarioView },
