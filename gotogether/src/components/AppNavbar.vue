@@ -137,7 +137,7 @@ const navigationItems = computed(() => {
     return [
       { key: 'overview', label: 'Resumen', href: '/' },
       //{ key: 'chat', label: 'Chat', href: '/chat' },
-      { key: 'voting', label: 'Votaciones', href: '/voting' },
+      //{ key: 'voting', label: 'Votaciones', href: '/voting' },
       //{ key: 'expenses', label: 'Gastos', href: '/presupuesto' },
       //{ key: 'tasks', label: 'Tareas', href: '/tareas' },
       { key: 'itinerary', label: 'Itinerario', href: '/itinerario' },
@@ -152,7 +152,7 @@ const navigationItems = computed(() => {
     { key: 'welcome', label: 'Inicio', href: '/welcome' },
     { key: 'trips', label: 'Mis Viajes', href: '/misviajes' },
     //{ key: 'chat', label: 'Chat', href: '/chat' },
-    { key: 'voting', label: 'Votaciones', href: '/voting' },
+    //{ key: 'voting', label: 'Votaciones', href: '/voting' },
     //{ key: 'expenses', label: 'Presupuesto', href: '/presupuesto' },
     //{ key: 'tasks', label: 'Tareas', href: '/tareas' },
     { key: 'itinerary', label: 'Itinerario', href: '/itinerario' },

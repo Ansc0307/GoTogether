@@ -1,3 +1,4 @@
+<!-- /components/voting/VoringCard.vue -->
 <template>
   <div class="voting-card" :class="{ 'finished': !isActive }">
     <div class="card-layout">

@@ -67,9 +67,9 @@ const routes = [
 
   //rutas para viajes
   { path: '/misviajes', name: 'Trips', component: TripsView, meta: { requiresAuth: true, section: 'trips' } },
-  //{ path: "/trip/:id", name: "TripDashboard", component: TripDashboard , meta: { requiresAuth: true, section: 'trips' }},
+  //{ path: "/trips/:id", name: "TripDashboard", component: TripDashboard , meta: { requiresAuth: true, section: 'trips' }},
   {
-    path: "/trips/:id",
+  path: "/trips/:id",
     name: "trip-dashboard",
     component: TripDashboard,
     props: true,
@@ -99,6 +99,16 @@ const routes = [
         path: "votaciones",
         name: "trip-votaciones",
         component: VotingList,
+      },
+      {
+        path: "votaciones/create",
+        name: "trip-votaciones-create",
+        component: () => import('../views/voting/CreateVoting.vue'),
+      },
+      {
+        path: "votaciones/:votingId",
+        name: "trip-votaciones-detail",
+        component: () => import('../views/voting/VotingDetail.vue'),
       }
     ],
   },

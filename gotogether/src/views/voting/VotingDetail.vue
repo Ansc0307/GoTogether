@@ -1,21 +1,25 @@
+<!-- /views/voting/VotingDetail.vue -->
 <template>
   <div class="voting-detail">
     <div class="container">
       <header class="header">
         <button class="back-btn" @click="goBack" aria-label="Volver">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
           <span>Volver</span>
         </button>
         <h1 class="title">Detalle de Votación</h1>
       </header>
 
+      <!-- Votación cargada -->
       <section class="card" v-if="voting">
         <h2 class="question">{{ voting.title || 'Título de la votación' }}</h2>
 
         <img v-if="voting.image" class="cover" :src="voting.image" alt="Imagen de la votación" />
 
         <div class="content">
-          <!-- Opciones disponibles mientras no esté cerrada -->
+          <!-- Opciones -->
           <div v-if="!isClosed" class="options">
             <button
               v-for="(opt, idx) in (voting.options || [])"
@@ -26,7 +30,9 @@
               :disabled="isClosed"
             >
               <span class="opt-check" v-if="selectedOption === opt" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
               </span>
               <span>{{ opt }}</span>
             </button>
@@ -35,7 +41,7 @@
             </p>
           </div>
 
-          <!-- Resultados: en dev se muestran en paralelo; si está cerrada, solo verás esto -->
+          <!-- Resultados -->
           <div v-if="displayResults" class="results">
             <div v-for="(value, label) in resultsForDisplay" :key="label" class="result-row">
               <div class="result-label">{{ label }}</div>
@@ -53,18 +59,27 @@
               <span v-if="votersList.length"> • {{ votersList.length }} votantes</span>
             </div>
             <button v-if="votersList.length" class="secondary" @click="openVotersModal">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
               <span>Quiénes votaron</span>
             </button>
             <button v-if="displayResults" class="primary" @click="shareResults">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/>
+                <polyline points="16 6 12 2 8 6"/>
+                <line x1="12" y1="2" x2="12" y2="15"/>
+              </svg>
               <span>Compartir resultados</span>
             </button>
           </footer>
         </div>
       </section>
 
-      <!-- Estados: cargando / no encontrado -->
+      <!-- Cargando o no encontrada -->
       <section v-else class="card placeholder">
         <div class="placeholder-content">
           <div class="skeleton title"></div>
@@ -74,20 +89,23 @@
         </div>
       </section>
 
-      <!-- Toast Notification -->
+      <!-- Toast -->
       <transition name="toast-fade">
         <div v-if="toast.show" class="toast" role="status" aria-live="polite">
           {{ toast.message }}
         </div>
       </transition>
 
-      <!-- Modal: Quiénes votaron -->
+      <!-- Modal votantes -->
       <div v-if="showVotersModal" class="modal-overlay" @click.self="closeVotersModal">
         <div class="modal">
           <header class="modal-header">
             <h3 class="modal-title">Votantes ({{ votersList.length }})</h3>
             <button class="icon-btn" @click="closeVotersModal" aria-label="Cerrar">
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
             </button>
           </header>
           <div class="modal-body">
@@ -110,197 +128,49 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { registrarVoto } from '../../composables/useVoting'
-import { DEV_DEFAULT_TRIP_ID, PUBLIC_SHARE_BASE_URL } from '../../config/devConfig'
 import { db, auth } from '../../firebase/firebaseConfig'
 import { doc, onSnapshot, collection, setDoc } from 'firebase/firestore'
+import { PUBLIC_SHARE_BASE_URL } from '../../config/devConfig'
 
 const route = useRoute()
 const router = useRouter()
 
-// Estado: documento en tiempo real
+// Params
+const tripId = computed(() => route.params.id)
+const votingId = computed(() => route.params.votingId)
+
+// Estado
 const voting = ref(null)
-// resultados agregados (porcentaje) para votaciones reales
 const aggResults = ref(null)
-const votersList = ref([]) // [{id, name, photo}]
-const isMock = computed(() => String(route.params.id).startsWith('mock-'))
-const displayResults = computed(() => {
-  if (!voting.value) return false
-  if (isMock.value) return !!voting.value.results
-  // Mostrar resultados cuando la votación esté cerrada (por deadline o status)
-  return !!aggResults.value && isClosed.value
-})
+const votersList = ref([])
 const selectedOption = ref(null)
 const justVoted = ref('')
+const showVotersModal = ref(false)
+const toast = ref({ show: false, message: '' })
 
-// Cerrada si: resultados presentes, status finished o deadline pasado
+const isMock = computed(() => String(votingId.value).startsWith('mock-'))
 const isClosed = computed(() => {
   const v = voting.value
   if (!v) return false
   if (v.results) return true
   if (v.status === 'finished') return true
-  try {
-    const dl = v.deadline
-    if (!dl) return false
-    let d
-    if (typeof dl === 'string' || typeof dl === 'number') d = new Date(dl)
-    else if (dl?.toDate) d = dl.toDate()
-    else if (dl?.seconds != null) d = new Date(dl.seconds * 1000)
-    else d = dl
-    return Date.now() >= d.getTime()
-  } catch { return false }
+  const dl = v.deadline
+  if (!dl) return false
+  let date
+  if (typeof dl === 'string' || typeof dl === 'number') date = new Date(dl)
+  else if (dl?.toDate) date = dl.toDate()
+  else if (dl?.seconds != null) date = new Date(dl.seconds * 1000)
+  else date = dl
+  return Date.now() >= date.getTime()
 })
 
-const goBack = () => router.back()
-
-// Toast
-const toast = ref({ show: false, message: '' })
-const showToast = (message) => {
-  toast.value = { show: true, message }
-  window.clearTimeout(showToast._t)
-  showToast._t = window.setTimeout(() => (toast.value.show = false), 2500)
-}
-
-const vote = async (option) => {
-  try {
-    const votacionId = String(route.params.id)
-    if (isMock.value) {
-      selectedOption.value = option
-      showToast('Demo: el voto no se guarda')
-    } else {
-      await registrarVoto(DEV_DEFAULT_TRIP_ID, votacionId, option)
-      showToast(selectedOption.value && selectedOption.value !== option ? `Voto actualizado: ${option}` : `Voto registrado: ${option}`)
-      selectedOption.value = option
-    }
-    // Animación sutil al votar
-    justVoted.value = option
-    window.setTimeout(() => { if (justVoted.value === option) justVoted.value = '' }, 700)
-  } catch (e) {
-    console.error(e)
-    showToast(e?.message || 'Error al registrar voto')
-  }
-}
-
-const shareResults = () => {
-  try {
-    const base = (PUBLIC_SHARE_BASE_URL || '').trim()
-    const path = route.fullPath || window.location.pathname
-    const url = base ? `${base.replace(/\/$/, '')}${path}` : path
-    navigator.clipboard?.writeText(url)
-    showToast('Enlace de resultados copiado')
-  } catch {
-    showToast('No se pudo copiar el enlace')
-  }
-}
-
-const formatDeadline = (date) => {
-  try {
-    let d
-    if (typeof date === 'string' || typeof date === 'number') d = new Date(date)
-    else if (date?.toDate) d = date.toDate()
-    else if (date?.seconds != null) d = new Date(date.seconds * 1000)
-    else d = date
-    return d.toLocaleString('es-BO', {
-      day: '2-digit', month: '2-digit', year: 'numeric',
-      hour: '2-digit', minute: '2-digit', hour12: false
-    })
-  } catch { return '' }
-}
-
-// Suscripción al documento
-let unsubDoc
-let unsubVotes
-onMounted(() => {
-  const votacionId = String(route.params.id)
-
-  // Si es mock, leer desde sessionStorage y salir
-  if (isMock.value) {
-    try {
-      const raw = sessionStorage.getItem('mockVoting')
-      if (raw) voting.value = JSON.parse(raw)
-    } catch {}
-    return
-  }
-
-  const ref = doc(db, 'trips', DEV_DEFAULT_TRIP_ID, 'votaciones', votacionId)
-  unsubDoc = onSnapshot(ref, (snap) => {
-    voting.value = snap.exists() ? { id: snap.id, ...snap.data() } : null
-  }, (err) => {
-    console.error('Voting detail snapshot error:', err)
-  })
-
-  // Suscribir el voto del usuario para preseleccionar si ya votó
-  try {
-    const user = auth.currentUser
-    if (user) {
-      const myVoteRef = doc(db, 'trips', DEV_DEFAULT_TRIP_ID, 'votaciones', votacionId, 'votes', user.uid)
-      onSnapshot(myVoteRef, (snap) => {
-        if (snap.exists()) {
-          const data = snap.data()
-          if (data?.option) selectedOption.value = data.option
-        }
-      })
-    }
-  } catch (e) {
-    console.warn('No se pudo suscribir al voto del usuario:', e)
-  }
-
-  // Suscripción a resultados agregados (conteo de votos por opción)
-  try {
-    const votesRef = collection(db, 'trips', DEV_DEFAULT_TRIP_ID, 'votaciones', votacionId, 'votes')
-    unsubVotes = onSnapshot(votesRef, (snap) => {
-      const counts = Object.create(null)
-      let total = 0
-      const voters = []
-      snap.forEach(d => {
-        const data = d.data()
-        const opt = data?.option
-        if (opt) {
-          counts[opt] = (counts[opt] || 0) + 1
-          total += 1
-        }
-        // Capturar identidad básica del votante para mostrar
-        const name = data?.userName || data?.userEmail || d.id
-        const photo = data?.userPhotoURL || null
-        voters.push({ id: d.id, name, photo })
-
-        // Backfill: si es el usuario actual y faltan campos, completar (merge)
-        try {
-          const u = auth.currentUser
-          if (u && d.id === u.uid && !data?.userName && !data?.userEmail) {
-            setDoc(d.ref, {
-              userName: u.displayName || null,
-              userEmail: u.email || null,
-              userPhotoURL: u.photoURL || null,
-            }, { merge: true })
-          }
-        } catch {}
-      })
-      // Guardar lista completa y mantener compatibilidad con UI previa
-      votersList.value = voters
-      if (voting.value) voting.value.voters = voters.map(v => v.name)
-      if (!voting.value?.options?.length || total === 0) {
-        aggResults.value = null
-        return
-      }
-      const res = {}
-      const options = voting.value.options
-      options.forEach(opt => {
-        const pct = total ? Math.round(((counts[opt] || 0) * 100) / total) : 0
-        res[opt] = pct
-      })
-      aggResults.value = res
-    })
-  } catch (e) {
-    console.warn('No se pudo suscribir a votos para resultados:', e)
-  }
-})
-
-onBeforeUnmount(() => {
-  if (unsubDoc) unsubDoc()
-  if (unsubVotes) unsubVotes()
+const displayResults = computed(() => {
+  if (!voting.value) return false
+  if (isMock.value) return !!voting.value.results
+  return !!aggResults.value && isClosed.value
 })
 
 const resultsForDisplay = computed(() => {
@@ -309,20 +179,120 @@ const resultsForDisplay = computed(() => {
   return aggResults.value
 })
 
-// Modal control
-const showVotersModal = ref(false)
+// Funciones
+const goBack = () => router.back()
+const showToast = (message) => {
+  toast.value = { show: true, message }
+  window.clearTimeout(showToast._t)
+  showToast._t = window.setTimeout(() => (toast.value.show = false), 2500)
+}
+const vote = async (option) => {
+  if (!tripId.value || !votingId.value) return
+  try {
+    if (isMock.value) {
+      selectedOption.value = option
+      showToast('Demo: el voto no se guarda')
+      return
+    }
+    await registrarVoto(tripId.value, votingId.value, option)
+    showToast(selectedOption.value && selectedOption.value !== option ? `Voto actualizado: ${option}` : `Voto registrado: ${option}`)
+    selectedOption.value = option
+    justVoted.value = option
+    setTimeout(() => { if (justVoted.value === option) justVoted.value = '' }, 700)
+  } catch (e) {
+    console.error(e)
+    showToast(e?.message || 'Error al registrar voto')
+  }
+}
+const shareResults = () => {
+  const base = (PUBLIC_SHARE_BASE_URL || '').trim()
+  const path = route.fullPath || window.location.pathname
+  const url = base ? `${base.replace(/\/$/, '')}${path}` : path
+  navigator.clipboard?.writeText(url)
+  showToast('Enlace de resultados copiado')
+}
 const openVotersModal = () => { if (votersList.value.length) showVotersModal.value = true }
 const closeVotersModal = () => { showVotersModal.value = false }
-
-// Utils
-const initials = (name = '') => {
-  return String(name)
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(n => n[0]?.toUpperCase())
-    .join('') || 'U'
+const initials = (name = '') => name.split(' ').filter(Boolean).slice(0,2).map(n => n[0].toUpperCase()).join('') || 'U'
+const formatDeadline = (date) => {
+  if (!date) return ''
+  let d
+  if (typeof date === 'string' || typeof date === 'number') d = new Date(date)
+  else if (date?.toDate) d = date.toDate()
+  else if (date?.seconds != null) d = new Date(date.seconds * 1000)
+  else d = date
+  return d.toLocaleString('es-BO', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute:'2-digit', hour12: false })
 }
+
+// Suscripciones
+let unsubDoc, unsubVotes
+onMounted(() => {
+  if (!tripId.value || !votingId.value) return
+
+  // Mock session
+  if (isMock.value) {
+    const raw = sessionStorage.getItem('mockVoting')
+    if (raw) voting.value = JSON.parse(raw)
+    return
+  }
+
+  // Documento votación
+  const votRef = doc(db, 'trips', tripId.value, 'votaciones', votingId.value)
+  unsubDoc = onSnapshot(votRef, (snap) => {
+    voting.value = snap.exists() ? { id: snap.id, ...snap.data() } : null
+  }, err => console.error('Voting detail snapshot error:', err))
+
+  // Voto actual del usuario
+  const user = auth.currentUser
+  if (user) {
+    const myVoteRef = doc(db, 'trips', tripId.value, 'votaciones', votingId.value, 'votes', user.uid)
+    onSnapshot(myVoteRef, snap => {
+      if (snap.exists()) selectedOption.value = snap.data()?.option || null
+    })
+  }
+
+  // Suscripción a todos los votos
+  const votesRef = collection(db, 'trips', tripId.value, 'votaciones', votingId.value, 'votes')
+  unsubVotes = onSnapshot(votesRef, snap => {
+    const counts = {}
+    const voters = []
+    let total = 0
+    snap.forEach(d => {
+      const data = d.data()
+      const opt = data?.option
+      if (opt) {
+        counts[opt] = (counts[opt] || 0) + 1
+        total++
+      }
+      const name = data?.userName || data?.userEmail || d.id
+      const photo = data?.userPhotoURL || null
+      voters.push({ id: d.id, name, photo })
+      // Backfill usuario actual
+      try {
+        if (auth.currentUser?.uid === d.id && (!data?.userName && !data?.userEmail)) {
+          setDoc(d.ref, {
+            userName: auth.currentUser.displayName || null,
+            userEmail: auth.currentUser.email || null,
+            userPhotoURL: auth.currentUser.photoURL || null
+          }, { merge: true })
+        }
+      } catch {}
+    })
+    votersList.value = voters
+    if (voting.value) voting.value.voters = voters.map(v => v.name)
+    if (!voting.value?.options?.length || total === 0) aggResults.value = null
+    else {
+      const res = {}
+      voting.value.options.forEach(opt => res[opt] = Math.round(((counts[opt] || 0) * 100) / total))
+      aggResults.value = res
+    }
+  })
+})
+
+onBeforeUnmount(() => {
+  if (unsubDoc) unsubDoc()
+  if (unsubVotes) unsubVotes()
+})
 </script>
 
 <style scoped>

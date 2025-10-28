@@ -1,3 +1,4 @@
+<!-- /views/voting/CreateVoting.vue -->
 <template>
   <div class="create-voting">
     <div class="container">
@@ -5,7 +6,7 @@
         <h1 class="title">Crear nueva votación</h1>
       </header>
 
-  <form v-if="!created" class="form" @submit.prevent="submit">
+      <form v-if="!created" class="form" @submit.prevent="submit">
         <label class="field">
           <span>Título</span>
           <input v-model="form.title" type="text" placeholder="Ej. ¿Dónde vamos el primer día?" required />
@@ -25,7 +26,10 @@
             <div v-for="(opt, idx) in form.options" :key="idx" class="option-item">
               <input v-model="form.options[idx]" type="text" :placeholder="`Opción ${idx+1}`" required />
               <button type="button" class="remove" @click="removeOption(idx)" aria-label="Eliminar opción">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
               </button>
             </div>
           </div>
@@ -42,10 +46,11 @@
         </footer>
       </form>
 
-      <!-- Confirmación bonita -->
       <section v-else class="success-card">
         <div class="icon-wrap" aria-hidden="true">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
         </div>
         <h2 class="success-title">Votación creada</h2>
         <p class="success-text">Tu votación está lista para usarse.</p>
@@ -60,11 +65,13 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { crearVotacion } from '../../composables/useVoting'
-import { DEV_DEFAULT_TRIP_ID, PUBLIC_SHARE_BASE_URL } from '../../config/devConfig'
+import { PUBLIC_SHARE_BASE_URL } from '../../config/devConfig'
 
 const router = useRouter()
+const route = useRoute()
+const tripId = route.params.id // viaje actual
 
 const form = reactive({
   title: '',
@@ -80,19 +87,20 @@ const removeOption = (idx) => {
   if (form.options.length > 2) form.options.splice(idx, 1)
 }
 
-const cancel = () => router.push('/voting')
+const cancel = () => router.push(`/trips/${tripId}/votaciones`)
 
 const submit = async () => {
   if (!form.title.trim()) return alert('El título es obligatorio')
   if (form.options.some(o => !o.trim())) return alert('Completa todas las opciones')
   try {
-    const res = await crearVotacion(DEV_DEFAULT_TRIP_ID, {
+    const res = await crearVotacion(tripId, {
       title: form.title,
       description: form.description,
       options: form.options,
       deadline: form.deadline || undefined
     })
-    const path = `/voting/${res.id}`
+    // Generar URL para compartir
+    const path = `/trips/${tripId}/votaciones/${res.id}`
     const base = (PUBLIC_SHARE_BASE_URL || '').trim()
     const url = base ? `${base.replace(/\/$/, '')}${path}` : path
     created.value = { id: res.id, url }
@@ -102,8 +110,11 @@ const submit = async () => {
   }
 }
 
-const goToList = () => router.push('/voting')
-const goToDetail = () => created.value?.id && router.push(`/voting/${created.value.id}`)
+const goToList = () => router.push(`/trips/${tripId}/votaciones`)
+const goToDetail = () => {
+  if (!created.value?.id) return
+  router.push(`/trips/${tripId}/votaciones/${created.value.id}`)
+}
 </script>
 
 <style scoped>
