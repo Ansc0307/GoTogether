@@ -41,16 +41,6 @@ const routes = [
     name: 'TestFirebase',
     component: TestFirebase
   },
-  {
-    path: '/presupuesto',
-    name: 'Presupuesto',
-    component: Presupuesto
-  },
-  {
-    path: '/presupuesto/agregar-gasto',
-    name: 'AgregarGasto',
-    component: AddCost
-  },
   
   // Rutas de votaciones
   {
@@ -77,12 +67,13 @@ const routes = [
 
   //rutas para viajes
   { path: '/misviajes', name: 'Trips', component: TripsView, meta: { requiresAuth: true, section: 'trips' } },
-  { path: "/trip/:id", name: "TripDashboard", component: TripDashboard , meta: { requiresAuth: true, section: 'trips' }},
+  //{ path: "/trip/:id", name: "TripDashboard", component: TripDashboard , meta: { requiresAuth: true, section: 'trips' }},
   {
     path: "/trips/:id",
     name: "trip-dashboard",
     component: TripDashboard,
     props: true,
+    meta: { requiresAuth: true, section: 'trips' },
     children: [
       {
         path: "tareas",
@@ -95,18 +86,20 @@ const routes = [
         component: Presupuesto,
       },
       {
+        path: "presupuesto/agregar-gasto",
+        name: "trip-agregar-gasto",
+        component: AddCost,
+      },
+      {
         path: "mapa",
         name: "trip-mapa",
         component: MapasView,
       },
       {
-      path:"votaciones",
-      name:"trip-votaciones",
-      component: VotingList,
+        path: "votaciones",
+        name: "trip-votaciones",
+        component: VotingList,
       }
-      // futuros tabs:
-      // { path: "itinerario", component: ItinerarioView },
-      // { path: "presupuesto", component: PresupuestoView },
     ],
   },
   
