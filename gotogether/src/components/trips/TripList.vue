@@ -86,6 +86,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  if (unsubscribe) unsubscribe(); // 🔌 Detiene la suscripción al desmontar el componente
+  if (unsubscribe) unsubscribe(); // Detiene la suscripción al desmontar el componente
 });
 </script>

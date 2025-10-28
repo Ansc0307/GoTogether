@@ -141,7 +141,7 @@ const navigationItems = computed(() => {
       { key: 'expenses', label: 'Gastos', href: '/presupuesto' },
       //{ key: 'tasks', label: 'Tareas', href: '/tareas' },
       { key: 'itinerary', label: 'Itinerario', href: '/itinerario' },
-      { key: 'maps', label: 'Mapas', href: '/maps' },
+      //{ key: 'maps', label: 'Mapas', href: '/maps' },
       ...(props.userRole === 'organizer' ? [
         { key: 'manage', label: 'Gestionar', href: '/manage' }
       ] : [])
@@ -156,7 +156,7 @@ const navigationItems = computed(() => {
     { key: 'expenses', label: 'Presupuesto', href: '/presupuesto' },
     //{ key: 'tasks', label: 'Tareas', href: '/tareas' },
     { key: 'itinerary', label: 'Itinerario', href: '/itinerario' },
-    { key: 'maps', label: 'Mapas', href: '/maps' }
+    //{ key: 'maps', label: 'Mapas', href: '/maps' }
   ]
 })
 

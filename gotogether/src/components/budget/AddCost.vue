@@ -1,3 +1,4 @@
+<!--/components/budget/AddCost.vue-->
 <template>
   <div class="flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display">
     <main class="flex flex-1 justify-center px-4 py-8 sm:px-6 lg:px-8">

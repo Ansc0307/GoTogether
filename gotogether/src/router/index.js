@@ -74,15 +74,6 @@ const routes = [
     component: () => import('../views/voting/VotingDetail.vue'),
     meta: { requiresAuth: true, section: 'voting' },
   },
-  {
-    path: '/tareas',
-    name: 'Tareas',
-    component: TasksView,
-    meta: {
-      requiresAuth: true,
-      section: 'tasks'
-    }
-  },
 
   //rutas para viajes
   { path: '/misviajes', name: 'Trips', component: TripsView, meta: { requiresAuth: true, section: 'trips' } },
@@ -119,16 +110,6 @@ const routes = [
     ],
   },
   
-  //ruta mapas
-  {
-    path: '/maps',
-    name: 'Mapas',
-    component: MapasView,
-    meta: {
-      requiresAuth: true,
-      section: 'maps'
-    }
-  },
   //rutas de autenticación
   { path: '/login', name: 'Login', component: LoginView, meta: { requiresGuest: true } },
   { path: '/register', name: 'Register', component: RegisterView, meta: { requiresGuest: true } },

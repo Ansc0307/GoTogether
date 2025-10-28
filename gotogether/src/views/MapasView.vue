@@ -178,9 +178,14 @@ import { useGeocoding } from '../composables/useGeocoding'
 import MapboxMap from '../components/mapas/MapboxMap.vue'
 import AddPointModal from '../components/mapas/AddPointModal.vue'
 import MapboxGeocoder from '../components/mapas/MapboxGeocoder.vue'
+import { useRoute } from 'vue-router'
+
+//esto para tener el id del viaje
+const route = useRoute()
+const viajeId = route.params.id
 
 // Composable para manejo de datos
-const { points, loading, error, agregarPunto, eliminarPunto } = useMap()
+const { points, loading, error, agregarPunto, eliminarPunto } = useMap(viajeId)
 const { reverseGeocode } = useGeocoding()
 
 // Estado local
@@ -295,7 +300,10 @@ const closeModal = () => {
 
 const handleAddPoint = async (pointData) => {
   try {
-    await agregarPunto(pointData)
+    await agregarPunto({
+      ...pointData,
+      viajeId // 👈 añadimos el id del viaje actual
+    })
     console.log('Punto agregado exitosamente')
     
     // Limpiar marcador temporal del mapa
