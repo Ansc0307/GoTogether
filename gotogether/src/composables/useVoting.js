@@ -2,7 +2,7 @@
 // Crea y registra votos dentro de trips/{tripId}/votaciones
 
 import { auth, db } from '../firebase/firebaseConfig'
-import { USE_DEV_FAKE_AUTH, DEV_DEFAULT_USER, DEV_DEFAULT_TRIP_ID } from '../config/devConfig'
+import { DEV_DEFAULT_TRIP_ID } from '../config/devConfig'
 import {
   addDoc,
   collection,
@@ -41,12 +41,8 @@ export async function crearVotacion(tripId, data) {
   const effectiveTripId = tripId || DEV_DEFAULT_TRIP_ID
   if (!effectiveTripId) throw new Error('tripId es requerido')
 
-  // AUTENTICACIÓN:
-  // En producción, elimina el fallback y exige auth.currentUser obligatoriamente.
-  // const user = auth.currentUser
-  // if (!user) throw new Error('Usuario no autenticado')
-  // En modo dev, usamos un usuario falso si no hay sesión real:
-  const user = auth.currentUser || (USE_DEV_FAKE_AUTH ? DEV_DEFAULT_USER : null)
+  // AUTENTICACIÓN: exige sesión real
+  const user = auth.currentUser
   if (!user) throw new Error('Usuario no autenticado')
 
   const { title, description = '', options, deadline } = data || {}
@@ -77,16 +73,17 @@ export async function registrarVoto(tripId, votacionId, option) {
   const effectiveTripId = tripId || DEV_DEFAULT_TRIP_ID
   if (!effectiveTripId) throw new Error('tripId es requerido')
   if (!votacionId) throw new Error('votacionId es requerido')
-  // AUTENTICACIÓN: misma nota que arriba.
-  // const user = auth.currentUser
-  // if (!user) throw new Error('Usuario no autenticado')
-  const user = auth.currentUser || (USE_DEV_FAKE_AUTH ? DEV_DEFAULT_USER : null)
+  // AUTENTICACIÓN: exige sesión real
+  const user = auth.currentUser
   if (!user) throw new Error('Usuario no autenticado')
   if (!option || !String(option).trim()) throw new Error('La opción es obligatoria')
 
   const voteRef = doc(db, 'trips', String(effectiveTripId), 'votaciones', String(votacionId), 'votes', user.uid)
   const voteData = {
     userId: user.uid,
+    userName: user.displayName || null,
+    userEmail: user.email || null,
+    userPhotoURL: user.photoURL || null,
     option: String(option).trim(),
     createdAt: serverTimestamp()
   }

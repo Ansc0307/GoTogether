@@ -85,11 +85,37 @@ const router = createRouter({
   routes
 })
 
-// Guard para rutas que requieren autenticación
+// Guard global: protege rutas con requiresAuth y evita que usuarios logueados visiten rutas de invitado
+let authReady = false
+let currentUser = null
+const auth = getAuth()
+onAuthStateChanged(auth, (u) => {
+  currentUser = u
+  authReady = true
+})
+
 router.beforeEach((to, from, next) => {
-  // Por ahora permitir todas las rutas
-  // Aquí irá la lógica de autenticación cuando esté lista
-  next()
+  const proceed = () => {
+    if (to.meta?.requiresAuth && !currentUser) {
+      return next({ name: 'Login', query: { redirect: to.fullPath } })
+    }
+    if (to.meta?.requiresGuest && currentUser) {
+      // Redirigir a una sección interna; votaciones por defecto
+      return next({ name: 'VotingList' })
+    }
+    next()
+  }
+
+  if (!authReady) {
+    const unreg = onAuthStateChanged(auth, () => {
+      unreg()
+      authReady = true
+      currentUser = auth.currentUser
+      proceed()
+    })
+  } else {
+    proceed()
+  }
 })
 
 export default router
