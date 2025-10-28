@@ -45,6 +45,7 @@
               <div class="percent">{{ value }}%</div>
             </div>
           </div>
+          <p v-else-if="isClosed" class="no-results">Aún no hay votos para mostrar.</p>
 
           <footer class="footer">
             <div class="meta">
@@ -83,7 +84,7 @@
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { registrarVoto } from '../../composables/useVoting'
-import { DEV_DEFAULT_TRIP_ID, USE_DEV_FAKE_AUTH, DEV_DEFAULT_USER, PUBLIC_SHARE_BASE_URL } from '../../config/devConfig'
+import { DEV_DEFAULT_TRIP_ID, PUBLIC_SHARE_BASE_URL } from '../../config/devConfig'
 import { db, auth } from '../../firebase/firebaseConfig'
 import { doc, onSnapshot, collection } from 'firebase/firestore'
 
@@ -98,8 +99,8 @@ const isMock = computed(() => String(route.params.id).startsWith('mock-'))
 const displayResults = computed(() => {
   if (!voting.value) return false
   if (isMock.value) return !!voting.value.results
-  // En dev, mostramos resultados (agregados) aunque no esté finished
-  return !!aggResults.value && (voting.value.status === 'finished' || USE_DEV_FAKE_AUTH)
+  // Mostrar resultados cuando la votación esté cerrada (por deadline o status)
+  return !!aggResults.value && isClosed.value
 })
 const selectedOption = ref(null)
 const justVoted = ref('')
@@ -202,7 +203,7 @@ onMounted(() => {
 
   // Suscribir el voto del usuario para preseleccionar si ya votó
   try {
-    const user = auth.currentUser || (USE_DEV_FAKE_AUTH ? DEV_DEFAULT_USER : null)
+    const user = auth.currentUser
     if (user) {
       const myVoteRef = doc(db, 'trips', DEV_DEFAULT_TRIP_ID, 'votaciones', votacionId, 'votes', user.uid)
       onSnapshot(myVoteRef, (snap) => {
@@ -222,13 +223,23 @@ onMounted(() => {
     unsubVotes = onSnapshot(votesRef, (snap) => {
       const counts = Object.create(null)
       let total = 0
+      const voters = []
       snap.forEach(d => {
-        const opt = d.data()?.option
+        const data = d.data()
+        const opt = data?.option
         if (opt) {
           counts[opt] = (counts[opt] || 0) + 1
           total += 1
         }
+        // Capturar identidad básica del votante para mostrar
+        const name = data?.userName || data?.userEmail || d.id
+        const photo = data?.userPhotoURL || null
+        voters.push({ id: d.id, name, photo })
       })
+      // Guardar tamaño de votantes en el objeto local si existe
+      if (voting.value) {
+        voting.value.voters = voters.map(v => v.name)
+      }
       if (!voting.value?.options?.length || total === 0) {
         aggResults.value = null
         return
