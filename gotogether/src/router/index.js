@@ -16,6 +16,7 @@ import TasksView from '../views/TasksView.vue'
 // viajes (RF5)
 import TripsView from '../views/trips/TripsView.vue'
 import TripDashboard from "../views/trips/TripDashboard.vue";
+import TripDetailView from '../views/trips/TripDetailView.vue'
 // mapas
 import MapasView from '../views/MapasView.vue'
 //importaciones de auth
@@ -83,6 +84,22 @@ const routes = [
   //rutas para viajes
   { path: '/misviajes', name: 'Trips', component: TripsView, meta: { requiresAuth: true, section: 'trips' } },
   { path: "/trip/:id", name: "TripDashboard", component: TripDashboard , meta: { requiresAuth: true, section: 'trips' }},
+  {
+    path: "/trips/:id",
+    name: "trip-dashboard",
+    component: TripDashboard,
+    props: true,
+    children: [
+      {
+        path: "tareas",
+        name: "trip-tareas",
+        component: TasksView,
+      },
+      // futuros tabs:
+      // { path: "itinerario", component: ItinerarioView },
+      // { path: "presupuesto", component: PresupuestoView },
+    ],
+  },
   
   //ruta mapas
   {

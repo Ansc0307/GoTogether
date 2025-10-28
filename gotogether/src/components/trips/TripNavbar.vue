@@ -1,48 +1,42 @@
 <!-- /components/trips/TripNavbar.vue -->
 <template>
-  <nav
-    class="mt-6 border-b border-gray-200 overflow-x-auto scrollbar-hide"
-  >
-    <ul
-      class="flex gap-6 text-gray-600 font-medium min-w-max px-2"
-    >
+  <nav class="mt-6 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+    <ul class="flex gap-6 text-gray-600 font-medium min-w-max px-2">
       <li>
-        <button @click="alertTab('tareas')" class="hover:text-primary whitespace-nowrap">
+        <RouterLink
+          :to="`/trips/${tripId}/tareas`"
+          class="hover:text-primary"
+          active-class="text-primary border-b-2 border-primary pb-1"
+        >
           Tareas
-        </button>
+        </RouterLink>
       </li>
       <li>
-        <button @click="alertTab('itinerario')" class="hover:text-primary whitespace-nowrap">
+        <RouterLink
+          :to="`/trips/${tripId}/itinerario`"
+          class="hover:text-primary"
+          active-class="text-primary border-b-2 border-primary pb-1"
+        >
           Itinerario
-        </button>
+        </RouterLink>
       </li>
       <li>
-        <button @click="alertTab('presupuesto')" class="hover:text-primary whitespace-nowrap">
+        <RouterLink
+          :to="`/trips/${tripId}/presupuesto`"
+          class="hover:text-primary"
+          active-class="text-primary border-b-2 border-primary pb-1"
+        >
           Presupuesto
-        </button>
-      </li>
-      <li>
-        <button @click="alertTab('votaciones')" class="hover:text-primary whitespace-nowrap">
-          Votaciones
-        </button>
-      </li>
-      <li>
-        <button @click="alertTab('mapa')" class="hover:text-primary whitespace-nowrap">
-          Mapa
-        </button>
+        </RouterLink>
       </li>
     </ul>
   </nav>
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   tripId: String,
 });
-
-const alertTab = (tab) => {
-  alert(`Se presionó la pestaña ${tab} del viaje con id: ${props.tripId}`);
-};
 </script>
 
 <style scoped>

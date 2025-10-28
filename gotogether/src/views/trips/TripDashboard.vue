@@ -10,23 +10,15 @@
     </div>
 
     <div v-else>
-      <!-- Cabecera del viaje -->
+      <!-- Cabecera -->
       <TripHeader :trip="trip" />
 
       <!-- Navbar -->
       <TripNavbar :tripId="trip.id" />
 
-      <!-- Contenido principal -->
+      <!-- 👇 Aquí cambian las secciones -->
       <div class="mt-8">
-        <h2 class="text-2xl font-semibold mb-4 text-gray-800">
-          Itinerario del Viaje
-        </h2>
-
-        <div class="bg-white rounded-lg shadow p-6">
-          <p class="text-gray-600">
-            Aquí aparecerá el itinerario con los eventos y actividades del viaje.
-          </p>
-        </div>
+        <router-view />
       </div>
     </div>
   </div>
@@ -53,14 +45,12 @@ const fetchTrip = async () => {
 
     if (tripSnap.exists()) {
       trip.value = { id: tripSnap.id, ...tripSnap.data() };
-
-      // 🔧 Si aún no hay campo members, lo inicializamos con un "default user"
       if (!trip.value.members) {
         trip.value.members = [
           {
             id: "default-user",
             name: "Usuario Explorador",
-            avatar: "/assets/default-avatar.png", // 👈 Usa tu ícono genérico
+            avatar: "/assets/default-avatar.png",
           },
         ];
       }

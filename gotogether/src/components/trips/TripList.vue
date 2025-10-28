@@ -38,7 +38,7 @@
       :key="trip.id"
       :trip="trip"
       class="cursor-pointer"
-      @click="$router.push(`/trip/${trip.id}`)"
+      @click="$router.push(`/trips/${trip.id}/tareas`)"
     />
   </div>
 </template>
