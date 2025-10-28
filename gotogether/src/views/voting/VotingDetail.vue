@@ -50,8 +50,12 @@
           <footer class="footer">
             <div class="meta">
               <span v-if="voting.deadline">Cierra: {{ formatDeadline(voting.deadline) }}</span>
-              <span v-if="voting.voters && voting.voters.length"> • {{ voting.voters.length }} votantes</span>
+              <span v-if="votersList.length"> • {{ votersList.length }} votantes</span>
             </div>
+            <button v-if="votersList.length" class="secondary" @click="openVotersModal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              <span>Quiénes votaron</span>
+            </button>
             <button v-if="displayResults" class="primary" @click="shareResults">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
               <span>Compartir resultados</span>
@@ -76,6 +80,31 @@
           {{ toast.message }}
         </div>
       </transition>
+
+      <!-- Modal: Quiénes votaron -->
+      <div v-if="showVotersModal" class="modal-overlay" @click.self="closeVotersModal">
+        <div class="modal">
+          <header class="modal-header">
+            <h3 class="modal-title">Votantes ({{ votersList.length }})</h3>
+            <button class="icon-btn" @click="closeVotersModal" aria-label="Cerrar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </header>
+          <div class="modal-body">
+            <ul class="voters-list">
+              <li v-for="v in votersList" :key="v.id" class="voter-item">
+                <img v-if="v.photo" :src="v.photo" class="avatar" :alt="v.name" />
+                <div v-else class="avatar initials">{{ initials(v.name) }}</div>
+                <span class="name">{{ v.name }}</span>
+              </li>
+            </ul>
+            <p v-if="!votersList.length" class="empty">Aún no hay votantes.</p>
+          </div>
+          <footer class="modal-footer">
+            <button class="primary" @click="closeVotersModal">Cerrar</button>
+          </footer>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -86,7 +115,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { registrarVoto } from '../../composables/useVoting'
 import { DEV_DEFAULT_TRIP_ID, PUBLIC_SHARE_BASE_URL } from '../../config/devConfig'
 import { db, auth } from '../../firebase/firebaseConfig'
-import { doc, onSnapshot, collection } from 'firebase/firestore'
+import { doc, onSnapshot, collection, setDoc } from 'firebase/firestore'
 
 const route = useRoute()
 const router = useRouter()
@@ -95,6 +124,7 @@ const router = useRouter()
 const voting = ref(null)
 // resultados agregados (porcentaje) para votaciones reales
 const aggResults = ref(null)
+const votersList = ref([]) // [{id, name, photo}]
 const isMock = computed(() => String(route.params.id).startsWith('mock-'))
 const displayResults = computed(() => {
   if (!voting.value) return false
@@ -235,11 +265,22 @@ onMounted(() => {
         const name = data?.userName || data?.userEmail || d.id
         const photo = data?.userPhotoURL || null
         voters.push({ id: d.id, name, photo })
+
+        // Backfill: si es el usuario actual y faltan campos, completar (merge)
+        try {
+          const u = auth.currentUser
+          if (u && d.id === u.uid && !data?.userName && !data?.userEmail) {
+            setDoc(d.ref, {
+              userName: u.displayName || null,
+              userEmail: u.email || null,
+              userPhotoURL: u.photoURL || null,
+            }, { merge: true })
+          }
+        } catch {}
       })
-      // Guardar tamaño de votantes en el objeto local si existe
-      if (voting.value) {
-        voting.value.voters = voters.map(v => v.name)
-      }
+      // Guardar lista completa y mantener compatibilidad con UI previa
+      votersList.value = voters
+      if (voting.value) voting.value.voters = voters.map(v => v.name)
       if (!voting.value?.options?.length || total === 0) {
         aggResults.value = null
         return
@@ -267,6 +308,21 @@ const resultsForDisplay = computed(() => {
   if (isMock.value) return voting.value.results || null
   return aggResults.value
 })
+
+// Modal control
+const showVotersModal = ref(false)
+const openVotersModal = () => { if (votersList.value.length) showVotersModal.value = true }
+const closeVotersModal = () => { showVotersModal.value = false }
+
+// Utils
+const initials = (name = '') => {
+  return String(name)
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(n => n[0]?.toUpperCase())
+    .join('') || 'U'
+}
 </script>
 
 <style scoped>
@@ -302,6 +358,8 @@ const resultsForDisplay = computed(() => {
 .meta { color:#475569; font-size:.875rem }
 .primary { display:flex; align-items:center; gap:.5rem; background:#2563eb; color:#fff; border:none; padding:.625rem .9rem; border-radius:.5rem; cursor:pointer; }
 .primary:hover { background:#1d4ed8 }
+.secondary { display:flex; align-items:center; gap:.5rem; background:#f1f5f9; color:#334155; border:1px solid #e2e8f0; padding:.625rem .9rem; border-radius:.5rem; cursor:pointer; }
+.secondary:hover { background:#e2e8f0 }
 
 /* Toast */
 .toast { position: fixed; right: 16px; bottom: 16px; background: #0f172a; color:#fff; padding:.6rem .8rem; border-radius:.5rem; box-shadow: 0 8px 16px rgba(0,0,0,.2); font-size:.9rem }
@@ -321,4 +379,21 @@ const resultsForDisplay = computed(() => {
 @media (min-width: 640px) {
   .options { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
+
+/* Modal styles */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; z-index:1000 }
+.modal { background:#fff; border-radius:.75rem; border:1px solid #e5e7eb; width:100%; max-width:520px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,.25) }
+.modal-header { display:flex; align-items:center; justify-content:space-between; padding:1rem 1rem; border-bottom:1px solid #e5e7eb }
+.modal-title { margin:0; font-size:1.1rem; font-weight:800; color:#0f172a }
+.icon-btn { background:#f8fafc; border:1px solid #e5e7eb; border-radius:.5rem; width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer }
+.icon-btn:hover { background:#f1f5f9 }
+.modal-body { padding:1rem }
+.voters-list { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.5rem; max-height:320px; overflow:auto }
+.voter-item { display:flex; align-items:center; gap:.75rem; padding:.5rem; border-radius:.5rem }
+.voter-item:hover { background:#f8fafc }
+.avatar { width:32px; height:32px; border-radius:999px; object-fit:cover; border:1px solid #e5e7eb }
+.avatar.initials { display:inline-flex; align-items:center; justify-content:center; background:#dbeafe; color:#1e3a8a; font-weight:800 }
+.name { color:#0f172a; font-weight:600 }
+.empty { color:#64748b; font-size:.9rem; text-align:center; padding:1rem 0 }
+.modal-footer { padding:1rem; border-top:1px solid #e5e7eb; display:flex; justify-content:flex-end }
 </style>
