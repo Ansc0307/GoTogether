@@ -19,6 +19,14 @@
         >
           Presupuesto
         </RouterLink>
+      </li><li>
+        <RouterLink
+          :to="`/trips/${tripId}/mapa`"
+          class="hover:text-primary"
+          active-class="text-primary border-b-2 border-primary pb-1"
+        >
+          Mapa
+        </RouterLink>
       </li>
     </ul>
   </nav>

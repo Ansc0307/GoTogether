@@ -1,4 +1,5 @@
-﻿<template>
+﻿<!-- /views/MapasView.vue -->
+<template>
   <div class="mapas-view">
   <main class="flex-1 flex flex-col lg:flex-row gap-6 p-4 sm:p-6 bg-transparent min-h-[calc(100vh-6rem)]">
       <!-- Sección principal del mapa -->
