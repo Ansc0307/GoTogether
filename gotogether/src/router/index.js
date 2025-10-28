@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 // Componentes de testing/desarrollo
 import TestFirebase from '../components/TestFirebase.vue'
@@ -17,6 +18,10 @@ import TripsView from '../views/trips/TripsView.vue'
 import TripDashboard from "../views/trips/TripDashboard.vue";
 // mapas
 import MapasView from '../views/MapasView.vue'
+//importaciones de auth
+import LoginView from '../views/auth/LoginView.vue'
+import RegisterView from '../views/auth/RegisterView.vue'
+import ResetPasswordView from '../views/auth/ResetPasswordView.vue'
 
 const routes = [
   // Ruta por defecto - Home público
@@ -88,7 +93,11 @@ const routes = [
       requiresAuth: true,
       section: 'maps'
     }
-  }
+  },
+  //rutas de autenticación
+  { path: '/login', name: 'Login', component: LoginView, meta: { requiresGuest: true } },
+  { path: '/register', name: 'Register', component: RegisterView, meta: { requiresGuest: true } },
+  { path: '/reset-password', name: 'ResetPassword', component: ResetPasswordView, meta: { requiresGuest: true } },
 ]
 
 const router = createRouter({
