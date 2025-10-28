@@ -104,6 +104,9 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import logoImg from '../assets/logo.png'
+
 const props = defineProps({
 	showNavigation: { type: Boolean, default: false },
 	userInfo: { type: Object, default: null },
@@ -113,8 +116,6 @@ const props = defineProps({
   userRole: { type: String, default: '' },
   currentSection: { type: String, default: '' }
 })
-// Fallback logo from public folder
-const logoImg = '/logo.png'
 
 // Emits
 const emit = defineEmits([
@@ -148,7 +149,7 @@ const navigationItems = computed(() => {
   }
 
   return [
-    { key: 'home', label: 'Inicio', href: '/' },
+    { key: 'welcome', label: 'Inicio', href: '/welcome' },
     { key: 'trips', label: 'Mis Viajes', href: '/misviajes' },
     { key: 'chat', label: 'Chat', href: '/chat' },
     { key: 'voting', label: 'Votaciones', href: '/voting' },

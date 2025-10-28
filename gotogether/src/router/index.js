@@ -24,6 +24,9 @@ import LoginView from '../views/auth/LoginView.vue'
 import RegisterView from '../views/auth/RegisterView.vue'
 import ResetPasswordView from '../views/auth/ResetPasswordView.vue'
 
+//welcome view
+import WelcomeView from '../views/WelcomeView.vue'
+
 const routes = [
   // Ruta por defecto - Home público
   {
@@ -130,6 +133,10 @@ const routes = [
   { path: '/login', name: 'Login', component: LoginView, meta: { requiresGuest: true } },
   { path: '/register', name: 'Register', component: RegisterView, meta: { requiresGuest: true } },
   { path: '/reset-password', name: 'ResetPassword', component: ResetPasswordView, meta: { requiresGuest: true } },
+
+
+  //ruta welcome
+  { path: '/welcome', name: 'Welcome', component: WelcomeView  , meta: { requiresAuth: true }},
 ]
 
 const router = createRouter({

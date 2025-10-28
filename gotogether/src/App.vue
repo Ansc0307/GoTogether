@@ -16,7 +16,7 @@
       @logout-click="handleLogout"
     />
     
-    <main class="flex-1 px-4 md:px-10 py-6 md:py-10 flex justify-center items-start">
+    <main class="flex-1 px-4 md:px-10 py-6 md:py-5 flex justify-center items-start">
       <div class="w-full max-w-[1200px]">
         <router-view />
       </div>

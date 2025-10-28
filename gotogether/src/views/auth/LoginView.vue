@@ -106,7 +106,7 @@ const handleLogin = async () => {
  try {
     await login(email.value, password.value)
     // Redirige al dashboard o a votaciones después del éxito
-    router.push('/voting')
+    router.push('/welcome')
   } catch (error) {
     // El error se mostrará automáticamente porque `authError` es reactivo
   }
@@ -116,7 +116,7 @@ const handleGoogleLogin = async () => {
   try {
     await loginWithGoogle()
     // Redirige a la página que deseas después del éxito
-    router.push('/voting')
+    router.push('/welcome')
   } catch (error) {
     // El error se mostrará automáticamente
   }
