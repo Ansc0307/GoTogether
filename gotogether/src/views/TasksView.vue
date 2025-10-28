@@ -1,4 +1,4 @@
-<!-- views/TareasView.vue -->
+<!-- views/TasksView.vue -->
 <template>
   <div class="p-8 max-w-5xl mx-auto">
     <div class="flex justify-between items-center mb-8">
@@ -9,15 +9,21 @@
       </button>
     </div>
 
-    <TaskList />
-    <TaskForm :visible="mostrarFormulario" @close="mostrarFormulario = false" />
+    <TaskList :tripId="route.params.id" />
+    <TaskForm :visible="mostrarFormulario" :tripId="route.params.id" @close="mostrarFormulario = false" />
+
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import { useRoute } from "vue-router";
 import TaskForm from "../components/tareas/TaskForm.vue";
 import TaskList from "../components/tareas/TaskList.vue";
 
 const mostrarFormulario = ref(false);
+
+// obtener el ID desde la URL
+const route = useRoute();
+const tripId = route.params.tripId;
 </script>

@@ -54,11 +54,16 @@
               class="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 focus:ring-primary focus:border-primary transition custom-select-arrow"
             >
               <option disabled value="">Selecciona un miembro del grupo</option>
-              <option value="Ana C.">Ana C. (Tú)</option>
-              <option value="Carlos M.">Carlos M.</option>
-              <option value="Sofia R.">Sofia R.</option>
-              <option value="Javier L.">Javier L.</option>
+              <option
+                v-for="m in miembros"
+                :key="m"
+                :value="m"
+              >
+                {{ m }} 
+                <span v-if="m === userEmail"> (Tú)</span>
+              </option>
             </select>
+
           </div>
         </div>
 
@@ -77,27 +82,63 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { db } from "../../firebase/firebaseConfig";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, Timestamp, doc, getDoc } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-const props = defineProps({ visible: Boolean });
+const props = defineProps({
+  visible: Boolean,
+  tripId: String
+});
+
 const emit = defineEmits(["close"]);
 
 const nombre = ref("");
 const descripcion = ref("");
 const responsable = ref("");
+const miembros = ref([]); // <- lista de miembros
+const userEmail = ref(null); // <- usuario actual
+
+onMounted(async () => {
+  console.log("🪪 tripId recibido:", props.tripId);
+
+  try {
+    const auth = getAuth();
+    userEmail.value = auth.currentUser?.email || null;
+
+    if (!props.tripId) {
+      console.warn("⚠️ No se recibió tripId en TaskForm");
+      return;
+    }
+
+    const tripRef = doc(db, "trips", props.tripId);
+    const tripSnap = await getDoc(tripRef);
+
+    if (tripSnap.exists()) {
+      const data = tripSnap.data();
+      console.log("Datos del viaje:", data);
+      miembros.value = data.members || [];
+    } else {
+      console.warn("No existe el documento del viaje");
+    }
+  } catch (e) {
+    console.error("Error al cargar miembros:", e);
+  }
+});
 
 const addTask = async () => {
   if (!nombre.value.trim()) return alert("Falta el nombre de la tarea");
   if (!responsable.value.trim()) return alert("Selecciona un responsable");
+  if (!props.tripId) return alert("No se ha vinculado el viaje");
 
   await addDoc(collection(db, "tareas"), {
     nombre: nombre.value,
     descripcion: descripcion.value,
     responsable: responsable.value,
     estado: "pendiente",
-    fechaCreacion: Timestamp.now()
+    fechaCreacion: Timestamp.now(),
+    tripId: props.tripId,
   });
 
   nombre.value = "";

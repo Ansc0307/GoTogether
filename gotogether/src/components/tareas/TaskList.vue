@@ -1,8 +1,11 @@
+<!-- /components/tareas/TaskList.vue -->
 <template>
   <div class="max-w-4xl mx-auto mt-8 space-y-12">
     <!-- Pendientes -->
     <div>
-      <h3 class="text-xl font-bold text-gray-800 mb-4 border-b-2 border-primary/20 pb-2">Pendientes</h3>
+      <h3 class="text-xl font-bold text-gray-800 mb-4 border-b-2 border-primary/20 pb-2">
+        Pendientes
+      </h3>
       <div v-if="pendientes.length === 0" class="text-gray-500">No hay tareas pendientes.</div>
 
       <div
@@ -10,7 +13,6 @@
         :key="task.id"
         class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-4"
       >
-        <!-- Cabecera -->
         <div
           class="flex items-center justify-between gap-4 p-4 cursor-pointer hover:bg-gray-50 transition"
           @click="toggleOpen(task.id)"
@@ -21,28 +23,38 @@
           </div>
 
           <div class="flex items-center gap-3">
-            <input type="checkbox" class="h-5 w-5 text-primary" :checked="false" @change.stop="toggleEstado(task)" />
-            <button @click.stop="deleteTask(task.id)" class="text-red-500 hover:text-red-700 text-xl">🗑️</button>
+            <input
+              type="checkbox"
+              class="h-5 w-5 text-primary"
+              :checked="false"
+              @change.stop="toggleEstado(task)"
+            />
+            <button @click.stop="deleteTask(task.id)" class="text-red-500 hover:text-red-700 text-xl">
+              🗑️
+            </button>
             <span class="material-symbols-outlined text-gray-400">
               {{ openTaskId === task.id ? '-' : '+' }}
             </span>
           </div>
         </div>
 
-        <!-- Detalles (se expanden) -->
         <div
           v-if="openTaskId === task.id"
           class="px-4 pb-4 text-sm text-gray-600 bg-gray-50 border-t border-gray-200"
         >
           <p><strong>Descripción:</strong> {{ task.descripcion || 'Sin descripción' }}</p>
-          <p class="mt-2 text-xs text-gray-400">Creado: {{ formatFecha(task.fechaCreacion) }}</p>
+          <p class="mt-2 text-xs text-gray-400">
+            Creado: {{ formatFecha(task.fechaCreacion) }}
+          </p>
         </div>
       </div>
     </div>
 
     <!-- Completadas -->
     <div>
-      <h3 class="text-xl font-bold text-gray-800 mb-4 border-b-2 border-primary/20 pb-2">Completadas</h3>
+      <h3 class="text-xl font-bold text-gray-800 mb-4 border-b-2 border-primary/20 pb-2">
+        Completadas
+      </h3>
       <div v-if="completadas.length === 0" class="text-gray-500">No hay tareas completadas.</div>
 
       <div
@@ -56,8 +68,15 @@
             <p class="text-sm text-gray-500">Responsable: {{ task.responsable }}</p>
           </div>
           <div class="flex items-center gap-3">
-            <input type="checkbox" class="h-5 w-5 text-primary" :checked="true" @change="toggleEstado(task)" />
-            <button @click="deleteTask(task.id)" class="text-red-500 hover:text-red-700 text-xl">🗑️</button>
+            <input
+              type="checkbox"
+              class="h-5 w-5 text-primary"
+              :checked="true"
+              @change="toggleEstado(task)"
+            />
+            <button @click="deleteTask(task.id)" class="text-red-500 hover:text-red-700 text-xl">
+              🗑️
+            </button>
           </div>
         </div>
       </div>
@@ -66,18 +85,39 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
+import { useRoute } from "vue-router";
 import { db } from "../../firebase/firebaseConfig";
-import { collection, onSnapshot, doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc, deleteDoc, updateDoc } from "firebase/firestore";
 
+const route = useRoute();
 const tasks = ref([]);
-const openTaskId = ref(null); // <- Nueva ref para abrir/cerrar
+const openTaskId = ref(null);
 
-onMounted(() => {
-  onSnapshot(collection(db, "tareas"), (snapshot) => {
-    tasks.value = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+const tripId = ref(route.params.id);
+
+// Esperar a que tripId tenga valor antes de suscribirse
+const subscribeTasks = () => {
+  if (!tripId.value) return; // evita error si no hay id
+
+  const q = query(collection(db, "tareas"), where("tripId", "==", tripId.value));
+  return onSnapshot(q, (snapshot) => {
+    tasks.value = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   });
-});
+};
+
+let unsubscribe = null;
+
+watch(
+  () => tripId.value,
+  (newId) => {
+    if (unsubscribe) unsubscribe();
+    if (newId) {
+      unsubscribe = subscribeTasks();
+    }
+  },
+  { immediate: true }
+);
 
 const deleteTask = async (id) => {
   await deleteDoc(doc(db, "tareas", id));
