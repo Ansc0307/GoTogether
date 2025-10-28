@@ -23,8 +23,11 @@
         Planifica tu próxima aventura
       </p>
 
+      <!-- 🔹 Spinner -->
+      <LoadingSpinner v-if="cargando" message="Guardando tu viaje..." />
+
       <!-- Formulario -->
-      <form @submit.prevent="crearViaje" class="space-y-4">
+      <form v-else @submit.prevent="crearViaje" class="space-y-4">
         <!-- Nombre del viaje -->
         <div>
           <label class="block text-gray-700 font-medium mb-1">Nombre del viaje</label>
@@ -87,6 +90,47 @@
           </div>
         </div>
 
+        <!-- Invitar miembros -->
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Invita a colaboradores</label>
+          <div class="flex gap-2">
+            <input
+              v-model="correoMiembro"
+              type="email"
+              placeholder="Correo del colaborador"
+              class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+            <button
+              type="button"
+              @click="agregarMiembro"
+              class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90"
+            >
+              Agregar
+            </button>
+          </div>
+
+          <!-- 🔹 Contenedor scrollable horizontal -->
+          <div
+            v-if="nuevoViaje.miembros.length"
+            class="invite-scroll mt-3"
+          >
+            <span
+              v-for="(correo, index) in nuevoViaje.miembros"
+              :key="index"
+              class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full flex items-center gap-2 whitespace-nowrap"
+            >
+              {{ correo }}
+              <button
+                type="button"
+                @click="eliminarMiembro(index)"
+                class="text-gray-400 hover:text-red-500 text-xs"
+              >
+                ✕
+              </button>
+            </span>
+          </div>
+        </div>
+
         <!-- Botón crear -->
         <button
           type="submit"
@@ -104,12 +148,10 @@
 import { ref } from "vue";
 import { db } from "../../firebase/firebaseConfig";
 import { collection, addDoc, Timestamp } from "firebase/firestore";
-// 🔒 Para más adelante (cuando haya login):
-// import { getAuth } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+import LoadingSpinner from "../budget/LoadingSpinner.vue";
 
-const props = defineProps({
-  visible: Boolean,
-});
+const props = defineProps({ visible: Boolean });
 const emit = defineEmits(["close"]);
 
 const nuevoViaje = ref({
@@ -118,65 +160,101 @@ const nuevoViaje = ref({
   fechaInicio: "",
   fechaFin: "",
   presupuesto: "",
+  miembros: [],
 });
+
+const cargando = ref(false);
+
+const correoMiembro = ref("");
+
+const agregarMiembro = () => {
+  const correo = correoMiembro.value.trim();
+  if (correo && !nuevoViaje.value.miembros.includes(correo)) {
+    nuevoViaje.value.miembros.push(correo);
+    correoMiembro.value = "";
+  }
+};
+
+const eliminarMiembro = (index) => {
+  nuevoViaje.value.miembros.splice(index, 1);
+};
 
 const crearViaje = async () => {
   if (!nuevoViaje.value.nombre.trim()) {
     return alert("Por favor, ingresa el nombre del viaje.");
   }
 
-  try {
-    // 🔐 FUTURO: cuando haya login, se obtiene el usuario actual así:
-    // const auth = getAuth();
-    // const user = auth.currentUser;
-    // const userId = user ? user.uid : "default-user";
+  cargando.value = true; // 🔹 Muestra el spinner
 
-    const createdBy = "default-user"; // Valor temporal mientras no hay login
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    const userEmail = user?.email || "default@user.com";
+    const userName = user?.displayName || "Usuario Explorador";
 
     await addDoc(collection(db, "trips"), {
       name: nuevoViaje.value.nombre,
+      description: "",
       destination: nuevoViaje.value.destinoEspecifico || "",
       startDate: nuevoViaje.value.fechaInicio,
       endDate: nuevoViaje.value.fechaFin,
       budget: parseFloat(nuevoViaje.value.presupuesto) || 0,
-      createdBy, // ✅ se guarda el ID del usuario (por ahora "default-user")
+      createdBy: userEmail,
+      createdByName: userName,
+      members: [userEmail, ...nuevoViaje.value.miembros],
       createdAt: Timestamp.now(),
     });
 
-    // cerrar el form y resetear campos
+    // Simulación de pequeña espera para UX
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    alert("¡Viaje creado exitosamente!");
+    emit("close");
+
+    // Reset
     nuevoViaje.value = {
       nombre: "",
       destinoEspecifico: "",
       fechaInicio: "",
       fechaFin: "",
       presupuesto: "",
+      miembros: [],
     };
-
-    emit("close");
-
-    alert("¡Viaje creado exitosamente!");
-
   } catch (error) {
     console.error("Error al crear el viaje:", error);
     alert("Hubo un error al guardar el viaje.");
+  } finally {
+    cargando.value = false; // 🔹 Oculta el spinner
   }
 };
 </script>
 
 <style scoped>
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
-</style>
 
+/* 🔹 Scroll horizontal para los colaboradores */
+.invite-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+
+.invite-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.invite-scroll::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+</style>

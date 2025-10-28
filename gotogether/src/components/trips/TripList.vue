@@ -1,6 +1,6 @@
 <!-- /components/trips/TripList.vue -->
 <template>
-  <!-- Mostrar indicador de carga -->
+  <!-- Indicador de carga -->
   <div v-if="loading" class="text-center py-12 text-gray-500">
     Cargando tus viajes...
   </div>
@@ -37,7 +37,7 @@
       v-for="trip in viajes"
       :key="trip.id"
       :trip="trip"
-      class="cursor-pointer"
+      :isOrganizer="trip.createdBy === currentUser?.email"
       @click="$router.push(`/trips/${trip.id}/tareas`)"
     />
   </div>
@@ -46,37 +46,37 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { db } from "../../firebase/firebaseConfig";
-import { collection, getDocs, query } from "firebase/firestore";
-import TripCard from "./TripCard.vue"; // 👈 importa el componente
-
-// 🔐 Cuando haya login:
-// import { getAuth } from "firebase/auth";
+import { collection, getDocs } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import TripCard from "./TripCard.vue";
 
 const viajes = ref([]);
 const loading = ref(true);
+const currentUser = ref(null);
 
 const fetchViajes = async () => {
   loading.value = true;
-
   try {
-    // 🔐 En el futuro (cuando haya login):
-    // const auth = getAuth();
-    // const user = auth.currentUser;
-    // const userId = user ? user.uid : null;
-    // const q = userId
-    //   ? query(collection(db, "trips"), where("userId", "==", userId))
-    //   : query(collection(db, "trips"), where("userId", "==", "default-user"));
+    const auth = getAuth();
+    currentUser.value = auth.currentUser;
 
-    // Por ahora (sin login):
-    const q = query(collection(db, "trips"));
-    const querySnapshot = await getDocs(q);
-
-    viajes.value = querySnapshot.docs.map((doc) => ({
+    const snapshot = await getDocs(collection(db, "trips"));
+    const allTrips = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
-  } catch (error) {
-    console.error("Error al obtener viajes:", error);
+
+    // Filtrar viajes donde el usuario sea organizador o miembro
+    viajes.value = allTrips.filter((trip) => {
+      const userEmail = currentUser.value?.email;
+      const isOrganizer = trip.createdBy === userEmail;
+      const isMember = Array.isArray(trip.members)
+        ? trip.members.includes(userEmail)
+        : false;
+      return isOrganizer || isMember;
+    });
+  } catch (err) {
+    console.error("Error al obtener viajes:", err);
   } finally {
     loading.value = false;
   }
@@ -86,4 +86,3 @@ onMounted(() => {
   fetchViajes();
 });
 </script>
-

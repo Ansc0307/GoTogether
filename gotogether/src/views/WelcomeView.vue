@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center text-center px-6 py-10 bg-background">
+  <div class="min-h-screen flex flex-col items-center justify-center text-center px-6 py-10 bg-background -mt-16">
     <!-- Spinner (mientras carga) -->
     <LoadingSpinner v-if="loading" message="Cargando perfil..." />
 
