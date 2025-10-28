@@ -1,3 +1,4 @@
+<!-- /views/PresupuestoView.vue -->
 <template>
   <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden text-black dark:text-white font-display">
     <main class="flex-1 px-40 py-10">

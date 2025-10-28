@@ -95,6 +95,11 @@ const routes = [
         name: "trip-tareas",
         component: TasksView,
       },
+      {
+        path: "presupuesto",
+        name: "trip-presupuesto",
+        component: Presupuesto,
+      },
       // futuros tabs:
       // { path: "itinerario", component: ItinerarioView },
       // { path: "presupuesto", component: PresupuestoView },

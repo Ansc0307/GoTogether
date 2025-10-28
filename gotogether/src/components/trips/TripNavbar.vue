@@ -13,15 +13,6 @@
       </li>
       <li>
         <RouterLink
-          :to="`/trips/${tripId}/itinerario`"
-          class="hover:text-primary"
-          active-class="text-primary border-b-2 border-primary pb-1"
-        >
-          Itinerario
-        </RouterLink>
-      </li>
-      <li>
-        <RouterLink
           :to="`/trips/${tripId}/presupuesto`"
           class="hover:text-primary"
           active-class="text-primary border-b-2 border-primary pb-1"
