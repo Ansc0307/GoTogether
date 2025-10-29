@@ -1,3 +1,4 @@
+<!--/components/budget/AddCost.vue-->
 <template>
   <div class="flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display">
     <main class="flex flex-1 justify-center px-4 py-8 sm:px-6 lg:px-8">
@@ -137,15 +138,18 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useBudget } from '../../composables/useBudget';
 
 export default {
   name: "RegistrarGasto",
   setup() {
     const router = useRouter();
-    const { miembros, agregarGasto } = useBudget();
+    const route = useRoute();
+    const tripId = route.params.id;
     
+    const { miembros, agregarGasto } = useBudget(tripId);
+
     const nuevoGasto = ref({
       descripcion: "",
       monto: 0,
@@ -173,45 +177,31 @@ export default {
       return reparto;
     });
 
-    const guardarGasto = () => {
+    const guardarGasto = async () => {
       if (!nuevoGasto.value.descripcion || nuevoGasto.value.monto <= 0 || !nuevoGasto.value.pagadoPor) {
         alert('Por favor completa todos los campos correctamente.');
         return;
       }
 
-      // Verificar que al menos una persona esté seleccionada para pagar
       const participantes = Object.values(nuevoGasto.value.corresponde).some(v => v);
       if (!participantes) {
         alert('Debe seleccionar al menos una persona que participe en el gasto');
         return;
       }
 
-      // Agregar el gasto usando el composable
-      agregarGasto({
+      await agregarGasto({
         descripcion: nuevoGasto.value.descripcion,
         monto: nuevoGasto.value.monto,
-        pagadoPor: nuevoGasto.value.pagadoPor, // Ya es objeto {id, name}
+        pagadoPor: nuevoGasto.value.pagadoPor,
         corresponde: nuevoGasto.value.corresponde
       });
 
       alert(`Gasto de Bs. ${nuevoGasto.value.monto} registrado correctamente.`);
-      
-      // Reiniciar formulario
-      nuevoGasto.value.descripcion = "";
-      nuevoGasto.value.monto = 0;
-      nuevoGasto.value.pagadoPor = "";
-      // Reinicializar corresponde
-      nuevoGasto.value.corresponde = {};
-      miembros.value.forEach(miembro => {
-        nuevoGasto.value.corresponde[miembro.name] = true;
-      });
-      
-      // Volver a la vista de presupuesto después de guardar
-      router.push('/presupuesto');
+      router.push(`/trips/${tripId}/presupuesto`); // volver al presupuesto del viaje
     };
 
     const volver = () => {
-      router.push('/presupuesto');
+      router.push(`/trips/${tripId}/presupuesto`); // mismo cambio
     };
     
     return {

@@ -1,3 +1,4 @@
+<!--/components/budget/ExpenceTable.vue-->
 <template>
   <div class="px-4 py-3">
     <div class="overflow-hidden rounded-lg border border-primary/20 dark:border-primary/30">
