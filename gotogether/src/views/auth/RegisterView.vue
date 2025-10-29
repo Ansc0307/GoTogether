@@ -125,7 +125,7 @@ const handleSignup = async () => {
     await signup(email.value, password.value) // Llama a la función de registro
     successMessage.value = '¡Cuenta creada con éxito! Redirigiendo...'
     // 3. Redirige desde aquí después del éxito
-    setTimeout(() => router.push('/voting'), 1500)
+    setTimeout(() => router.push('/welcome'), 1500)
   } catch (e) {
     // El error de Firebase ya está en `authError`, lo mostramos
     error.value = authError.value || 'Ocurrió un error inesperado.'
