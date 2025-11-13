@@ -151,7 +151,13 @@ export class BudgetService {
       const tripSnap = await getDoc(doc(db, COLLECTIONS.TRIPS, this.tripId));
       if (!tripSnap.exists()) return [];
       const members = tripSnap.data().members || [];
-      return members.map(email => ({ id: email, name: email }));
+      const aliasMap = tripSnap.data().alias || {};
+
+      return members.map(email => ({
+        id: email,
+        name: email,
+        displayName: (aliasMap && aliasMap[email]) ? aliasMap[email] : email
+      }));
     } catch (error) {
       console.error('Error getting members:', error);
       return [];

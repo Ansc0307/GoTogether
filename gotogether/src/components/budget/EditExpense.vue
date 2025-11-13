@@ -48,7 +48,7 @@
             >
               <option value="">Seleccionar...</option>
               <option v-for="miembro in miembros" :key="miembro.id" :value="miembro">
-                {{ miembro.name }}
+                {{ miembro.displayName || miembro.name }}
               </option>
             </select>
           </div>
@@ -69,7 +69,7 @@
                 />
               </div>
               <div class="ml-3 text-sm leading-6">
-                <label class="font-medium text-foreground-light dark:text-foreground-dark">{{ miembro.name }}</label>
+                <label class="font-medium text-foreground-light dark:text-foreground-dark">{{ miembro.displayName || miembro.name }}</label>
               </div>
             </div>
           </fieldset>
@@ -85,7 +85,7 @@
                 :key="miembro"
                 class="flex items-center justify-between py-4"
               >
-                <p class="text-muted-light dark:text-muted-dark">{{ miembro }} pagará</p>
+                <p class="text-muted-light dark:text-muted-dark">{{ (miembros.find(m => m.name === miembro) || {}).displayName || miembro }} pagará</p>
                 <p class="font-medium text-foreground-light dark:text-foreground-dark">Bs. {{ monto.toFixed(2) }}</p>
               </div>
             </div>

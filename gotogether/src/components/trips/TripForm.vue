@@ -90,6 +90,17 @@
           </div>
         </div>
 
+        <!-- Alias propio -->
+        <div>
+          <label class="block text-gray-700 font-medium mb-1">Tu alias</label>
+          <input
+            v-model="selfAlias"
+            type="text"
+            placeholder="Cómo quieres que te vean (ej. Ana)"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+          />
+        </div>
+
         <!-- Invitar miembros -->
         <div>
           <label class="block text-gray-700 font-medium mb-1">Invita a colaboradores</label>
@@ -174,6 +185,8 @@ const cargando = ref(false);
 
 const correoMiembro = ref("");
 const aliasMiembro = ref("");
+// alias para el propio creador
+const selfAlias = ref("");
 
 const agregarMiembro = () => {
   const correo = correoMiembro.value.trim();
@@ -209,6 +222,11 @@ const crearViaje = async () => {
     const userEmail = user?.email || "default@user.com";
     const userName = user?.displayName || "Usuario Explorador";
 
+    // si el usuario ingresó un alias para sí mismo, incluirlo en el map
+    if (selfAlias.value && selfAlias.value.trim()) {
+      aliasMap.value[userEmail] = selfAlias.value.trim();
+    }
+
     await addDoc(collection(db, "trips"), {
       name: nuevoViaje.value.nombre,
       description: "",
@@ -239,6 +257,7 @@ const crearViaje = async () => {
       miembros: [],
     };
     aliasMap.value = {};
+    selfAlias.value = "";
   } catch (error) {
     console.error("Error al crear el viaje:", error);
     alert("Hubo un error al guardar el viaje.");

@@ -46,6 +46,7 @@
           </div>
           <ExpenseTable 
             :gastos="gastos"
+            :miembros="miembros"
             @edit-expense="abrirEditarGasto"
             @delete-expense="eliminarGasto"
           />
