@@ -51,10 +51,10 @@ export function useBudget(tripId = 'default-trip') {
     });
 
     return miembros.value.map(miembro => {
-      const balance = balancesPorPersona[miembro.name];
-      const diferencia = balance.pagado - balance.debe;
+      const balance = balancesPorPersona[miembro.name] || { pagado: 0, debe: 0 };
+      const diferencia = (balance.pagado || 0) - (balance.debe || 0);
       return {
-        nombre: miembro.name,
+        nombre: miembro.displayName || miembro.name,
         debe: diferencia < 0 ? Math.abs(diferencia) : '-',
         recibe: diferencia > 0 ? diferencia : '-'
       };
@@ -96,7 +96,7 @@ export function useBudget(tripId = 'default-trip') {
         Object.entries(nuevoGasto.corresponde).forEach(([memberName, participa]) => {
           if (participa) {
             const miembro = miembros.value.find(m => m.name === memberName);
-            if (miembro) participantes.push({ id: miembro.id, name: miembro.name });
+            if (miembro) participantes.push({ id: miembro.id, name: miembro.name, displayName: miembro.displayName });
           }
         });
       }

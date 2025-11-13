@@ -18,7 +18,12 @@
               Bs {{ formatCurrency(gasto.monto) }}
             </td>
             <td class="h-[64px] px-6 py-2 text-sm text-black/60 dark:text-white/60">
-              {{ typeof gasto.pagadoPor === 'string' ? gasto.pagadoPor : gasto.pagadoPor.name }}
+              <span v-if="typeof gasto.pagadoPor === 'string'">
+                {{ (miembros.find(m => m.id === gasto.pagadoPor || m.name === gasto.pagadoPor) || {}).displayName || gasto.pagadoPor }}
+              </span>
+              <span v-else>
+                {{ gasto.pagadoPor.displayName || gasto.pagadoPor.name }}
+              </span>
             </td>
             <td class="h-[64px] px-6 py-2 text-sm">
               <button 
@@ -46,6 +51,10 @@ export default {
   name: 'ExpenseTable',
   props: {
     gastos: {
+      type: Array,
+      default: () => []
+    },
+    miembros: {
       type: Array,
       default: () => []
     }
