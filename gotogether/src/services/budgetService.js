@@ -1,95 +1,105 @@
 import { 
   collection, 
   doc, 
-  getDocs, 
+  getDoc, 
+  getDocs,
   addDoc, 
   updateDoc, 
   deleteDoc, 
-  onSnapshot,
-  query,
-  orderBy,
-  where
+  query, 
+  where,
+  onSnapshot
 } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 
-// Colecciones de Firestore
 const COLLECTIONS = {
   TRIPS: 'trips',
   EXPENSES: 'expenses',
-  BUDGETS: 'budgets',
-  MEMBERS: 'members'
+  BUDGETS: 'budgets'
 };
 
 export class BudgetService {
-  constructor(tripId = 'default-trip') {
+  constructor(tripId) {
     this.tripId = tripId;
   }
 
-  // ========== PRESUPUESTO ==========
+  // =======================
+  // Obtener presupuesto
+  // =======================
   async getBudget() {
-    try {
-      const budgetRef = doc(db, COLLECTIONS.BUDGETS, this.tripId);
-      const budgetDoc = await getDocs(query(collection(db, COLLECTIONS.BUDGETS), where('tripId', '==', this.tripId)));
-      
-      if (!budgetDoc.empty) {
-        return budgetDoc.docs[0].data();
-      }
-      
-      // Si no existe, crear uno por defecto
-      const defaultBudget = {
-        tripId: this.tripId,
-        total: 15000,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      
-      await addDoc(collection(db, COLLECTIONS.BUDGETS), defaultBudget);
-      return defaultBudget;
-    } catch (error) {
-      console.error('Error getting budget:', error);
-      return { total: 15000 };
-    }
-  }
+  try {
+    const budgetQuery = query(collection(db, COLLECTIONS.BUDGETS), where('tripId', '==', this.tripId));
+    const budgetDocs = await getDocs(budgetQuery);
 
+    if (!budgetDocs.empty) {
+      // Si ya existe, devolver el presupuesto existente
+      const budgetDoc = budgetDocs.docs[0];
+      return { id: budgetDoc.id, ...budgetDoc.data() };
+    }
+
+    // 🔹 Si no existe presupuesto, obtener el valor desde el trip
+    const tripRef = doc(db, COLLECTIONS.TRIPS, this.tripId);
+    const tripSnap = await getDoc(tripRef);
+    let tripBudget = 15000; // valor por defecto si el trip no tiene campo budget
+
+    if (tripSnap.exists()) {
+      const tripData = tripSnap.data();
+      tripBudget = tripData.budget ?? 15000; // usa el valor del trip si existe
+    }
+
+    // 🔹 Crear presupuesto nuevo usando el valor del trip
+    const defaultBudget = {
+      tripId: this.tripId,
+      total: tripBudget,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    const docRef = await addDoc(collection(db, COLLECTIONS.BUDGETS), defaultBudget);
+
+    // (Opcional) asegurar que el campo trip.budget esté sincronizado
+    await updateDoc(tripRef, { budget: tripBudget });
+
+    return { id: docRef.id, ...defaultBudget };
+
+  } catch (error) {
+    console.error('Error getting budget:', error);
+    return { total: 15000 };
+  }
+}
+
+  // =======================
+  // Actualizar presupuesto
+  // =======================
   async updateBudget(newTotal) {
     try {
       const budgetQuery = query(collection(db, COLLECTIONS.BUDGETS), where('tripId', '==', this.tripId));
       const budgetDocs = await getDocs(budgetQuery);
-      
+
       if (!budgetDocs.empty) {
         const budgetDoc = budgetDocs.docs[0];
-        await updateDoc(budgetDoc.ref, {
-          total: newTotal,
-          updatedAt: new Date()
-        });
+        await updateDoc(budgetDoc.ref, { total: newTotal, updatedAt: new Date() });
       }
+
+      // Actualizar también el campo budget en trips
+      const tripRef = doc(db, COLLECTIONS.TRIPS, this.tripId);
+      await updateDoc(tripRef, { budget: newTotal });
+
     } catch (error) {
       console.error('Error updating budget:', error);
       throw error;
     }
   }
 
-  // ========== GASTOS ==========
+  // =======================
+  // GASTOS
+  // =======================
   async getExpenses() {
     try {
-      // Simplificar consulta para evitar índices complejos
-      const expensesQuery = query(
-        collection(db, COLLECTIONS.EXPENSES),
-        where('tripId', '==', this.tripId)
-      );
-      
-      const expensesSnapshot = await getDocs(expensesQuery);
-      const expenses = expensesSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      // Ordenar en el cliente
-      return expenses.sort((a, b) => {
-        const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt) || new Date();
-        const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt) || new Date();
-        return dateB - dateA;
-      });
+      const expensesQuery = query(collection(db, COLLECTIONS.EXPENSES), where('tripId', '==', this.tripId));
+      const snapshot = await getDocs(expensesQuery);
+      const expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      return expenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     } catch (error) {
       console.error('Error getting expenses:', error);
       return [];
@@ -99,18 +109,11 @@ export class BudgetService {
   async addExpense(expense) {
     try {
       const newExpense = {
-        descripcion: expense.descripcion,
-        monto: expense.monto,
-        pagadoPor: {
-          id: expense.pagadoPor.id,
-          name: expense.pagadoPor.name
-        },
-        participantes: expense.participantes || [], // Array de objetos {id, name}
+        ...expense,
         tripId: this.tripId,
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      
       const docRef = await addDoc(collection(db, COLLECTIONS.EXPENSES), newExpense);
       return { id: docRef.id, ...newExpense };
     } catch (error) {
@@ -121,8 +124,7 @@ export class BudgetService {
 
   async updateExpense(expenseId, updates) {
     try {
-      const expenseRef = doc(db, COLLECTIONS.EXPENSES, expenseId);
-      await updateDoc(expenseRef, {
+      await updateDoc(doc(db, COLLECTIONS.EXPENSES, expenseId), {
         ...updates,
         updatedAt: new Date()
       });
@@ -134,113 +136,62 @@ export class BudgetService {
 
   async deleteExpense(expenseId) {
     try {
-      const expenseRef = doc(db, COLLECTIONS.EXPENSES, expenseId);
-      await deleteDoc(expenseRef);
+      await deleteDoc(doc(db, COLLECTIONS.EXPENSES, expenseId));
     } catch (error) {
       console.error('Error deleting expense:', error);
       throw error;
     }
   }
 
-  // ========== MIEMBROS ==========
+  // =======================
+  // MIEMBROS
+  // =======================
   async getMembers() {
     try {
-      const membersQuery = query(
-        collection(db, COLLECTIONS.MEMBERS),
-        where('tripId', '==', this.tripId)
-      );
-      
-      const membersSnapshot = await getDocs(membersQuery);
-      
-      if (membersSnapshot.empty) {
-        // Si no hay miembros, crear algunos por defecto
-        const defaultMembers = ['Ana', 'Carlos', 'Sofia'];
-        const createdMembers = [];
-        
-        for (const member of defaultMembers) {
-          const docRef = await addDoc(collection(db, COLLECTIONS.MEMBERS), {
-            name: member,
-            tripId: this.tripId,
-            createdAt: new Date()
-          });
-          createdMembers.push({
-            id: docRef.id,
-            name: member,
-            tripId: this.tripId
-          });
-        }
-        return createdMembers;
-      }
-      
-      return membersSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
+      const tripSnap = await getDoc(doc(db, COLLECTIONS.TRIPS, this.tripId));
+      if (!tripSnap.exists()) return [];
+      const members = tripSnap.data().members || [];
+      return members.map(email => ({ id: email, name: email }));
     } catch (error) {
       console.error('Error getting members:', error);
-      // Fallback con IDs temporales
-      return [
-        { id: 'temp-1', name: 'Ana', tripId: this.tripId },
-        { id: 'temp-2', name: 'Carlos', tripId: this.tripId },
-        { id: 'temp-3', name: 'Sofia', tripId: this.tripId }
-      ];
+      return [];
     }
   }
 
   async addMember(memberName) {
     try {
-      const docRef = await addDoc(collection(db, COLLECTIONS.MEMBERS), {
-        name: memberName,
-        tripId: this.tripId,
-        createdAt: new Date()
-      });
-      return {
-        id: docRef.id,
-        name: memberName,
-        tripId: this.tripId
-      };
+      const tripRef = doc(db, COLLECTIONS.TRIPS, this.tripId);
+      const tripSnap = await getDoc(tripRef);
+      if (!tripSnap.exists()) throw new Error('Trip not found');
+
+      const currentMembers = tripSnap.data().members || [];
+      if (!currentMembers.includes(memberName)) currentMembers.push(memberName);
+
+      await updateDoc(tripRef, { members: currentMembers });
+
+      return { id: memberName, name: memberName };
     } catch (error) {
       console.error('Error adding member:', error);
       throw error;
     }
   }
 
-  // ========== LISTENERS EN TIEMPO REAL ==========
+  // =======================
+  // LISTENERS EN TIEMPO REAL
+  // =======================
   onExpensesChange(callback) {
-    // Simplificar consulta para evitar índices complejos
-    const expensesQuery = query(
-      collection(db, COLLECTIONS.EXPENSES),
-      where('tripId', '==', this.tripId)
-    );
-    
-    return onSnapshot(expensesQuery, (snapshot) => {
-      const expenses = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      // Ordenar en el cliente
-      const sortedExpenses = expenses.sort((a, b) => {
-        const dateA = a.createdAt?.toDate?.() || new Date(a.createdAt) || new Date();
-        const dateB = b.createdAt?.toDate?.() || new Date(b.createdAt) || new Date();
-        return dateB - dateA;
-      });
-      
-      callback(sortedExpenses);
+    const expensesQuery = query(collection(db, COLLECTIONS.EXPENSES), where('tripId', '==', this.tripId));
+    return onSnapshot(expensesQuery, snapshot => {
+      const expenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const sorted = expenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      callback(sorted);
     });
   }
 
   onBudgetChange(callback) {
-    const budgetQuery = query(
-      collection(db, COLLECTIONS.BUDGETS),
-      where('tripId', '==', this.tripId)
-    );
-    
-    return onSnapshot(budgetQuery, (snapshot) => {
-      if (!snapshot.empty) {
-        const budget = snapshot.docs[0].data();
-        callback(budget);
-      }
+    const budgetQuery = query(collection(db, COLLECTIONS.BUDGETS), where('tripId', '==', this.tripId));
+    return onSnapshot(budgetQuery, snapshot => {
+      if (!snapshot.empty) callback({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
     });
   }
 }

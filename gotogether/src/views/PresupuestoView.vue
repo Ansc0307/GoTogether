@@ -1,3 +1,4 @@
+<!-- /views/PresupuestoView.vue -->
 <template>
   <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden text-black dark:text-white font-display">
     <main class="flex-1 px-40 py-10">
@@ -84,6 +85,7 @@
 <script>
 import { BudgetSummary, BalanceTable, ExpenseTable, EditBudget, EditExpense } from '../components/budget';
 import { useBudget } from '../composables/useBudget';
+import { useRoute } from 'vue-router';
 
 export default {
   name: "Presupuesto",
@@ -95,6 +97,9 @@ export default {
     EditExpense
   },
   setup() {
+    const route = useRoute();
+    const tripId = route.params.id; // <-- ✅ Obtener el ID del viaje actual
+
     const {
       presupuestoTotal,
       gastos,
@@ -106,7 +111,7 @@ export default {
       eliminarGasto: eliminarGastoComposable,
       editarGasto: editarGastoComposable,
       actualizarPresupuesto
-    } = useBudget();
+    } = useBudget(tripId); // para pasar tripId dinámico
 
     return {
       presupuestoTotal,
@@ -118,7 +123,8 @@ export default {
       miembros,
       eliminarGastoComposable,
       editarGastoComposable,
-      actualizarPresupuesto
+      actualizarPresupuesto,
+      tripId 
     };
   },
   data() {
@@ -131,7 +137,7 @@ export default {
   },
   methods: {
     irARegistrarGasto() {
-      this.$router.push('/presupuesto/agregar-gasto');
+      this.$router.push(`/trips/${this.tripId}/presupuesto/agregar-gasto`);
     },
     async eliminarGasto(index) {
       if (confirm('¿Estás seguro de que quieres eliminar este gasto?')) {

@@ -1,3 +1,4 @@
+<!--/components/budget/BudgetSummary.vue-->
 <template>
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
     <div class="flex flex-col gap-2 rounded-lg p-6 bg-primary/10 dark:bg-primary/20 relative group">
