@@ -93,33 +93,37 @@
         <!-- Invitar miembros -->
         <div>
           <label class="block text-gray-700 font-medium mb-1">Invita a colaboradores</label>
-          <div class="flex gap-2">
-            <input
-              v-model="correoMiembro"
-              type="email"
-              placeholder="Correo del colaborador"
-              class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-            />
-            <button
-              type="button"
-              @click="agregarMiembro"
-              class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90"
-            >
-              Agregar
-            </button>
-          </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
+                <input
+                  v-model="correoMiembro"
+                  type="email"
+                  placeholder="Correo del colaborador"
+                  class="col-span-1 md:col-span-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+                />
+                <input
+                  v-model="aliasMiembro"
+                  type="text"
+                  placeholder="Alias (ej. Ana, Carlos)"
+                  class="col-span-1 md:col-span-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+                />
+                <button
+                  type="button"
+                  @click="agregarMiembro"
+                  class="col-span-1 md:col-span-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90"
+                >
+                  Agregar
+                </button>
+              </div>
 
           <!-- 🔹 Contenedor scrollable horizontal -->
-          <div
-            v-if="nuevoViaje.miembros.length"
-            class="invite-scroll mt-3"
-          >
+          <div v-if="nuevoViaje.miembros.length" class="invite-scroll mt-3">
             <span
               v-for="(correo, index) in nuevoViaje.miembros"
-              :key="index"
+              :key="correo"
               class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full flex items-center gap-2 whitespace-nowrap"
             >
-              {{ correo }}
+              <span class="font-medium">{{ aliasMap[correo] ? aliasMap[correo] + ' ·' : '' }}</span>
+              <span class="truncate">{{ correo }}</span>
               <button
                 type="button"
                 @click="eliminarMiembro(index)"
@@ -160,22 +164,35 @@ const nuevoViaje = ref({
   fechaInicio: "",
   fechaFin: "",
   presupuesto: "",
-  miembros: [],
+  miembros: [], // array de correos
 });
+
+// aliasMap: objeto donde la llave es el correo y el valor es el alias
+const aliasMap = ref({});
 
 const cargando = ref(false);
 
 const correoMiembro = ref("");
+const aliasMiembro = ref("");
 
 const agregarMiembro = () => {
   const correo = correoMiembro.value.trim();
-  if (correo && !nuevoViaje.value.miembros.includes(correo)) {
+  const alias = aliasMiembro.value.trim();
+  if (!correo) return;
+  if (!nuevoViaje.value.miembros.includes(correo)) {
     nuevoViaje.value.miembros.push(correo);
-    correoMiembro.value = "";
+    if (alias) aliasMap.value[correo] = alias;
+  } else {
+    // Si ya existe el correo pero actualizamos alias
+    if (alias) aliasMap.value[correo] = alias;
   }
+  correoMiembro.value = "";
+  aliasMiembro.value = "";
 };
 
 const eliminarMiembro = (index) => {
+  const correo = nuevoViaje.value.miembros[index];
+  if (correo && aliasMap.value[correo]) delete aliasMap.value[correo];
   nuevoViaje.value.miembros.splice(index, 1);
 };
 
@@ -202,6 +219,7 @@ const crearViaje = async () => {
       createdBy: userEmail,
       createdByName: userName,
       members: [userEmail, ...nuevoViaje.value.miembros],
+      alias: { ...(aliasMap.value || {}) },
       createdAt: Timestamp.now(),
     });
 
@@ -220,6 +238,7 @@ const crearViaje = async () => {
       presupuesto: "",
       miembros: [],
     };
+    aliasMap.value = {};
   } catch (error) {
     console.error("Error al crear el viaje:", error);
     alert("Hubo un error al guardar el viaje.");
