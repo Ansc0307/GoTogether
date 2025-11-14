@@ -31,70 +31,52 @@
       <form @submit.prevent="saveTask" class="space-y-6">
         <!-- Nombre -->
         <div>
-          <label
-            for="task-name"
-            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-          >
-            Nombre
-          </label>
+          <label class="block text-sm font-medium mb-1">Nombre</label>
           <input
-            id="task-name"
             v-model="nombre"
             type="text"
-            placeholder="Ej. Reservar alojamiento en La Paz"
-            class="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 focus:ring-primary focus:border-primary transition"
+            placeholder="Ej. Reservar alojamiento"
+            class="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border"
           />
         </div>
 
         <!-- Descripción -->
         <div>
-          <label
-            for="task-description"
-            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-          >
-            Descripción
-          </label>
+          <label class="block text-sm font-medium mb-1">Descripción</label>
           <textarea
-            id="task-description"
             v-model="descripcion"
             rows="4"
-            placeholder="Añade detalles como fechas, preferencias, presupuesto, etc."
-            class="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 focus:ring-primary focus:border-primary transition"
+            placeholder="Detalles, fechas, presupuesto..."
+            class="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border"
           ></textarea>
         </div>
 
         <!-- Responsable -->
         <div>
-          <label
-            for="responsable"
-            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          <label class="block text-sm font-medium mb-1">Asignar al responsable</label>
+
+          <select
+            v-model="responsable"
+            class="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border focus:ring-primary"
           >
-            Asignar al responsable
-          </label>
-          <div class="relative">
-            <select
-              id="responsable"
-              v-model="responsable"
-              class="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 focus:ring-primary focus:border-primary transition custom-select-arrow"
+            <option disabled value="">Selecciona un miembro del grupo</option>
+
+            <option
+              v-for="correo in miembros"
+              :key="correo"
+              :value="correo"
             >
-              <option disabled value="">Selecciona un miembro del grupo</option>
-              <option
-                v-for="m in miembros"
-                :key="m"
-                :value="m"
-              >
-                {{ m }}
-                <span v-if="m === userEmail"> (Tú)</span>
-              </option>
-            </select>
-          </div>
+              {{ aliasLabel(correo) }}
+              <span v-if="correo === userEmail"> (Tú)</span>
+            </option>
+          </select>
         </div>
 
         <!-- Botón -->
         <div class="flex justify-end pt-2">
           <button
             type="submit"
-            class="bg-primary text-white font-bold py-3 px-6 rounded-lg hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg shadow-primary/20"
+            class="bg-primary text-white font-bold py-3 px-6 rounded-lg"
           >
             {{ mode === "edit" ? "Guardar cambios" : "Crear tarea" }}
           </button>
@@ -110,10 +92,9 @@ import { db } from "../../firebase/firebaseConfig";
 import { collection, addDoc, updateDoc, doc, getDoc, Timestamp } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-// Props combinadas
 const props = defineProps({
   visible: Boolean,
-  mode: { type: String, default: "create" }, // "create" | "edit"
+  mode: { type: String, default: "create" },
   task: { type: Object, default: null },
   tripId: String,
 });
@@ -123,40 +104,48 @@ const emit = defineEmits(["close"]);
 const nombre = ref("");
 const descripcion = ref("");
 const responsable = ref("");
+
 const miembros = ref([]);
+const aliasMap = ref({});
+
 const userEmail = ref(null);
 
-// 🔹 Cargar miembros del viaje
+// Cargar miembros + alias del viaje
 onMounted(async () => {
   try {
     const auth = getAuth();
     userEmail.value = auth.currentUser?.email || null;
 
-    if (!props.tripId) {
-      console.warn("⚠️ No se recibió tripId en TaskForm");
-      return;
-    }
+    if (!props.tripId) return;
 
     const tripRef = doc(db, "trips", props.tripId);
     const tripSnap = await getDoc(tripRef);
 
     if (tripSnap.exists()) {
       const data = tripSnap.data();
+
       miembros.value = data.members || [];
+      aliasMap.value = data.alias || {};
     }
   } catch (e) {
     console.error("Error al cargar miembros:", e);
   }
 });
 
-// 🔹 Reset form helper
+// Mostrar alias + correo
+const aliasLabel = (correo) => {
+  const alias = aliasMap.value[correo];
+  return alias ? `${alias} (${correo})` : correo;
+};
+
+// Reset form
 const resetForm = () => {
   nombre.value = "";
   descripcion.value = "";
   responsable.value = "";
 };
 
-// 🔹 Actualizar valores cuando se abre en modo editar
+// Cargar datos en modo editar
 watch(
   () => [props.task, props.mode, props.visible],
   ([newTask, mode, visible]) => {
@@ -173,22 +162,18 @@ watch(
   { immediate: true }
 );
 
-// 🔹 Guardar o actualizar tarea
+// Guardar o actualizar
 const saveTask = async () => {
   if (!nombre.value.trim()) return alert("Falta el nombre de la tarea");
   if (!responsable.value.trim()) return alert("Selecciona un responsable");
 
   if (props.mode === "edit" && props.task?.id) {
-    // Editar tarea existente
-    const refTarea = doc(db, "tareas", props.task.id);
-    await updateDoc(refTarea, {
+    await updateDoc(doc(db, "tareas", props.task.id), {
       nombre: nombre.value,
       descripcion: descripcion.value,
       responsable: responsable.value,
     });
   } else {
-    // Crear nueva tarea asociada al viaje
-    if (!props.tripId) return alert("No se ha vinculado el viaje");
     await addDoc(collection(db, "tareas"), {
       nombre: nombre.value,
       descripcion: descripcion.value,
@@ -202,20 +187,8 @@ const saveTask = async () => {
   handleClose();
 };
 
-// 🔹 Cerrar modal
 const handleClose = () => {
   resetForm();
   emit("close");
 };
 </script>
-
-<style scoped>
-.custom-select-arrow {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.75rem center;
-  background-repeat: no-repeat;
-  background-size: 1.25em 1.25em;
-  appearance: none;
-  padding-right: 2.5rem;
-}
-</style>
