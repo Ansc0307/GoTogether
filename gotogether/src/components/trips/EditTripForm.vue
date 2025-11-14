@@ -5,6 +5,7 @@
     class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 backdrop-blur-sm"
   >
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative animate-fadeIn">
+
       <!-- Botón cerrar -->
       <button
         @click="$emit('close')"
@@ -13,71 +14,88 @@
         <span class="material-symbols-outlined text-2xl">close</span>
       </button>
 
-      <h2 class="text-2xl font-bold text-gray-800 text-center mb-1">
-        Editar Viaje
-      </h2>
-      <p class="text-center text-gray-500 text-sm mb-6">
-        Modifica los detalles de tu viaje
-      </p>
+      <h2 class="text-2xl font-bold text-gray-800 text-center mb-1">Editar Viaje</h2>
+      <p class="text-center text-gray-500 text-sm mb-6">Modifica los detalles de tu viaje</p>
 
       <LoadingSpinner v-if="cargando" message="Guardando..." />
 
       <form v-else @submit.prevent="guardarCambios" class="space-y-4">
-        <!-- Nombre del viaje -->
+
+        <!-- Nombre -->
         <div>
           <label class="block text-gray-700 font-medium mb-1">Nombre del viaje</label>
-          <input v-model="form.nombre" type="text" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none" required />
+          <input v-model="form.nombre" type="text" class="w-full border rounded-lg px-3 py-2" required />
         </div>
 
         <!-- Destino -->
         <div>
           <label class="block text-gray-700 font-medium mb-1">Destino específico</label>
-          <input v-model="form.destinoEspecifico" type="text" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none" />
+          <input v-model="form.destinoEspecifico" type="text" class="w-full border rounded-lg px-3 py-2" />
         </div>
 
         <!-- Fechas -->
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-gray-700 font-medium mb-1">Fecha de inicio</label>
-            <input v-model="form.fechaInicio" type="date" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none" required />
+            <input v-model="form.fechaInicio" type="date" class="w-full border rounded-lg px-3 py-2" required />
           </div>
           <div>
             <label class="block text-gray-700 font-medium mb-1">Fecha fin</label>
-            <input v-model="form.fechaFin" type="date" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none" required />
+            <input v-model="form.fechaFin" type="date" class="w-full border rounded-lg px-3 py-2" required />
           </div>
         </div>
 
         <!-- Presupuesto -->
         <div>
-          <label class="block text-gray-700 font-medium mb-1">Presupuesto base (opcional)</label>
-          <div class="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-            <span class="text-gray-500 mr-2">Bs.</span>
-            <input v-model="form.presupuesto" type="number" min="0" step="0.01" placeholder="0.00" class="flex-1 outline-none border-none bg-transparent" />
+          <label class="block text-gray-700 font-medium mb-1">Presupuesto base</label>
+          <div class="flex items-center border rounded-lg px-3 py-2">
+            <span class="mr-2 text-gray-500">Bs.</span>
+            <input v-model="form.presupuesto" type="number" class="flex-1 outline-none bg-transparent" />
           </div>
         </div>
 
-        <!-- Invitar miembros -->
+        <!-- Agregar miembro -->
         <div>
-          <label class="block text-gray-700 font-medium mb-1">Invita a colaboradores</label>
-          <div class="flex gap-2">
-            <input v-model="correoMiembro" type="email" placeholder="Correo del colaborador" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none" />
-            <button type="button" @click="agregarMiembro" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90">Agregar</button>
-          </div>
+          <label class="block text-gray-700 font-medium mb-1">Agregar colaborador</label>
 
-          <div v-if="form.miembros.length" class="invite-scroll mt-3">
-            <span v-for="(correo, index) in form.miembros" :key="index" class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full flex items-center gap-2 whitespace-nowrap">
-              {{ correo }}
-              <button type="button" @click="eliminarMiembro(index)" class="text-gray-400 hover:text-red-500 text-xs">✕</button>
-            </span>
+          <div class="grid grid-cols-3 gap-2">
+            <input v-model="correoMiembro" type="email" placeholder="Correo" class="col-span-2 border rounded-lg px-3 py-2" />
+            <button type="button" @click="agregarMiembro" class="bg-primary text-white px-4 py-2 rounded-lg">Agregar</button>
+          </div>
+        </div>
+
+        <!-- Lista de miembros con alias -->
+        <div v-if="form.miembros.length" class="invite-scroll mt-4 space-y-2">
+
+          <div
+            v-for="(correo, index) in form.miembros"
+            :key="correo"
+            class="border rounded-lg p-3 flex flex-col gap-1 bg-gray-50"
+          >
+            <div class="flex justify-between items-center">
+              <strong class="text-primary">{{ aliasMap[correo] }}</strong>
+              <button @click="eliminarMiembro(index)" class="text-gray-400 hover:text-red-500 text-sm">✕</button>
+            </div>
+
+            <span class="text-xs text-gray-600">{{ correo }}</span>
+
+            <!-- Editar alias -->
+            <input
+              v-model="aliasMap[correo]"
+              type="text"
+              placeholder="Alias"
+              class="mt-1 border rounded-lg px-2 py-1 text-sm"
+            />
           </div>
         </div>
 
         <!-- Botones -->
         <div class="flex justify-between gap-2 mt-4">
-          <button type="submit" class="flex-1 bg-primary text-white py-2 rounded-lg hover:bg-primary/90">Guardar cambios</button>
-          <button type="button" @click="confirmDelete" class="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600">Eliminar Viaje</button>
+          <button type="submit" class="flex-1 bg-primary text-white py-2 rounded-lg">Guardar cambios</button>
+          <button type="button" @click="confirmDelete" class="flex-1 bg-red-500 text-white py-2 rounded-lg">Eliminar Viaje</button>
         </div>
       </form>
+
     </div>
   </div>
 </template>
@@ -92,9 +110,11 @@ const props = defineProps({
   visible: Boolean,
   tripId: String
 });
+
 const emit = defineEmits(["close"]);
 
 const cargando = ref(false);
+
 const form = ref({
   nombre: "",
   destinoEspecifico: "",
@@ -103,13 +123,20 @@ const form = ref({
   presupuesto: 0,
   miembros: []
 });
+
+// aliasMap: { correo : alias }
+const aliasMap = ref({});
+
 const correoMiembro = ref("");
 
+// Cargar datos del viaje
 const loadTripData = async () => {
-  const ref = doc(db, "trips", props.tripId);
-  const snap = await getDoc(ref);
+  const refDoc = doc(db, "trips", props.tripId);
+  const snap = await getDoc(refDoc);
+
   if (snap.exists()) {
     const data = snap.data();
+
     form.value = {
       nombre: data.name,
       destinoEspecifico: data.destination || "",
@@ -118,6 +145,16 @@ const loadTripData = async () => {
       presupuesto: data.budget || 0,
       miembros: data.members || []
     };
+
+    // cargar alias
+    aliasMap.value = { ...(data.alias || {}) };
+
+    // generar alias automáticos si faltan
+    form.value.miembros.forEach((correo, i) => {
+      if (!aliasMap.value[correo]) {
+        aliasMap.value[correo] = `Miembro ${i + 1}`;
+      }
+    });
   }
 };
 
@@ -127,51 +164,65 @@ watch(() => props.visible, (v) => {
   if (v) loadTripData();
 });
 
+// Agregar nuevo miembro
 const agregarMiembro = () => {
   const correo = correoMiembro.value.trim();
-  if (correo && !form.value.miembros.includes(correo)) {
+  if (!correo) return;
+
+  if (!form.value.miembros.includes(correo)) {
     form.value.miembros.push(correo);
-    correoMiembro.value = "";
+    aliasMap.value[correo] = `Miembro ${form.value.miembros.length}`;
   }
+
+  correoMiembro.value = "";
 };
 
+// Eliminar miembro
 const eliminarMiembro = (index) => {
+  const correo = form.value.miembros[index];
+  delete aliasMap.value[correo];
   form.value.miembros.splice(index, 1);
 };
 
+// Guardar cambios
 const guardarCambios = async () => {
   cargando.value = true;
+
   try {
-    const ref = doc(db, "trips", props.tripId);
-    await updateDoc(ref, {
+    const refDoc = doc(db, "trips", props.tripId);
+
+    await updateDoc(refDoc, {
       name: form.value.nombre,
       destination: form.value.destinoEspecifico,
       startDate: form.value.fechaInicio,
       endDate: form.value.fechaFin,
       budget: parseFloat(form.value.presupuesto) || 0,
-      members: form.value.miembros
+      members: form.value.miembros,
+      alias: aliasMap.value
     });
-    alert("Cambios guardados exitosamente!");
+
+    alert("Cambios guardados exitosamente");
     emit("close");
   } catch (e) {
     console.error(e);
-    alert("Error al guardar los cambios.");
+    alert("Error al guardar");
   } finally {
     cargando.value = false;
   }
 };
 
+// Eliminar viaje
 const confirmDelete = async () => {
-  if (confirm("¿Seguro que quieres eliminar este viaje? Esta acción no se puede deshacer.")) {
+  if (confirm("¿Seguro que quieres eliminar este viaje?")) {
     cargando.value = true;
+
     try {
       await deleteDoc(doc(db, "trips", props.tripId));
-      alert("Viaje eliminado correctamente.");
+      alert("Viaje eliminado.");
       emit("close");
       window.location.href = "/misviajes";
     } catch (e) {
-      console.error(e);
-      alert("Error al eliminar el viaje.");
+      alert("Error al eliminar");
     } finally {
       cargando.value = false;
     }
@@ -189,21 +240,7 @@ const confirmDelete = async () => {
 }
 
 .invite-scroll {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding-bottom: 6px;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
-}
-
-.invite-scroll::-webkit-scrollbar {
-  height: 6px;
-}
-
-.invite-scroll::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 3px;
+  max-height: 250px;
+  overflow-y: auto;
 }
 </style>
