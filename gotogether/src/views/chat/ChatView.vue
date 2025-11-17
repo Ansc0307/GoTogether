@@ -74,10 +74,10 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp, doc, getDoc } from 'firebase/firestore';
 import { useRoute } from 'vue-router';
 import { useAuth } from '@/composables/useAuth';
 import { db } from '@/firebase/firebaseConfig';
-import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, Timestamp } from 'firebase/firestore';
 
 const route = useRoute();
 const { user } = useAuth(); // Tu composable de autenticación
@@ -87,6 +87,7 @@ const messages = ref([]);
 const newMessage = ref('');
 const loading = ref(true);
 const chatContainer = ref(null); // Para el autoscroll
+const tripAliases = ref({});
 let unsubscribe = null;
 
 // --- 1. Función para hacer scroll al final ---
@@ -99,11 +100,20 @@ const scrollToBottom = () => {
 };
 
 // --- 2. Obtener mensajes en tiempo real ---
-onMounted(() => {
+onMounted(async () => {
   if (!tripId.value) return;
+  //cargar el alias del miembro
+  try {
+    const tripDocRef = doc(db, 'trips', tripId.value);
+    const tripSnap = await getDoc(tripDocRef);
+    if (tripSnap.exists()) {
+      tripAliases.value = tripSnap.data().alias || {};
+    }
+  } catch (e) {
+    console.error("Error al cargar datos del viaje:", e);
+  }
 
-  // Esta es la "ruta" de la base de datos de la que hablamos
-  // No es una carpeta de tu proyecto.
+  // Esta es la "ruta" de la base de datos
   const chatColRef = collection(db, 'trips', tripId.value, 'chat');
   const q = query(chatColRef, orderBy('timestamp', 'asc'));
 
@@ -128,16 +138,23 @@ const sendMessage = async () => {
 
   const chatColRef = collection(db, 'trips', tripId.value, 'chat');
   
+  const userEmail = user.value.email;
+  // Busca el alias en el mapa que cargamos, usando el email del usuario como llave
+  const senderAlias = tripAliases.value[userEmail];
+  
+  // Usa el alias si existe; si no, usa el displayName; si no, usa el email.
+  const finalSenderName = senderAlias || user.value.displayName || user.value.email;
+  
   try {
     await addDoc(chatColRef, {
       text: newMessage.value,
       senderId: user.value.uid,
-      senderName: user.value.displayName || user.value.email, // Aquí usaremos el nombre del perfil (Tarea 1)
-      senderPhotoURL: user.value.photoURL || '', // Y la foto de perfil (Tarea 1)
+      senderName: finalSenderName, // 👈 USA LA NUEVA VARIABLE
+      senderPhotoURL: user.value.photoURL || '', 
       timestamp: serverTimestamp()
     });
-    newMessage.value = ''; // Limpiar el input
-    scrollToBottom(); // Scroll al enviar
+    newMessage.value = ''; 
+    scrollToBottom();
   } catch (error) {
     console.error("Error al enviar mensaje:", error);
   }
