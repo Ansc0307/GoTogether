@@ -46,7 +46,7 @@
           <textarea
             v-model="descripcion"
             rows="4"
-            placeholder="Detalles, fechas, presupuesto..."
+            placeholder="Detalles, presupuesto..."
             class="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border"
           ></textarea>
         </div>
