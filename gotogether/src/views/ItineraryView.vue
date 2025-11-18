@@ -3,6 +3,14 @@
   <div>
     <div class="flex items-center justify-between">
       <h1 class="text-3xl font-bold text-gray-800">Itinerario del Viaje</h1>
+      <button
+        @click="showCreate = true"
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white hover:brightness-110 shadow"
+        title="Añadir evento"
+      >
+        <span class="text-lg">+</span>
+        Añadir Evento
+      </button>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
@@ -25,7 +33,7 @@
               <div class="text-xs text-gray-500">{{ grp.monthYear }}</div>
             </div>
             <div class="h-10 w-px bg-gray-300 mx-2"></div>
-            <h3 class="text-lg font-semibold text-gray-800">{{ grp.title }}</h3>
+            <h3 class="text-lg font-semibold text-gray-800">Día {{ grp.dayNumber }}</h3>
           </div>
 
           <!-- Actividades del día -->
@@ -78,6 +86,14 @@
         </div>
       </aside>
     </div>
+
+    <!-- Modal crear tarea -->
+    <TaskForm
+      :visible="showCreate"
+      mode="create"
+      :tripId="tripId"
+      @close="showCreate = false"
+    />
   </div>
 </template>
 
@@ -85,11 +101,14 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { db } from '../firebase/firebaseConfig'
-import { collection, query, where, onSnapshot } from 'firebase/firestore'
+import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore'
+import TaskForm from '../components/tareas/TaskForm.vue'
 
 const route = useRoute()
 const tripId = ref(route.params.id)
 const tasks = ref([])
+const showCreate = ref(false)
+const tripStartDate = ref(null) // Date a medianoche
 
 onMounted(() => {
   if (!tripId.value) return
@@ -103,6 +122,19 @@ onMounted(() => {
       return ta - tb
     })
     tasks.value = list
+  })
+
+  // cargar startDate del trip
+  const tRef = doc(db, 'trips', tripId.value)
+  getDoc(tRef).then(snap => {
+    if (snap.exists()) {
+      const s = snap.data()?.startDate // esperado: 'YYYY-MM-DD'
+      if (typeof s === 'string' && s.length >= 10) {
+        const [y,m,d] = s.split('-').map(Number)
+        const dt = new Date(Date.UTC(y, (m-1), d))
+        tripStartDate.value = dt
+      }
+    }
   })
 })
 
@@ -122,9 +154,19 @@ const groups = computed(() => {
     const day = dt.toLocaleDateString('es-ES', { day: '2-digit' })
     const monthYear = dt.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
     const weekday = dt.toLocaleDateString('es-ES', { weekday: 'short' })
+    // Calcular número de día relativo a startDate
+    let dayNumber = 1
+    if (tripStartDate.value) {
+      const msPerDay = 24*60*60*1000
+      // usar solo fecha (UTC) para evitar desfaces
+      const dUTC = Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate())
+      const s = tripStartDate.value
+      const sUTC = Date.UTC(s.getUTCFullYear(), s.getUTCMonth(), s.getUTCDate())
+      dayNumber = Math.max(1, Math.floor((dUTC - sUTC)/msPerDay) + 1)
+    }
     return {
       key,
-      title: `Día ${day}`,
+      dayNumber,
       day,
       monthYear,
       weekday,
