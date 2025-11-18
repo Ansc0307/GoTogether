@@ -40,6 +40,10 @@
           <div class="flex-grow">
             <p class="font-medium text-gray-900">{{ task.nombre }}</p>
             <p class="text-sm text-gray-500">Responsable: {{ aliasMap[task.responsable] }}</p>
+            <p v-if="task.fechaLimite" class="text-xs text-gray-400">
+  ⏳ Fecha límite: {{ formatFecha(task.fechaLimite) }}
+</p>
+
           </div>
 
           <div class="flex items-center gap-3">
@@ -78,9 +82,16 @@
           class="px-4 pb-4 text-sm text-gray-600 bg-gray-50 border-t border-gray-200"
         >
           <p><strong>Descripción:</strong> {{ task.descripcion || 'Sin descripción' }}</p>
-          <p class="mt-2 text-xs text-gray-400">
-            Creado: {{ formatFecha(task.fechaCreacion) }}
-          </p>
+
+<!-- NUEVO: FECHA LÍMITE -->
+<p v-if="task.fechaLimite" class="mt-2">
+  <strong>Fecha límite:</strong> {{ formatFecha(task.fechaLimite) }}
+</p>
+
+<p class="mt-2 text-xs text-gray-400">
+  Creado: {{ formatFecha(task.fechaCreacion) }}
+</p>
+
         </div>
       </div>
     </div>
@@ -104,6 +115,10 @@
           <div class="flex-grow">
             <p class="font-medium text-gray-900 line-through">{{ task.nombre }}</p>
             <p class="text-sm text-gray-500">Responsable: {{ aliasMap[task.responsable] }}</p>
+            <p v-if="task.fechaLimite" class="text-xs text-gray-400">
+  ⏳ Fecha límite: {{ formatFecha(task.fechaLimite) }}
+</p>
+
           </div>
 
           <div class="flex items-center gap-3">
@@ -270,12 +285,15 @@ const generarPDF = () => {
 
   autoTable(pdf, {
     startY: pdf.lastAutoTable.finalY + 5,
-    head: [["Nombre", "Descripción", "Responsable"]],
+    head: [["Nombre", "Descripción", "Responsable", "Fecha límite"]],
+
     body: pendientes.value.map((t) => [
-      t.nombre,
-      t.descripcion || "—",
-      aliasMap.value[t.responsable],
-    ]),
+  t.nombre,
+  t.descripcion || "—",
+  aliasMap.value[t.responsable],
+  t.fechaLimite ? formatFecha(t.fechaLimite) : "—",
+]),
+
     styles: { fontSize: 10, cellPadding: 2, overflow: "linebreak" },
     headStyles: { fillColor: [80, 120, 200], textColor: 255 },
     margin: { left: 30, right: 30 },
@@ -294,12 +312,15 @@ const generarPDF = () => {
 
   autoTable(pdf, {
     startY: pdf.lastAutoTable.finalY + 5,
-    head: [["Nombre", "Descripción", "Responsable"]],
+    head: [["Nombre", "Descripción", "Responsable", "Fecha límite"]],
+
     body: completadas.value.map((t) => [
-      t.nombre,
-      t.descripcion || "—",
-      aliasMap.value[t.responsable],
-    ]),
+  t.nombre,
+  t.descripcion || "—",
+  aliasMap.value[t.responsable],
+  t.fechaLimite ? formatFecha(t.fechaLimite) : "—",
+]),
+
     styles: { fontSize: 10, cellPadding: 2, overflow: "linebreak" },
     headStyles: { fillColor: [80, 200, 120], textColor: 255 },
     margin: { left: 30, right: 30 },

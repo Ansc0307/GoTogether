@@ -51,6 +51,16 @@
           ></textarea>
         </div>
 
+        <!-- Fecha límite -->
+        <div>
+          <label class="block text-sm font-medium mb-1">Fecha límite</label>
+          <input
+            v-model="fechaLimite"
+            type="date"
+            class="w-full px-4 py-3 rounded-lg bg-white dark:bg-slate-800 border"
+          />
+        </div>
+
         <!-- Responsable -->
         <div>
           <label class="block text-sm font-medium mb-1">Asignar al responsable</label>
@@ -104,6 +114,7 @@ const emit = defineEmits(["close"]);
 const nombre = ref("");
 const descripcion = ref("");
 const responsable = ref("");
+const fechaLimite = ref("");
 
 const miembros = ref([]);
 const aliasMap = ref({});
@@ -143,6 +154,7 @@ const resetForm = () => {
   nombre.value = "";
   descripcion.value = "";
   responsable.value = "";
+  fechaLimite.value = "";
 };
 
 // Cargar datos en modo editar
@@ -154,6 +166,9 @@ watch(
         nombre.value = newTask.nombre || "";
         descripcion.value = newTask.descripcion || "";
         responsable.value = newTask.responsable || "";
+        fechaLimite.value = newTask.fechaLimite
+          ? newTask.fechaLimite.toDate().toISOString().split("T")[0]
+          : "";
       } else {
         resetForm();
       }
@@ -167,11 +182,16 @@ const saveTask = async () => {
   if (!nombre.value.trim()) return alert("Falta el nombre de la tarea");
   if (!responsable.value.trim()) return alert("Selecciona un responsable");
 
+  const fechaLimiteTimestamp = fechaLimite.value
+    ? Timestamp.fromDate(new Date(fechaLimite.value))
+    : null;
+
   if (props.mode === "edit" && props.task?.id) {
     await updateDoc(doc(db, "tareas", props.task.id), {
       nombre: nombre.value,
       descripcion: descripcion.value,
       responsable: responsable.value,
+      fechaLimite: fechaLimiteTimestamp,
     });
   } else {
     await addDoc(collection(db, "tareas"), {
@@ -179,6 +199,7 @@ const saveTask = async () => {
       descripcion: descripcion.value,
       responsable: responsable.value,
       estado: "pendiente",
+      fechaLimite: fechaLimiteTimestamp,
       fechaCreacion: Timestamp.now(),
       tripId: props.tripId,
     });
