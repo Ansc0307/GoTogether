@@ -80,9 +80,8 @@ const handleNavigation = (section) => {
     case 'tasks':
       router.push('/tareas')
       break
-    case 'itinerary':
-      // Temporal: Itinerario (próximamente)
-      alert('Itinerario - Próximamente')
+    case 'calendar':
+      router.push('/calendar')
       break
     case 'maps':
       router.push('/maps')

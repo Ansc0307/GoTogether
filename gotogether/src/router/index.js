@@ -13,6 +13,9 @@ import VotingList from '../views/VotingList.vue'
 // tareas 
 import TasksView from '../views/TasksView.vue'
 
+// Calendario
+import CalendarView from '../views/CalendarView.vue'
+
 // viajes (RF5)
 import TripsView from '../views/trips/TripsView.vue'
 import TripDashboard from "../views/trips/TripDashboard.vue";
@@ -117,7 +120,11 @@ const routes = [
   { path: '/login', name: 'Login', component: LoginView, meta: { requiresGuest: true } },
   { path: '/register', name: 'Register', component: RegisterView, meta: { requiresGuest: true } },
   { path: '/reset-password', name: 'ResetPassword', component: ResetPasswordView, meta: { requiresGuest: true } },
-
+{
+  path: "/calender",
+  name: "CalendarView",
+  component: CalendarView,
+},
 
   //ruta welcome
   { path: '/welcome', name: 'Welcome', component: WelcomeView  , meta: { requiresAuth: true }},
