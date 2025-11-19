@@ -7,7 +7,9 @@ export function useCalendarData() {
   const trips = ref([])
   const votes = ref([])
 
+  // ===============================
   // CARGAR TAREAS
+  // ===============================
   const loadTasks = async (userEmail) => {
     try {
       const q = query(
@@ -24,7 +26,7 @@ export function useCalendarData() {
           return {
             id: doc.id,
             ...data,
-            fechaLimite: data.fechaLimite.toDate()
+            fechaLimite: data.fechaLimite.toDate(),
           }
         })
         .filter(Boolean)
@@ -33,7 +35,9 @@ export function useCalendarData() {
     }
   }
 
+  // ===============================
   // CARGAR TRIPS
+  // ===============================
   const loadTrips = async (userEmail) => {
     try {
       const q = query(
@@ -73,38 +77,31 @@ export function useCalendarData() {
     }
   }
 
-  // CARGAR VOTACIONES
+  // ===============================
+  // CARGAR VOTACIONES (OPTIMIZADO)
+  // ===============================
   const loadVotes = async (tripIds) => {
     try {
-      const voteArray = []
-
       const uniqueTrips = [...new Set(tripIds)]
 
-      for (const tripId of uniqueTrips) {
-
-        const votacionesRef = collection(
-          db,
-          'trips',
-          tripId,
-          'votaciones'
+      const requests = uniqueTrips.map(tripId =>
+        getDocs(collection(db, "trips", tripId, "votaciones")).then(snapshot =>
+          snapshot.docs.map(doc => {
+            const data = doc.data()
+            if (!data.deadline?.toDate) return null
+            return {
+              id: doc.id,
+              tripId,
+              ...data,
+              deadline: data.deadline.toDate(),
+            }
+          }).filter(Boolean)
         )
+      )
 
-        const querySnapshot = await getDocs(votacionesRef)
+      const results = await Promise.all(requests)
 
-        querySnapshot.forEach(doc => {
-          const data = doc.data()
-          if (!data.deadline?.toDate) return
-
-          voteArray.push({
-            id: doc.id,
-            tripId,
-            ...data,
-            deadline: data.deadline.toDate(),
-          })
-        })
-      }
-
-      votes.value = voteArray
+      votes.value = results.flat()
 
     } catch (err) {
       console.error("Error cargando votaciones:", err)

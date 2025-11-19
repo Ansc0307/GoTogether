@@ -4,28 +4,27 @@
     <!-- Header -->
     <header class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-700">
   
-  <!-- Izquierda (flechas + mes) -->
-  <div class="flex items-center gap-3">
-    <button @click="previousWeek">
-      <span class="material-symbols-outlined">chevron_left</span>
-    </button>
+      <!-- Izquierda (flechas + mes) -->
+      <div class="flex items-center gap-3">
+        <button @click="previousWeek">
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
 
-    <h2 class="text-lg font-bold">
-      {{ monthName }} {{ currentYear }}
-    </h2>
+        <h2 class="text-lg font-bold">
+          {{ monthName }} {{ currentYear }}
+        </h2>
 
-    <button @click="nextWeek">
-      <span class="material-symbols-outlined">chevron_right</span>
-    </button>
-  </div>
+        <button @click="nextWeek">
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+      </div>
 
-  <!-- 🔥 Botones Día/Semana/Mes -->
-  <CalendarViewSwitcher
-    :current="'week'"
-    @change="$emit('changeView', $event)"
-  />
-</header>
-
+      <!-- 🔥 Botones Día/Semana/Mes -->
+      <CalendarViewSwitcher
+        :current="'week'"
+        @change="$emit('changeView', $event)"
+      />
+    </header>
 
     <!-- Grid Header -->
     <div class="grid grid-cols-7 border-b border-gray-200">
@@ -63,50 +62,23 @@
         :style="{ gridColumnStart: i }"
       ></div>
 
-      <!-- EVENTS -->
-      <div class="absolute inset-0 p-2 grid grid-cols-7 gap-1">
+      <!-- EVENTS UNIFICADOS -->
+      <div class="absolute inset-0 p-2 grid grid-cols-7 auto-rows-[48px] gap-1 overflow-hidden">
 
-        <!-- Tareas -->
         <div
-          v-for="(tarea, i) in weekTasks"
-          :key="'tarea-'+i"
-          :style="{ gridColumnStart: tarea.col }"
+          v-for="(event, i) in positionedEvents"
+          :key="i"
+          :style="{
+            gridColumnStart: event.col,
+            gridRowStart: event.row
+          }"
         >
           <div
-            class="mt-6 h-20 bg-primary/10 border-l-4 border-primary p-2 rounded-r-lg"
+            class="h-full p-2 rounded-r-lg border-l-4 flex flex-col overflow-hidden"
+            :class="event.style"
           >
-            <p class="font-bold text-sm text-primary">{{ tarea.nombre }}</p>
-            <p class="text-xs text-primary">
-              Fecha límite: {{ tarea.fechaLimite.toLocaleDateString() }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Trips -->
-        <div
-          v-for="(dia, i) in weekTripDays"
-          :key="'trip-'+i"
-          :style="{ gridColumnStart: dia.col }"
-        >
-          <div
-            class="mt-2 h-12 bg-green-100 border-l-4 border-green-500 p-1 rounded-r-lg"
-          >
-            <p class="font-bold text-xs text-green-700">{{ dia.name }}</p>
-            <p class="text-xs text-green-700">{{ dia.date.toLocaleDateString() }}</p>
-          </div>
-        </div>
-
-        <!-- Votaciones -->
-        <div
-          v-for="(vote, i) in weekVotes"
-          :key="'vote-'+i"
-          :style="{ gridColumnStart: vote.col }"
-        >
-          <div
-            class="mt-2 h-12 bg-yellow-100 border-l-4 border-yellow-500 p-1 rounded-r-lg"
-          >
-            <p class="font-bold text-xs text-yellow-700">{{ vote.title }}</p>
-            <p class="text-xs text-yellow-700">Deadline: {{ vote.deadline.toLocaleDateString() }}</p>
+            <p class="font-bold text-xs truncate">{{ event.title }}</p>
+            <p class="text-xs truncate">{{ event.subtitle }}</p>
           </div>
         </div>
 
@@ -115,14 +87,11 @@
     </div>
   </div>
 </template>
-
-
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useCalendarData } from '@/composables/useCalendarData'
 import CalendarViewSwitcher from '@/components/calendar/CalendarViewSwitcher.vue'
-
 
 // ========================================
 // Firebase composable
@@ -170,7 +139,6 @@ const weekDays = computed(() => {
   const start = new Date(currentDate.value)
   const day = start.getDay()
 
-  // move to Monday (if Sunday -> go back 6)
   const diff = day === 0 ? -6 : 1 - day
   start.setDate(start.getDate() + diff)
 
@@ -203,11 +171,12 @@ const weekTasks = computed(() => {
       weekDays.value.some(d => t.fechaLimite.toDateString() === d.date.toDateString())
     )
     .map(t => ({
-      nombre: t.nombre,
-      fechaLimite: t.fechaLimite,
+      title: t.nombre,
+      subtitle: "Fecha límite: " + t.fechaLimite.toLocaleDateString(),
       col: weekDays.value.findIndex(d =>
         d.date.toDateString() === t.fechaLimite.toDateString()
-      ) + 1
+      ) + 1,
+      style: "bg-primary/10 border-primary text-primary"
     }))
 })
 
@@ -223,11 +192,12 @@ const weekTripDays = computed(() => {
       weekDays.value.some(d => t.date.toDateString() === d.date.toDateString())
     )
     .map(t => ({
-      name: t.name,
-      date: t.date,
+      title: t.name,
+      subtitle: t.date.toLocaleDateString(),
       col: weekDays.value.findIndex(d =>
         d.date.toDateString() === t.date.toDateString()
-      ) + 1
+      ) + 1,
+      style: "bg-green-100 border-green-500 text-green-700"
     }))
 })
 
@@ -244,10 +214,43 @@ const weekVotes = computed(() => {
     )
     .map(v => ({
       title: v.title,
-      deadline: v.deadline,
+      subtitle: "Deadline: " + v.deadline.toLocaleDateString(),
       col: weekDays.value.findIndex(d =>
         d.date.toDateString() === v.deadline.toDateString()
-      ) + 1
+      ) + 1,
+      style: "bg-yellow-100 border-yellow-500 text-yellow-700"
     }))
+})
+
+// ========================================
+// UNIFICAR Y POSICIONAR EVENTOS DINÁMICAMENTE
+// ========================================
+const positionedEvents = computed(() => {
+  const events = [
+    ...weekTasks.value,
+    ...weekTripDays.value,
+    ...weekVotes.value
+  ]
+
+  const columns = { 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [] }
+
+  events.forEach(ev => {
+    columns[ev.col].push(ev)
+  })
+
+  const positioned = []
+
+  Object.keys(columns).forEach(col => {
+    const colEvents = columns[col]
+
+    colEvents.forEach((ev, index) => {
+      positioned.push({
+        ...ev,
+        row: index + 2 // fila 2 y hacia abajo
+      })
+    })
+  })
+
+  return positioned
 })
 </script>
