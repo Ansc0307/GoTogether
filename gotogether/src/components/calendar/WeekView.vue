@@ -2,49 +2,30 @@
   <div class="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 shadow-sm flex flex-col">
 
     <!-- Header -->
-    <header class="flex items-center justify-between p-4 border-b border-gray-200">
-      <div class="flex items-center gap-3">
-        <button
-          class="text-gray-500 hover:bg-gray-100 flex size-9 items-center justify-center rounded-lg"
-          @click="previousWeek"
-        >
-          <span class="material-symbols-outlined">chevron_left</span>
-        </button>
+    <header class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-slate-700">
+  
+  <!-- Izquierda (flechas + mes) -->
+  <div class="flex items-center gap-3">
+    <button @click="previousWeek">
+      <span class="material-symbols-outlined">chevron_left</span>
+    </button>
 
-        <h2 class="text-lg font-bold">
-          {{ monthName }} {{ currentYear }}
-        </h2>
+    <h2 class="text-lg font-bold">
+      {{ monthName }} {{ currentYear }}
+    </h2>
 
-        <button
-          class="text-gray-500 hover:bg-gray-100 flex size-9 items-center justify-center rounded-lg"
-          @click="nextWeek"
-        >
-          <span class="material-symbols-outlined">chevron_right</span>
-        </button>
-      </div>
+    <button @click="nextWeek">
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  </div>
 
-      <div class="flex items-center gap-1 bg-gray-100 p-1 rounded-lg">
-        <button
-          class="h-8 px-3 text-sm font-medium rounded-md hover:bg-white hover:text-gray-900"
-          @click="$emit('changeView', 'day')"
-        >
-          Día
-        </button>
+  <!-- 🔥 Botones Día/Semana/Mes -->
+  <CalendarViewSwitcher
+    :current="'week'"
+    @change="$emit('changeView', $event)"
+  />
+</header>
 
-        <button
-          class="h-8 px-3 text-sm font-bold bg-white rounded-md shadow-sm"
-        >
-          Semana
-        </button>
-
-        <button
-          class="h-8 px-3 text-sm font-medium text-gray-600 rounded-md hover:bg-white hover:text-gray-900"
-          @click="$emit('changeView', 'month')"
-        >
-          Mes
-        </button>
-      </div>
-    </header>
 
     <!-- Grid Header -->
     <div class="grid grid-cols-7 border-b border-gray-200">
@@ -82,13 +63,13 @@
         :style="{ gridColumnStart: i }"
       ></div>
 
-      <!-- EVENTOS: tareas -->
+      <!-- EVENTS -->
       <div class="absolute inset-0 p-2 grid grid-cols-7 gap-1">
 
+        <!-- Tareas -->
         <div
           v-for="(tarea, i) in weekTasks"
           :key="'tarea-'+i"
-          class="col-start-1"
           :style="{ gridColumnStart: tarea.col }"
         >
           <div
@@ -101,11 +82,10 @@
           </div>
         </div>
 
-        <!-- EVENTOS: trips -->
+        <!-- Trips -->
         <div
           v-for="(dia, i) in weekTripDays"
           :key="'trip-'+i"
-          class="col-start-1"
           :style="{ gridColumnStart: dia.col }"
         >
           <div
@@ -116,158 +96,158 @@
           </div>
         </div>
 
+        <!-- Votaciones -->
+        <div
+          v-for="(vote, i) in weekVotes"
+          :key="'vote-'+i"
+          :style="{ gridColumnStart: vote.col }"
+        >
+          <div
+            class="mt-2 h-12 bg-yellow-100 border-l-4 border-yellow-500 p-1 rounded-r-lg"
+          >
+            <p class="font-bold text-xs text-yellow-700">{{ vote.title }}</p>
+            <p class="text-xs text-yellow-700">Deadline: {{ vote.deadline.toLocaleDateString() }}</p>
+          </div>
+        </div>
+
       </div>
 
     </div>
   </div>
 </template>
 
+
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { db } from '@/firebase/firebaseConfig'
-import { collection, query, where, getDocs } from 'firebase/firestore'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { useCalendarData } from '@/composables/useCalendarData'
+import CalendarViewSwitcher from '@/components/calendar/CalendarViewSwitcher.vue'
+
+
+// ========================================
+// Firebase composable
+// ========================================
+const { tareas, trips, votes, loadTasks, loadTrips, loadVotes } = useCalendarData()
 
 const auth = getAuth()
 const currentDate = ref(new Date())
-const tareas = ref([])
-const trips = ref([])
 
-// OBTENER TAREAS DEL USUARIO
-const loadTasks = async (userEmail) => {
-  try {
-    const q = query(
-      collection(db, 'tareas'),
-      where('responsable', '==', userEmail)
-    )
-
-    const querySnapshot = await getDocs(q)
-
-    tareas.value = querySnapshot.docs
-      .map(doc => {
-        const data = doc.data()
-        if (!data.fechaLimite?.toDate) return null
-        return { ...data, fechaLimite: data.fechaLimite.toDate() }
-      })
-      .filter(Boolean)
-    console.log("Tareas cargadas:", tareas.value)
-  } catch (err) {
-    console.error("Error cargando tareas:", err)
-  }
-}
-
-// OBTENER TRIPS DEL USUARIO (como miembro o creador)
-const loadTrips = async (userEmail) => {
-  try {
-    const q = query(
-      collection(db, 'trips'),
-      where('members', 'array-contains', userEmail)
-    )
-
-    const querySnapshot = await getDocs(q)
-    trips.value = querySnapshot.docs
-      .map(doc => {
-        const data = doc.data()
-        const start = new Date(data.startDate)
-        const end = new Date(data.endDate)
-        // Generar todos los días del viaje
-        const days = []
-        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-          days.push({ name: data.name, date: new Date(d) })
-        }
-        return days
-      })
-      .flat()
-    console.log("Trips cargados:", trips.value)
-  } catch (err) {
-    console.error("Error cargando trips:", err)
-  }
-}
-
-// Montaje: esperar usuario y cargar
 onMounted(() => {
   onAuthStateChanged(auth, user => {
     if (user) {
-      console.log("Usuario autenticado:", user.email)
       loadTasks(user.email)
       loadTrips(user.email)
+      loadVotes(user.email)
     }
   })
 })
 
-// INICIO DE SEMANA
-const getStartOfWeek = (date) => {
-  const d = new Date(date)
-  const day = d.getDay()
-  const diff = d.getDate() - (day === 0 ? 6 : day - 1)
-  return new Date(d.setDate(diff))
-}
-const startOfWeek = computed(() => getStartOfWeek(currentDate.value))
-
-// CABECERA DE SEMANA
-const weekDays = computed(() => {
-  const days = []
-  const start = startOfWeek.value
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(start)
-    d.setDate(start.getDate() + i)
-    days.push({
-      date: d,
-      label: d.toLocaleDateString('es-ES', { weekday: 'short' }).toUpperCase(),
-      day: d.getDate(),
-      isToday: isToday(d)
-    })
-  }
-  return days
-})
-
-const isToday = (d) => {
-  const now = new Date()
-  return (
-    d.getDate() === now.getDate() &&
-    d.getMonth() === now.getMonth() &&
-    d.getFullYear() === now.getFullYear()
-  )
-}
-
+// ========================================
+// Calendar Metadata
+// ========================================
 const monthName = computed(() =>
   currentDate.value.toLocaleDateString('es-ES', { month: 'long' })
 )
+
 const currentYear = computed(() => currentDate.value.getFullYear())
 
-// FILTRAR SOLO LAS TAREAS DE ESTA SEMANA
-const weekTasks = computed(() => {
-  return tareas.value
-    .map(t => {
-      const col = weekDays.value.findIndex(d =>
-        d.date.getDate() === t.fechaLimite.getDate() &&
-        d.date.getMonth() === t.fechaLimite.getMonth() &&
-        d.date.getFullYear() === t.fechaLimite.getFullYear()
-      ) + 1
-      return { ...t, col }
-    })
-    .filter(t => t.col > 0)
-})
-
-// FILTRAR TRIPS QUE COINCIDAN CON LA SEMANA
-const weekTripDays = computed(() => {
-  return trips.value
-    .map(t => {
-      const col = weekDays.value.findIndex(d =>
-        d.date.getDate() === t.date.getDate() &&
-        d.date.getMonth() === t.date.getMonth() &&
-        d.date.getFullYear() === t.date.getFullYear()
-      ) + 1
-      return { ...t, col }
-    })
-    .filter(t => t.col > 0)
-})
-
-// NAVEGACIÓN SEMANAL
-const nextWeek = () => {
-  currentDate.value = new Date(currentDate.value.setDate(currentDate.value.getDate() + 7))
-}
 const previousWeek = () => {
-  currentDate.value = new Date(currentDate.value.setDate(currentDate.value.getDate() - 7))
+  currentDate.value = new Date(
+    currentDate.value.setDate(currentDate.value.getDate() - 7)
+  )
 }
+
+const nextWeek = () => {
+  currentDate.value = new Date(
+    currentDate.value.setDate(currentDate.value.getDate() + 7)
+  )
+}
+
+// ========================================
+// Generate week days (Mon - Sun)
+// ========================================
+const weekDays = computed(() => {
+  const start = new Date(currentDate.value)
+  const day = start.getDay()
+
+  // move to Monday (if Sunday -> go back 6)
+  const diff = day === 0 ? -6 : 1 - day
+  start.setDate(start.getDate() + diff)
+
+  const days = []
+
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(start)
+    d.setDate(start.getDate() + i)
+
+    days.push({
+      date: d,
+      day: d.getDate(),
+      label: d.toLocaleDateString('es-ES', { weekday: 'short' }),
+      isToday: d.toDateString() === new Date().toDateString()
+    })
+  }
+
+  return days
+})
+
+// ========================================
+// Filter Week Tasks
+// ========================================
+const weekTasks = computed(() => {
+  if (!tareas.value) return []
+
+  return tareas.value
+    .filter(t => t.fechaLimite instanceof Date)
+    .filter(t =>
+      weekDays.value.some(d => t.fechaLimite.toDateString() === d.date.toDateString())
+    )
+    .map(t => ({
+      nombre: t.nombre,
+      fechaLimite: t.fechaLimite,
+      col: weekDays.value.findIndex(d =>
+        d.date.toDateString() === t.fechaLimite.toDateString()
+      ) + 1
+    }))
+})
+
+// ========================================
+// Filter Week Trips
+// ========================================
+const weekTripDays = computed(() => {
+  if (!trips.value) return []
+
+  return trips.value
+    .filter(t => t.date instanceof Date)
+    .filter(t =>
+      weekDays.value.some(d => t.date.toDateString() === d.date.toDateString())
+    )
+    .map(t => ({
+      name: t.name,
+      date: t.date,
+      col: weekDays.value.findIndex(d =>
+        d.date.toDateString() === t.date.toDateString()
+      ) + 1
+    }))
+})
+
+// ========================================
+// Filter Week Votes
+// ========================================
+const weekVotes = computed(() => {
+  if (!votes.value) return []
+
+  return votes.value
+    .filter(v => v.deadline instanceof Date)
+    .filter(v =>
+      weekDays.value.some(d => v.deadline.toDateString() === d.date.toDateString())
+    )
+    .map(v => ({
+      title: v.title,
+      deadline: v.deadline,
+      col: weekDays.value.findIndex(d =>
+        d.date.toDateString() === v.deadline.toDateString()
+      ) + 1
+    }))
+})
 </script>

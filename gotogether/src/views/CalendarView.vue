@@ -1,17 +1,22 @@
 <template>
-  <div class="p-4 max-w-7xl mx-auto">
+  <div class="p-4 w-full max-w-[1500px] mx-auto">
+
     <!-- Botones de vista -->
-    <div class="flex gap-2 mb-4">
-      <button @click="currentView='day'" :class="btnClass('day')">Día</button>
-      <button @click="currentView='week'" :class="btnClass('week')">Semana</button>
-      <button @click="currentView='month'" :class="btnClass('month')">Mes</button>
+  
+
+    <!-- Contenedor dinámico -->
+    <div class="w-full overflow-x-auto">
+      <component
+  :is="viewComponent"
+  :events="events"
+  :tripId="tripId"
+  @changeView="currentView = $event"
+/>
+
     </div>
 
-    <!-- Contenedor dinámico de vista -->
-    <component :is="viewComponent" 
-               :events="events"
-               :tripId="tripId"
-    />
+    
+
   </div>
 </template>
 
@@ -32,7 +37,7 @@ const currentView = ref('week')
 const events = ref([])
 
 const viewComponent = computed(() => {
-  switch(currentView.value) {
+  switch (currentView.value) {
     case 'day': return DayView
     case 'week': return WeekView
     case 'month': return MonthView
@@ -40,19 +45,24 @@ const viewComponent = computed(() => {
   }
 })
 
-const btnClass = (view) => `
-  px-4 py-2 rounded-lg font-semibold ${currentView.value===view?'bg-primary text-white':'bg-gray-100 text-gray-700'}
+const btnClass = view => `
+  px-4 py-2 whitespace-nowrap rounded-lg font-semibold
+  ${currentView.value===view
+    ? 'bg-primary text-white'
+    : 'bg-gray-200 text-gray-700 dark:bg-slate-800 dark:text-gray-300'}
 `
 
-// Función para cargar eventos desde Firebase
+// Cargar eventos
 const fetchEvents = async () => {
   if (!props.tripId) return
+
   const types = ['tareas', 'votaciones', 'trips']
   let allEvents = []
 
   for (const type of types) {
     const q = query(collection(db, type), where("tripId", "==", props.tripId))
     const snapshot = await getDocs(q)
+
     snapshot.forEach(doc => {
       const data = doc.data()
       allEvents.push({
@@ -64,8 +74,18 @@ const fetchEvents = async () => {
       })
     })
   }
+
   events.value = allEvents
 }
 
 onMounted(fetchEvents)
 </script>
+
+<style scoped>
+/* Mejor soporte móvil */
+@media (max-width: 600px) {
+  button {
+    font-size: 0.85rem;
+  }
+}
+</style>
