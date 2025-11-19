@@ -65,22 +65,27 @@
       <!-- EVENTS UNIFICADOS -->
       <div class="absolute inset-0 p-2 grid grid-cols-7 auto-rows-[48px] gap-1 overflow-hidden">
 
-        <div
-          v-for="(event, i) in positionedEvents"
-          :key="i"
-          :style="{
-            gridColumnStart: event.col,
-            gridRowStart: event.row
-          }"
-        >
-          <div
-            class="h-full p-2 rounded-r-lg border-l-4 flex flex-col overflow-hidden"
-            :class="event.style"
-          >
-            <p class="font-bold text-xs truncate">{{ event.title }}</p>
-            <p class="text-xs truncate">{{ event.subtitle }}</p>
-          </div>
-        </div>
+       <div
+  v-for="(event, i) in positionedEvents"
+  :key="i"
+  :style="{
+    gridColumnStart: event.col,
+    gridRowStart: event.row
+  }"
+>
+  <div
+    class="h-full p-2 rounded-r-lg border-l-4 flex flex-col overflow-hidden"
+    :class="event.style"
+  >
+    <p class="font-bold text-xs truncate">{{ event.title }}</p>
+    <p class="text-xs">
+      <span v-for="(line, index) in event.subtitle" :key="index" class="block truncate">
+        {{ line }}
+      </span>
+    </p>
+  </div>
+</div>
+
 
       </div>
 
@@ -172,14 +177,16 @@ const weekTasks = computed(() => {
     )
     .map(t => ({
       title: t.nombre,
-      subtitle: "Fecha límite: " + t.fechaLimite.toLocaleDateString(),
+      subtitle: [
+        "Fecha límite: " + t.fechaLimite.toLocaleDateString(),
+        t.tripName ? "Destino: " + t.tripName : null
+      ].filter(Boolean),
       col: weekDays.value.findIndex(d =>
         d.date.toDateString() === t.fechaLimite.toDateString()
       ) + 1,
       style: "bg-primary/10 border-primary text-primary"
     }))
 })
-
 // ========================================
 // Filter Week Trips
 // ========================================
@@ -193,13 +200,17 @@ const weekTripDays = computed(() => {
     )
     .map(t => ({
       title: t.name,
-      subtitle: t.date.toLocaleDateString(),
+      subtitle: [
+        "Día del viaje: " + t.date.toLocaleDateString(),
+        t.destination ? "Destino: " + t.destination : null
+      ].filter(Boolean),
       col: weekDays.value.findIndex(d =>
         d.date.toDateString() === t.date.toDateString()
       ) + 1,
       style: "bg-green-100 border-green-500 text-green-700"
     }))
 })
+
 
 // ========================================
 // Filter Week Votes
@@ -214,7 +225,10 @@ const weekVotes = computed(() => {
     )
     .map(v => ({
       title: v.title,
-      subtitle: "Deadline: " + v.deadline.toLocaleDateString(),
+      subtitle: [
+        "Deadline: " + v.deadline.toLocaleDateString(),
+        v.tripName ? "Destino: " + v.tripName : null
+      ].filter(Boolean),
       col: weekDays.value.findIndex(d =>
         d.date.toDateString() === v.deadline.toDateString()
       ) + 1,

@@ -66,6 +66,7 @@
           <p class="font-bold text-blue-800">{{ t.nombre }}</p>
           <p class="text-xs text-blue-700">
             Fecha límite: {{ t.fechaLimite.toLocaleDateString() }}
+            Destino: {{ t.tripName }}
           </p>
         </div>
       </section>
@@ -107,7 +108,10 @@
         >
           <p class="font-bold text-yellow-700">{{ v.title }}</p>
           <p class="text-xs text-yellow-700">
-            Deadline: {{ v.deadline.toLocaleDateString() }}
+            Deadline: {{ v.deadline.toLocaleDateString() }} 
+          
+  <span v-if="v.tripName">- Destino: {{ v.tripName }}</span>
+
           </p>
         </div>
       </section>
@@ -121,6 +125,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useCalendarData } from '@/composables/useCalendarData'
+import CalendarViewSwitcher from '@/components/calendar/CalendarViewSwitcher.vue'
 
 const { tareas, trips, votes, loadTasks, loadTrips, loadVotes } = useCalendarData()
 
