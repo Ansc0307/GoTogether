@@ -1,7 +1,7 @@
 <!-- /views/PresupuestoView.vue -->
 <template>
   <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden text-black dark:text-white font-display">
-    <main class="flex-1 px-40 py-10">
+    <main class="flex-1 px-4 sm:px-40 py-10">
       <div class="layout-content-container flex flex-col max-w-[960px] mx-auto w-full">
         
         <!-- Título y descripción -->
@@ -38,32 +38,36 @@
           <div class="px-4 pt-8 pb-4">
             <h2 class="text-xl font-bold tracking-tight">Balances</h2>
           </div>
-          <BalanceTable :balances="balances" />
+          <div class="overflow-x-auto -mx-4 px-4">
+            <BalanceTable :balances="balances" />
+          </div>
 
           <!-- Gastos -->
           <div class="px-4 pt-8 pb-4">
             <h2 class="text-xl font-bold tracking-tight">Gastos</h2>
           </div>
-          <ExpenseTable 
-            :gastos="gastos"
-            :miembros="miembros"
-            @edit-expense="abrirEditarGasto"
-            @delete-expense="eliminarGasto"
-          />
+          <div class="overflow-x-auto -mx-4 px-4">
+            <ExpenseTable 
+              :gastos="gastos"
+              :miembros="miembros"
+              @edit-expense="abrirEditarGasto"
+              @delete-expense="eliminarGasto"
+            />
+          </div>
 
           <!-- Botón -->
           <div class="flex px-4 py-6 justify-end">
-            <div class="flex gap-3">
+            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <button
                 @click="showExportModal = true"
-                class="flex items-center justify-center rounded-lg h-10 px-4 bg-subtle-light dark:bg-subtle-dark text-sm font-bold text-foreground-light dark:text-foreground-dark hover:bg-subtle-light/90"
+                class="w-full sm:w-auto flex items-center justify-center rounded-lg h-10 px-4 bg-subtle-light dark:bg-subtle-dark text-sm font-bold text-foreground-light dark:text-foreground-dark hover:bg-subtle-light/90"
                 title="Exportar presupuesto y gastos a CSV"
               >
                 Exportar CSV
               </button>
               <button
                 @click="irARegistrarGasto"
-                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]"
+                class="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]"
               >
                 <span class="truncate">+ Registrar Gasto</span>
               </button>
@@ -91,8 +95,8 @@
     />
 
     <!-- Export modal -->
-    <div v-if="showExportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div class="bg-background-light dark:bg-background-dark rounded-lg p-6 w-full max-w-lg mx-4">
+    <div v-if="showExportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div class="bg-background-light dark:bg-background-dark rounded-lg p-4 sm:p-6 w-full max-w-lg mx-0 max-h-[90vh] overflow-y-auto">
         <h3 class="text-lg font-bold mb-4">Exportar presupuesto a CSV</h3>
 
         <div class="space-y-4">
@@ -131,9 +135,9 @@
           </div>
         </div>
 
-        <div class="mt-6 flex justify-end gap-3">
-          <button @click="showExportModal = false" class="px-4 py-2 rounded bg-subtle-light dark:bg-subtle-dark">Cancelar</button>
-          <button @click="confirmExport" class="px-4 py-2 rounded bg-primary text-white">Exportar</button>
+        <div class="mt-6 flex flex-col sm:flex-row justify-end gap-3">
+          <button @click="showExportModal = false" class="px-4 py-2 rounded bg-subtle-light dark:bg-subtle-dark w-full sm:w-auto">Cancelar</button>
+          <button @click="confirmExport" class="px-4 py-2 rounded bg-primary text-white w-full sm:w-auto">Exportar</button>
         </div>
       </div>
     </div>
