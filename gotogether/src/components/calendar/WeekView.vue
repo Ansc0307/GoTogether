@@ -63,33 +63,33 @@
       ></div>
 
       <!-- EVENTS UNIFICADOS -->
-      <div class="absolute inset-0 p-2 grid grid-cols-7 auto-rows-[48px] gap-1 overflow-hidden">
-
-       <div
-  v-for="(event, i) in positionedEvents"
-  :key="i"
-  :style="{
-    gridColumnStart: event.col,
-    gridRowStart: event.row
-  }"
->
-  <div
-    class="h-full p-2 rounded-r-lg border-l-4 flex flex-col overflow-hidden"
-    :class="event.style"
-  >
-    <p class="font-bold text-xs truncate">{{ event.title }}</p>
-    <p class="text-xs">
-      <span v-for="(line, index) in event.subtitle" :key="index" class="block truncate">
-        {{ line }}
-      </span>
-    </p>
-  </div>
-</div>
-
-
+       <div class="absolute inset-0 p-1 sm:p-2 grid grid-cols-7 auto-rows-[48px] sm:auto-rows-[64px] md:auto-rows-[80px] gap-1 overflow-auto">
+        <div
+          v-for="(event, i) in positionedEvents"
+          :key="i"
+          :style="{
+            gridColumnStart: event.col,
+            gridRowStart: event.row,
+            gridRowEnd: 'span ' + (event.rowSpan || 1)
+          }"
+        >
+          <div
+            class="h-full p-1 sm:p-2 rounded-r-lg border-l-4 flex flex-col overflow-auto leading-tight min-h-0 break-words"
+            :class="event.style"
+            style="font-size: .64rem;"
+          >
+            <p class="font-bold" :style="{ fontSize: '0.75rem' }">
+              {{ event.title }}
+            </p>
+            <div class="text-[0.62rem] mt-0.5">
+              <span v-for="(line, index) in event.subtitle" :key="index" class="block">
+                {{ line }}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-
-    </div>
+      </div>
   </div>
 </template>
 <script setup>

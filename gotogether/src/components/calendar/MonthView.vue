@@ -63,22 +63,23 @@
       <div
         v-for="(d, i) in monthDays"
         :key="i"
-        class="border border-gray-200 p-2 relative"
+        class="border border-gray-200 p-1 sm:p-2 relative"
         :class="{
           'bg-gray-100 text-gray-500': d.otherMonth,
           'bg-blue-50 border-primary font-bold': d.isToday
         }"
       >
-        <p class="text-right text-sm pr-1">{{ d.date.getDate() }}</p>
+        <p class="text-right text-[0.7rem] sm:text-sm pr-1">{{ d.date.getDate() }}</p>
 
-        <!-- Events -->
-        <div class="mt-2 space-y-1">
+        <!-- Events: contenedor con altura máxima y scroll para cuándo hay mucho texto -->
+        <div class="mt-1 space-y-1 max-h-28 sm:max-h-36 md:max-h-44 overflow-auto pr-1">
 
           <!-- Tareas -->
           <div
             v-for="(t, idx) in d.tasks"
             :key="'t-'+idx"
-            class="bg-blue-100 border-l-4 border-blue-500 px-1 py-[2px] rounded-r text-xs text-blue-800 truncate"
+            class="bg-blue-100 border-l-4 border-blue-500 px-1 py-0.5 rounded-r text-[0.62rem] sm:text-xs text-blue-800 leading-tight break-words"
+            title=" {{ t.nombre }}"
           >
             {{ t.nombre }}
           </div>
@@ -87,7 +88,8 @@
           <div
             v-for="(tr, idx) in d.trips"
             :key="'tr-'+idx"
-            class="bg-green-100 border-l-4 border-green-500 px-1 py-[2px] rounded-r text-xs text-green-700 truncate"
+            class="bg-green-100 border-l-4 border-green-500 px-1 py-0.5 rounded-r text-[0.62rem] sm:text-xs text-green-700 leading-tight break-words"
+            title=" {{ tr.name }}"
           >
             {{ tr.name }}
           </div>
@@ -96,7 +98,8 @@
           <div
             v-for="(v, idx) in d.votes"
             :key="'v-'+idx"
-            class="bg-yellow-100 border-l-4 border-yellow-500 px-1 py-[2px] rounded-r text-xs text-yellow-700 truncate"
+            class="bg-yellow-100 border-l-4 border-yellow-500 px-1 py-0.5 rounded-r text-[0.62rem] sm:text-xs text-yellow-700 leading-tight break-words"
+            title=" {{ v.title }}"
           >
             {{ v.title }}
           </div>
