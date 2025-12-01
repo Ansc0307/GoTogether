@@ -27,9 +27,10 @@
         >
         <img 
           v-if="message.senderId !== user?.uid"
-          :src="getAvatar(message.senderPhotoURL, message.senderName)" 
-          :alt="message.senderName" 
-          class="h-10 w-10 rounded-full flex-shrink-0"
+          :src="getAvatar(message.senderPhotoURL, message.senderName, message.senderEmail)" 
+          :alt="message.senderName || message.senderEmail"
+          class="h-10 w-10 rounded-full flex-shrink-0 object-cover bg-gray-200"
+          @error="onAvatarError($event, message)"
         />
 
         <div 
@@ -312,7 +313,43 @@ const getAvatar = (photoURL, name) => {
   if (photoURL) return photoURL;
   const seed = name || 'default';
   // Avatar genérico si no hay foto
-  return `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(seed)}`;
+  return generateInitialsAvatar(seed);
+};
+
+// Generate a simple SVG avatar with the initial and a deterministic background color
+const generateInitialsAvatar = (name) => {
+  const seed = (name || 'U').toString();
+  const initial = (seed.trim().charAt(0) || 'U').toUpperCase();
+  const color = stringToColor(seed);
+  const svg = `<?xml version='1.0' encoding='UTF-8'?>` +
+    `<svg xmlns='http://www.w3.org/2000/svg' width='128' height='128'>` +
+    `<rect width='100%' height='100%' fill='${color}'/>` +
+    `<text x='50%' y='50%' dy='.08em' font-family='Arial, Helvetica, sans-serif' font-size='64' fill='white' text-anchor='middle'>${initial}</text>` +
+    `</svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
+// Simple deterministic color generator from a string
+const stringToColor = (str) => {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const h = Math.abs(hash) % 360; // hue
+  // return hsl color (supported inside SVG fill)
+  return `hsl(${h} 60% 40%)`;
+};
+
+const onAvatarError = (event, message) => {
+  try {
+    if (!event || !event.target) return;
+    // Prevent infinite loop if generated avatar somehow errors
+    event.target.onerror = null;
+    const fallback = generateInitialsAvatar(message?.senderName || message?.senderEmail || 'U');
+    event.target.src = fallback;
+  } catch (e) {
+    // ignore
+  }
 };
 
 const formatTimestamp = (timestamp) => {
