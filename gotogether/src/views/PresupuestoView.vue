@@ -1,7 +1,7 @@
 <!-- /views/PresupuestoView.vue -->
 <template>
   <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-x-hidden text-black dark:text-white font-display">
-    <main class="flex-1 px-40 py-10">
+    <main class="flex-1 px-4 sm:px-40 py-10">
       <div class="layout-content-container flex flex-col max-w-[960px] mx-auto w-full">
         
         <!-- Título y descripción -->
@@ -38,27 +38,40 @@
           <div class="px-4 pt-8 pb-4">
             <h2 class="text-xl font-bold tracking-tight">Balances</h2>
           </div>
-          <BalanceTable :balances="balances" />
+          <div class="overflow-x-auto -mx-4 px-4">
+            <BalanceTable :balances="balances" />
+          </div>
 
           <!-- Gastos -->
           <div class="px-4 pt-8 pb-4">
             <h2 class="text-xl font-bold tracking-tight">Gastos</h2>
           </div>
-          <ExpenseTable 
-            :gastos="gastos"
-            :miembros="miembros"
-            @edit-expense="abrirEditarGasto"
-            @delete-expense="eliminarGasto"
-          />
+          <div class="overflow-x-auto -mx-4 px-4">
+            <ExpenseTable 
+              :gastos="gastos"
+              :miembros="miembros"
+              @edit-expense="abrirEditarGasto"
+              @delete-expense="eliminarGasto"
+            />
+          </div>
 
           <!-- Botón -->
           <div class="flex px-4 py-6 justify-end">
-            <button
-              @click="irARegistrarGasto"
-              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]"
-            >
-              <span class="truncate">+ Registrar Gasto</span>
-            </button>
+            <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <button
+                @click="showExportModal = true"
+                class="w-full sm:w-auto flex items-center justify-center rounded-lg h-10 px-4 bg-subtle-light dark:bg-subtle-dark text-sm font-bold text-foreground-light dark:text-foreground-dark hover:bg-subtle-light/90"
+                title="Exportar presupuesto y gastos a CSV"
+              >
+                Exportar CSV
+              </button>
+              <button
+                @click="irARegistrarGasto"
+                class="w-full sm:w-auto flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]"
+              >
+                <span class="truncate">+ Registrar Gasto</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -80,6 +93,54 @@
       @close="cerrarEditarGasto"
       @save="guardarGastoEditado"
     />
+
+    <!-- Export modal -->
+    <div v-if="showExportModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+      <div class="bg-background-light dark:bg-background-dark rounded-lg p-4 sm:p-6 w-full max-w-lg mx-0 max-h-[90vh] overflow-y-auto">
+        <h3 class="text-lg font-bold mb-4">Exportar presupuesto a CSV</h3>
+
+        <div class="space-y-4">
+          <label class="flex items-center gap-2">
+            <input type="checkbox" v-model="exportOptions.includeSummary" />
+            <span>Incluir resumen</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="checkbox" v-model="exportOptions.includeBalances" />
+            <span>Incluir balances</span>
+          </label>
+          <label class="flex items-center gap-2">
+            <input type="checkbox" v-model="exportOptions.includeExpenses" />
+            <span>Incluir gastos</span>
+          </label>
+
+          <div v-if="exportOptions.includeExpenses" class="pl-4 border-l border-subtle-light dark:border-subtle-dark">
+            <p class="font-medium">Columnas de gastos</p>
+            <div class="grid grid-cols-2 gap-2 mt-2">
+              <label class="flex items-center gap-2"><input type="checkbox" v-model="exportOptions.expenseColumns.descripcion" /> Descripción</label>
+              <label class="flex items-center gap-2"><input type="checkbox" v-model="exportOptions.expenseColumns.monto" /> Monto</label>
+              <label class="flex items-center gap-2"><input type="checkbox" v-model="exportOptions.expenseColumns.pagadoPor" /> Pagado por</label>
+              <label class="flex items-center gap-2"><input type="checkbox" v-model="exportOptions.expenseColumns.fecha" /> Fecha</label>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-sm">Desde</label>
+                <input type="date" v-model="exportOptions.dateFrom" class="w-full border rounded p-2" />
+              </div>
+              <div>
+                <label class="block text-sm">Hasta</label>
+                <input type="date" v-model="exportOptions.dateTo" class="w-full border rounded p-2" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row justify-end gap-3">
+          <button @click="showExportModal = false" class="px-4 py-2 rounded bg-subtle-light dark:bg-subtle-dark w-full sm:w-auto">Cancelar</button>
+          <button @click="confirmExport" class="px-4 py-2 rounded bg-primary text-white w-full sm:w-auto">Exportar</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -133,12 +194,134 @@ export default {
       showEditBudget: false,
       showEditExpense: false,
       expenseToEdit: null,
-      expenseIndexToEdit: -1
+      expenseIndexToEdit: -1,
+      // export modal state & options
+      showExportModal: false,
+      exportOptions: {
+        includeSummary: true,
+        includeBalances: true,
+        includeExpenses: true,
+        expenseColumns: {
+          descripcion: true,
+          monto: true,
+          pagadoPor: true,
+          fecha: true
+        },
+        dateFrom: null,
+        dateTo: null
+      }
     };
   },
   methods: {
     irARegistrarGasto() {
       this.$router.push(`/trips/${this.tripId}/presupuesto/agregar-gasto`);
+    },
+    exportCSV(options) {
+      options = options || this.exportOptions || {};
+      const escape = (v) => {
+        if (v === null || v === undefined) return '""';
+        const s = String(v);
+        return '"' + s.replace(/"/g, '""') + '"';
+      };
+
+      const parts = [];
+
+      // Helper to get date of an expense as JS Date (or null)
+      const getDateFromGasto = (g) => {
+        if (!g) return null;
+        if (g.createdAt && g.createdAt.seconds) return new Date(g.createdAt.seconds * 1000);
+        if (g.createdAt instanceof Date) return g.createdAt;
+        if (g.fecha) {
+          const d = new Date(g.fecha);
+          if (!isNaN(d)) return d;
+        }
+        return null;
+      };
+
+      // Filter expenses by date range if provided
+      let gastosFiltered = (this.gastos || []).slice();
+      if (options.dateFrom) {
+        const from = new Date(options.dateFrom);
+        gastosFiltered = gastosFiltered.filter(g => {
+          const d = getDateFromGasto(g);
+          return d ? d >= from : true;
+        });
+      }
+      if (options.dateTo) {
+        const to = new Date(options.dateTo);
+        // include whole day
+        to.setHours(23,59,59,999);
+        gastosFiltered = gastosFiltered.filter(g => {
+          const d = getDateFromGasto(g);
+          return d ? d <= to : true;
+        });
+      }
+
+      // Resumen
+      if (options.includeSummary) {
+        parts.push('Resumen');
+        parts.push('Tipo,Valor');
+        parts.push(`${escape('Presupuesto Total')},${escape(this.presupuestoTotal)}`);
+        parts.push(`${escape('Gastos Totales')},${escape(this.gastosTotales)}`);
+        const saldo = (this.presupuestoTotal || 0) - (this.gastosTotales || 0);
+        parts.push(`${escape('Saldo Restante')},${escape(saldo)}`);
+        parts.push('');
+      }
+
+      // Balances
+      if (options.includeBalances) {
+        parts.push('Balances');
+        parts.push('Participante,Debe,Recibe');
+        (this.balances || []).forEach(b => {
+          parts.push(`${escape(b.nombre)},${escape(typeof b.debe === 'number' ? b.debe : b.debe)},${escape(typeof b.recibe === 'number' ? b.recibe : b.recibe)}`);
+        });
+        parts.push('');
+      }
+
+      // Gastos
+      if (options.includeExpenses) {
+        // build header from selected columns
+        const cols = [];
+        if (options.expenseColumns.descripcion) cols.push('Descripción');
+        if (options.expenseColumns.monto) cols.push('Monto');
+        if (options.expenseColumns.pagadoPor) cols.push('Pagado por');
+        if (options.expenseColumns.fecha) cols.push('Fecha');
+
+        parts.push('Gastos');
+        parts.push(cols.join(','));
+
+        gastosFiltered.forEach(g => {
+          const row = [];
+          if (options.expenseColumns.descripcion) row.push(escape(g.descripcion || ''));
+          if (options.expenseColumns.monto) row.push(escape(g.monto || ''));
+          if (options.expenseColumns.pagadoPor) {
+            let paidBy = '';
+            if (typeof g.pagadoPor === 'string') {
+              const m = (this.miembros || []).find(x => x.id === g.pagadoPor || x.name === g.pagadoPor);
+              paidBy = (m && (m.displayName || m.name)) || g.pagadoPor;
+            } else if (g.pagadoPor && (g.pagadoPor.displayName || g.pagadoPor.name)) {
+              paidBy = g.pagadoPor.displayName || g.pagadoPor.name;
+            }
+            row.push(escape(paidBy));
+          }
+          if (options.expenseColumns.fecha) {
+            const d = getDateFromGasto(g);
+            row.push(escape(d ? d.toLocaleDateString('es-ES') : ''));
+          }
+          parts.push(row.join(','));
+        });
+      }
+
+      const csv = parts.join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `presupuesto_${this.tripId || 'trip'}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     },
     async eliminarGasto(index) {
       if (confirm('¿Estás seguro de que quieres eliminar este gasto?')) {
@@ -179,6 +362,15 @@ export default {
       this.showEditExpense = false;
       this.expenseToEdit = null;
       this.expenseIndexToEdit = -1;
+    }
+    ,
+    confirmExport() {
+      // call export with current options then close modal
+      try {
+        this.exportCSV(this.exportOptions);
+      } finally {
+        this.showExportModal = false;
+      }
     }
   }
 };
