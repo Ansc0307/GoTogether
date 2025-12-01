@@ -1,25 +1,30 @@
-<!-- CalendarViewSwitcher.vue -->
 <template>
-  <div class="flex items-center gap-1 bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
+  <div class="flex items-center gap-1 bg-gray-100 dark:bg-slate-800 p-1 rounded-lg overflow-x-auto sm:overflow-visible whitespace-nowrap sm:whitespace-normal">
     <button
       @click="$emit('change','day')"
       :class="buttonClass('day')"
+      :aria-pressed="props.current === 'day'"
     >
-      Día
+      <span class="inline-block sm:hidden">D</span>
+      <span class="hidden sm:inline">Día</span>
     </button>
 
     <button
       @click="$emit('change','week')"
       :class="buttonClass('week')"
+      :aria-pressed="props.current === 'week'"
     >
-      Semana
+      <span class="inline-block sm:hidden">S</span>
+      <span class="hidden sm:inline">Semana</span>
     </button>
 
     <button
       @click="$emit('change','month')"
       :class="buttonClass('month')"
+      :aria-pressed="props.current === 'month'"
     >
-      Mes
+      <span class="inline-block sm:hidden">M</span>
+      <span class="hidden sm:inline">Mes</span>
     </button>
   </div>
 </template>
@@ -30,7 +35,7 @@ const props = defineProps({
 })
 
 const buttonClass = (view) =>
-  `px-3 py-1.5 rounded-md transition font-medium
+  `px-3 py-1.5 rounded-md transition font-medium text-sm sm:text-base flex-shrink-0
    ${props.current === view
       ? 'bg-white text-black shadow-sm dark:bg-white dark:text-black'
       : 'text-gray-500 hover:bg-white hover:text-black dark:text-gray-300'}
