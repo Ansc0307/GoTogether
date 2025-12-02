@@ -77,6 +77,11 @@ const routes = [
     meta: { requiresAuth: true, section: 'trips' },
     children: [
       {
+      path: "chat", 
+      name: "trip-chat",
+      component: () => import('../views/chat/ChatView.vue'), 
+      },
+      {
         path: "tareas",
         name: "trip-tareas",
         component: TasksView,

@@ -1,7 +1,8 @@
 <!--/components/budget/BalanceTable.vue-->
 <template>
   <div class="px-4 py-3">
-    <div class="overflow-hidden rounded-lg border border-primary/20 dark:border-primary/30">
+    <!-- Table for md+ -->
+    <div class="hidden md:block overflow-hidden rounded-lg border border-primary/20 dark:border-primary/30">
       <table class="w-full text-left">
         <thead class="bg-background-light dark:bg-primary/20">
           <tr>
@@ -22,6 +23,25 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Cards for mobile -->
+    <div class="md:hidden space-y-3">
+      <div v-for="(balance, index) in balances" :key="index" class="rounded-lg border border-primary/10 dark:border-primary/20 p-3 bg-background-light dark:bg-background-dark">
+        <div class="flex items-center justify-between">
+          <div class="text-sm font-medium">{{ balance.nombre }}</div>
+        </div>
+        <div class="mt-2 grid grid-cols-2 gap-2 text-sm text-black/60 dark:text-white/60">
+          <div>
+            <div class="text-xs text-muted-light dark:text-muted-dark">Debe</div>
+            <div class="font-medium">{{ balance.debe !== '-' ? `Bs ${formatCurrency(balance.debe)}` : '-' }}</div>
+          </div>
+          <div>
+            <div class="text-xs text-muted-light dark:text-muted-dark">Recibe</div>
+            <div class="font-medium">{{ balance.recibe !== '-' ? `Bs ${formatCurrency(balance.recibe)}` : '-' }}</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
