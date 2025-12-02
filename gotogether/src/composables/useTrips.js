@@ -419,18 +419,24 @@ export const useTrips = () => {
   // Obtener lista de miembros con alias
   const getMembersWithAliases = async (tripId) => {
     try {
-      const trip = await tripService.getTripById(tripId);
-      const members = trip.members || [];
-      const aliasMap = trip.alias || {};
+      console.log('🔍 Obteniendo trip con ID:', tripId)
+      const trip = await tripService.getTripById(tripId)
+      console.log('✅ Trip obtenido:', trip)
+      
+      const members = trip.members || []
+      const aliasMap = trip.alias || {}
+      
+      console.log('📋 Miembros:', members)
+      console.log('🏷️ Alias map:', aliasMap)
       
       return members.map(email => ({
         email,
         alias: aliasMap[email] || email.split('@')[0],
         isOrganizer: email === trip.createdBy
-      }));
+      }))
     } catch (err) {
-      console.error('Error obteniendo miembros:', err);
-      return [];
+      console.error('❌ Error obteniendo miembros:', err)
+      return []
     }
   };
 
