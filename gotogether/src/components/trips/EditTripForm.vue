@@ -1,278 +1,371 @@
-
+<!-- components/trips/EditTripForm.vue -->
 <template>
-  <div
-    v-if="visible"
-    class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 backdrop-blur-sm p-4 sm:p-0"
-  >
-    <div class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg sm:max-w-md p-6 sm:p-8 relative animate-fadeIn max-h-[90vh] overflow-auto">
-
-      <!-- Botón cerrar -->
-      <button
-        @click="$emit('close')"
-        class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
-        aria-label="Cerrar"
-      >
-        <span class="material-symbols-outlined text-2xl">close</span>
-      </button>
-
-      <h2 class="text-xl sm:text-2xl font-bold text-gray-800 dark:text-gray-100 text-center mb-1">Editar Viaje</h2>
-      <p class="text-center text-gray-500 dark:text-gray-300 text-sm mb-4 sm:mb-6">Modifica los detalles de tu viaje</p>
-
-      <LoadingSpinner v-if="cargando" message="Guardando..." />
-
-      <form v-else @submit.prevent="guardarCambios" class="space-y-4">
-
-        <!-- Nombre -->
+  <div>
+    <!-- Formulario principal -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <form @submit.prevent="saveChanges" class="space-y-6">
+        <!-- Nombre del viaje -->
         <div>
-          <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1 text-sm">Nombre del viaje</label>
-          <input v-model="form.nombre" type="text" class="w-full border rounded-lg px-3 py-2 text-sm" required />
+          <label class="label">
+            Nombre del viaje
+            <span class="text-red-500">*</span>
+          </label>
+          <input
+            v-model="form.name"
+            type="text"
+            class="input"
+            placeholder="Ej: Aventura en los Andes"
+            required
+            :disabled="isLoading"
+          />
+          <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
         </div>
 
         <!-- Destino -->
         <div>
-          <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1 text-sm">Destino específico</label>
-          <input v-model="form.destinoEspecifico" type="text" class="w-full border rounded-lg px-3 py-2 text-sm" />
+          <label class="label">Destino específico</label>
+          <input
+            v-model="form.destination"
+            type="text"
+            class="input"
+            placeholder="Ej: Salar de Uyuni, Lago Titicaca"
+            :disabled="isLoading"
+          />
         </div>
 
         <!-- Fechas -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1 text-sm">Fecha de inicio</label>
-            <input v-model="form.fechaInicio" type="date" class="w-full border rounded-lg px-3 py-2 text-sm" required />
-          </div>
-          <div>
-            <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1 text-sm">Fecha fin</label>
-            <input v-model="form.fechaFin" type="date" class="w-full border rounded-lg px-3 py-2 text-sm" required />
-          </div>
-        </div>
-
-        <!-- Presupuesto -->
-        <div>
-          <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1 text-sm">Presupuesto base</label>
-          <div class="flex items-center border rounded-lg px-3 py-2 text-sm">
-            <span class="mr-2 text-gray-500">Bs.</span>
-            <input v-model="form.presupuesto" type="number" class="flex-1 outline-none bg-transparent text-sm" />
-          </div>
-        </div>
-
-        <!-- Agregar miembro (responsive) -->
-        <div>
-          <label class="block text-gray-700 dark:text-gray-200 font-medium mb-1 text-sm">Agregar colaborador</label>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <label class="label">
+              Fecha de inicio
+              <span class="text-red-500">*</span>
+            </label>
             <input
-              v-model="correoMiembro"
-              type="email"
-              placeholder="Correo"
-              class="col-span-1 sm:col-span-2 border rounded-lg px-3 py-2 text-sm w-full"
+              v-model="form.startDate"
+              type="date"
+              class="input"
+              required
+              :disabled="isLoading"
             />
+            <p v-if="errors.startDate" class="mt-1 text-sm text-red-600">{{ errors.startDate }}</p>
+          </div>
+          <div>
+            <label class="label">
+              Fecha de fin
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              v-model="form.endDate"
+              type="date"
+              class="input"
+              required
+              :disabled="isLoading"
+            />
+            <p v-if="errors.endDate" class="mt-1 text-sm text-red-600">{{ errors.endDate }}</p>
+          </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="flex flex-col sm:flex-row justify-between gap-4 pt-6 border-t border-gray-100">
+          <!-- Botón eliminar -->
+          <button
+            type="button"
+            @click="emit('delete-requested')"
+            class="btn bg-red-500 text-white hover:bg-red-600 flex items-center justify-center gap-2 order-2 sm:order-1"
+            :disabled="isLoading"
+          >
+            <span class="material-symbols-outlined text-base">delete</span>
+            Eliminar viaje
+          </button>
+
+          <!-- Botones de guardar/cancelar -->
+          <div class="flex gap-3 order-1 sm:order-2">
             <button
               type="button"
-              @click="agregarMiembro"
-              class="bg-primary text-white px-4 py-2 rounded-lg w-full sm:w-auto text-sm"
+              @click="cancelChanges"
+              class="btn-outline"
+              :disabled="isLoading"
             >
-              Agregar
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn-primary flex items-center gap-2"
+              :disabled="isLoading || !hasChanges"
+            >
+              <span v-if="isLoading" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+              <span v-else class="material-symbols-outlined text-base">save</span>
+              {{ isLoading ? 'Guardando...' : 'Guardar cambios' }}
             </button>
           </div>
         </div>
 
-        <!-- Lista de miembros con alias (responsive grid) -->
-        <div v-if="form.miembros.length" class="invite-scroll mt-4">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div
-              v-for="(correo, index) in form.miembros"
-              :key="correo"
-              class="border rounded-lg p-3 flex flex-col gap-3 bg-gray-50 dark:bg-slate-800"
-            >
-              <div class="flex items-center gap-3 w-full sm:w-auto">
-                <div class="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20 text-primary font-bold text-sm">
-                  {{ (aliasMap[correo] || correo).slice(0,2).toUpperCase() }}
-                </div>
-                <div class="flex-1 min-w-0">
-
-                  <div class="flex items-center justify-between">
-                    <strong class="text-primary text-sm">{{ aliasMap[correo] }}</strong>
-                    <button @click="eliminarMiembro(index)" class="text-gray-400 hover:text-red-500 text-sm" aria-label="Eliminar miembro">✕</button>
-                  </div>
-                  <span class="text-[10px] text-gray-600 break-words">{{ correo }}</span>
-
-
-
-
-                </div>
-              </div>
-
-              <!-- Editar alias -->
-              <input
-                v-model="aliasMap[correo]"
-                type="text"
-                placeholder="Alias"
-                class="mt-2 sm:mt-0 border rounded-lg px-2 py-1 text-sm w-full sm:w-36"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- Botones (stack en móvil) -->
-        <div class="flex flex-col sm:flex-row justify-between gap-3 mt-4">
-          <button type="submit" class="w-full sm:flex-1 bg-primary text-white py-2 rounded-lg text-sm">Guardar cambios</button>
-          <button type="button" @click="confirmDelete" class="w-full sm:flex-1 bg-red-500 text-white py-2 rounded-lg text-sm">Eliminar Viaje</button>
+        <!-- Mensaje de error general -->
+        <div v-if="error" class="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p class="text-red-700 text-sm flex items-center gap-2">
+            <span class="material-symbols-outlined text-base">error</span>
+            {{ error }}
+          </p>
         </div>
       </form>
+    </div>
 
+    <!-- Sección de información (solo lectura) -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+      <h3 class="text-lg font-semibold text-blue-800 mb-3 flex items-center gap-2">
+        <span class="material-symbols-outlined">info</span>
+        Información del viaje
+      </h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <p class="text-sm text-blue-700 font-medium mb-1">Creado por</p>
+          <p class="text-blue-900">{{ tripData?.createdByName || 'No disponible' }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-blue-700 font-medium mb-1">Fecha de creación</p>
+          <p class="text-blue-900">{{ formatCreationDate(tripData?.createdAt) }}</p>
+        </div>
+        <div>
+          <p class="text-sm text-blue-700 font-medium mb-1">Total integrantes</p>
+          <p class="text-blue-900">{{ tripData?.members?.length || 0 }} personas</p>
+        </div>
+        <div>
+          <p class="text-sm text-blue-700 font-medium mb-1">Última actualización</p>
+          <p class="text-blue-900">{{ formatCreationDate(tripData?.updatedAt) }}</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
-import { db } from "../../firebase/firebaseConfig";
-import { doc, getDoc, updateDoc, deleteDoc } from "firebase/firestore";
-import LoadingSpinner from "../budget/LoadingSpinner.vue";
+import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { useTrips } from '@/composables/useTrips'
 
 const props = defineProps({
-  visible: Boolean,
+  tripData: Object,
   tripId: String
-});
+})
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['saved', 'delete-requested', 'cancel'])
 
-const cargando = ref(false);
+// Usar composable
+const { 
+  isLoading, 
+  error, 
+  updateTrip, 
+  reset: resetComposable 
+} = useTrips()
 
-const form = ref({
-  nombre: "",
-  destinoEspecifico: "",
-  fechaInicio: "",
-  fechaFin: "",
-  presupuesto: 0,
-  miembros: []
-});
+// Estado local
+const form = reactive({
+  name: '',
+  destination: '',
+  startDate: '',
+  endDate: '',
+  budget: 0
+})
 
-// aliasMap: { correo : alias }
-const aliasMap = ref({});
+const errors = reactive({
+  name: '',
+  startDate: '',
+  endDate: '',
+  budget: ''
+})
 
-const correoMiembro = ref("");
+const originalData = ref({})
 
-// Cargar datos del viaje
-const loadTripData = async () => {
-  if (!props.tripId) return;
-  const refDoc = doc(db, "trips", props.tripId);
-  const snap = await getDoc(refDoc);
+// Computed
+const hasChanges = computed(() => {
+  if (!originalData.value) return false
+  
+  return (
+    form.name !== originalData.value.name ||
+    form.destination !== originalData.value.destination ||
+    form.startDate !== originalData.value.startDate ||
+    form.endDate !== originalData.value.endDate ||
+    Number(form.budget) !== Number(originalData.value.budget)
+  )
+})
 
-  if (snap.exists()) {
-    const data = snap.data();
-
-    form.value = {
-      nombre: data.name || "",
-      destinoEspecifico: data.destination || "",
-      fechaInicio: data.startDate || "",
-      fechaFin: data.endDate || "",
-      presupuesto: data.budget || 0,
-      miembros: data.members || []
-    };
-
-    // cargar alias
-    aliasMap.value = { ...(data.alias || {}) };
-
-    // generar alias automáticos si faltan
-    form.value.miembros.forEach((correo, i) => {
-      if (!aliasMap.value[correo]) {
-        aliasMap.value[correo] = `Miembro ${i + 1}`;
-      }
-    });
+// Inicializar formulario
+const initForm = () => {
+  if (props.tripData) {
+    form.name = props.tripData.name || ''
+    form.destination = props.tripData.destination || ''
+    form.startDate = props.tripData.startDate || ''
+    form.endDate = props.tripData.endDate || ''
+    form.budget = props.tripData.budget || 0
+    
+    // Guardar datos originales para comparación
+    originalData.value = { ...form }
   }
-};
+}
 
-onMounted(loadTripData);
-
-watch(() => props.visible, (v) => {
-  if (v) loadTripData();
-});
-
-// Agregar nuevo miembro
-const agregarMiembro = () => {
-  const correo = correoMiembro.value.trim();
-  if (!correo) return;
-
-  if (!form.value.miembros.includes(correo)) {
-    form.value.miembros.push(correo);
-    aliasMap.value[correo] = `Miembro ${form.value.miembros.length}`;
+// Validar formulario
+const validateForm = () => {
+  let isValid = true
+  
+  // Resetear errores
+  Object.keys(errors).forEach(key => errors[key] = '')
+  
+  // Validar nombre
+  if (!form.name.trim()) {
+    errors.name = 'El nombre del viaje es requerido'
+    isValid = false
   }
-
-  correoMiembro.value = "";
-};
-
-// Eliminar miembro
-const eliminarMiembro = (index) => {
-  const correo = form.value.miembros[index];
-  delete aliasMap.value[correo];
-  form.value.miembros.splice(index, 1);
-};
-
-// Guardar cambios
-const guardarCambios = async () => {
-  cargando.value = true;
-
-  try {
-    const refDoc = doc(db, "trips", props.tripId);
-
-    await updateDoc(refDoc, {
-      name: form.value.nombre,
-      destination: form.value.destinoEspecifico,
-      startDate: form.value.fechaInicio,
-      endDate: form.value.fechaFin,
-      budget: parseFloat(form.value.presupuesto) || 0,
-      members: form.value.miembros,
-      alias: aliasMap.value
-    });
-
-    alert("Cambios guardados exitosamente");
-    emit("close");
-  } catch (e) {
-    console.error(e);
-    alert("Error al guardar");
-  } finally {
-    cargando.value = false;
+  
+  // Validar fechas
+  if (!form.startDate) {
+    errors.startDate = 'La fecha de inicio es requerida'
+    isValid = false
   }
-};
-
-// Eliminar viaje
-const confirmDelete = async () => {
-  if (confirm("¿Seguro que quieres eliminar este viaje?")) {
-    cargando.value = true;
-
-    try {
-      await deleteDoc(doc(db, "trips", props.tripId));
-      alert("Viaje eliminado.");
-      emit("close");
-      window.location.href = "/misviajes";
-    } catch (e) {
-      alert("Error al eliminar");
-    } finally {
-      cargando.value = false;
+  
+  if (!form.endDate) {
+    errors.endDate = 'La fecha de fin es requerida'
+    isValid = false
+  }
+  
+  if (form.startDate && form.endDate) {
+    const start = new Date(form.startDate)
+    const end = new Date(form.endDate)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    
+    if (start > end) {
+      errors.startDate = 'La fecha de inicio no puede ser posterior a la fecha de fin'
+      isValid = false
+    }
+    
+    if (start < today) {
+      errors.startDate = 'La fecha de inicio no puede ser en el pasado'
+      isValid = false
     }
   }
-};
+  
+  // Validar presupuesto
+  if (form.budget !== '' && form.budget !== null) {
+    const budgetNum = Number(form.budget)
+    if (isNaN(budgetNum) || budgetNum < 0) {
+      errors.budget = 'El presupuesto debe ser un número válido mayor o igual a 0'
+      isValid = false
+    }
+  }
+  
+  return isValid
+}
+
+// Guardar cambios
+const saveChanges = async () => {
+  if (!validateForm()) {
+    return
+  }
+
+  const updates = {
+    name: form.name.trim(),
+    destination: form.destination.trim(),
+    startDate: form.startDate,
+    endDate: form.endDate,
+    budget: Number(form.budget) || 0
+  }
+
+  const result = await updateTrip(props.tripId, updates)
+  
+  if (result.success) {
+    emit('saved', '¡Cambios guardados exitosamente!')
+    // Actualizar datos originales
+    originalData.value = { ...form }
+    resetComposable()
+  } else {
+    emit('saved', `Error: ${result.error}`)
+  }
+}
+
+// Cancelar cambios
+const cancelChanges = () => {
+  if (hasChanges.value) {
+    if (confirm('¿Deseas descartar los cambios no guardados?')) {
+      resetForm()
+      emit('cancel')
+    }
+  } else {
+    emit('cancel')
+  }
+}
+
+// Resetear formulario
+const resetForm = () => {
+  initForm()
+  resetComposable()
+}
+
+// Formatear fecha de creación
+const formatCreationDate = (timestamp) => {
+  if (!timestamp) return 'No disponible'
+  
+  try {
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
+    return date.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  } catch {
+    return 'Fecha no disponible'
+  }
+}
+
+// Watch para validación en tiempo real
+watch(() => form.startDate, () => {
+  if (form.startDate && form.endDate) {
+    const start = new Date(form.startDate)
+    const end = new Date(form.endDate)
+    if (start > end) {
+      errors.endDate = 'La fecha de fin debe ser posterior a la fecha de inicio'
+    } else {
+      errors.endDate = ''
+    }
+  }
+})
+
+watch(() => form.endDate, () => {
+  if (form.startDate && form.endDate) {
+    const start = new Date(form.startDate)
+    const end = new Date(form.endDate)
+    if (start > end) {
+      errors.startDate = 'La fecha de inicio debe ser anterior a la fecha de fin'
+    } else {
+      errors.startDate = ''
+    }
+  }
+})
+
+// Inicializar cuando cambien los datos
+onMounted(() => {
+  initForm()
+})
+
+watch(() => props.tripData, () => {
+  initForm()
+})
 </script>
 
 <style scoped>
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.animate-fadeIn {
-  animation: fadeIn 0.25s ease-out;
+/* Estilos específicos */
+.btn {
+  min-height: 42px;
 }
 
-/* Altura de lista de miembros: más pequeña en móvil, mayor en pantallas grandes */
-.invite-scroll {
-  max-height: 28vh;
-  overflow-y: auto;
-  padding-right: 4px;
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
-@media (min-width: 640px) {
-  .invite-scroll {
-    max-height: 250px;
-  }
+
+.input:disabled {
+  background-color: #f9fafb;
+  cursor: not-allowed;
 }
 </style>
