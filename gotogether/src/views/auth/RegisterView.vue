@@ -50,7 +50,7 @@
                 v-model="password"
                 type="password"
                 required
-                placeholder="Mínimo 6 caracteres"
+                placeholder="Mínimo 8 caracteres"
                 class="form-input block w-full rounded-lg border-border-light dark:border-border-dark bg-input-light dark:bg-input-dark text-text-light dark:text-text-dark placeholder-subtle-light dark:placeholder-subtle-dark focus:ring-primary focus:border-primary sm:text-sm px-4 py-3"
               />
             </div>

@@ -1,6 +1,17 @@
 <template>
-  <div class="font-display bg-background-light dark:bg-background-dark min-h-screen flex items-center justify-center p-6">
-    <div class="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8">
+  <!-- Contenedor principal ocupa toda la pantalla -->
+  <div class="relative min-h-screen flex items-center justify-center">
+    <!-- Imagen de fondo cubriendo toda la pantalla (fixed para cubrir todo el viewport) -->
+    <div
+      class="fixed inset-0 bg-center bg-no-repeat bg-cover"
+      style="background-image: url('https://images.unsplash.com/photo-1761216674297-6ffa4d89400c?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&fm=jpg&q=80&w=1600');"
+    ></div>
+
+    <!-- Capa de oscurecimiento (fixed para cubrir todo el viewport) -->
+    <div class="fixed inset-0 bg-black/50"></div>
+
+    <!-- Contenido del formulario centrado -->
+  <div class="relative z-10 w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8">
       <h1 class="text-3xl font-bold text-center text-text-light dark:text-text-dark mb-6">
         Recuperar Contraseña
       </h1>
@@ -46,19 +57,18 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useAuth } from '@/composables/useAuth' // Asegúrate que la ruta sea correcta
+import { useAuth } from '@/composables/useAuth'
 
 const email = ref('')
-const message = ref('') // Local message for success
+const message = ref('')
 const { resetPassword, isLoading, authError } = useAuth()
 
 const handleResetPassword = async () => {
-  message.value = '' // Clear local message
+  message.value = ''
   const result = await resetPassword(email.value)
   if (result.success) {
     message.value = result.message
   }
-  // Error message is handled reactively by authError from the composable
 }
 </script>
 

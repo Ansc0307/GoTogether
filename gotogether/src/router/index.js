@@ -12,6 +12,10 @@ import VotingList from '../views/VotingList.vue'
 
 // tareas 
 import TasksView from '../views/TasksView.vue'
+import ItineraryView from '../views/ItineraryView.vue'
+
+// Calendario
+import CalendarView from '../views/CalendarView.vue'
 
 // viajes (RF5)
 import TripsView from '../views/trips/TripsView.vue'
@@ -76,6 +80,11 @@ const routes = [
     meta: { requiresAuth: true, section: 'trips' },
     children: [
       {
+      path: "chat", 
+      name: "trip-chat",
+      component: () => import('../views/chat/ChatView.vue'), 
+      },
+      {
         path: "tareas",
         name: "trip-tareas",
         component: TasksView,
@@ -84,6 +93,11 @@ const routes = [
         path: "presupuesto",
         name: "trip-presupuesto",
         component: Presupuesto,
+      },
+      {
+        path: "itinerario",
+        name: "trip-itinerario",
+        component: ItineraryView,
       },
       {
         path: "presupuesto/agregar-gasto",
@@ -117,7 +131,11 @@ const routes = [
   { path: '/login', name: 'Login', component: LoginView, meta: { requiresGuest: true } },
   { path: '/register', name: 'Register', component: RegisterView, meta: { requiresGuest: true } },
   { path: '/reset-password', name: 'ResetPassword', component: ResetPasswordView, meta: { requiresGuest: true } },
-
+{
+  path: "/calender",
+  name: "CalendarView",
+  component: CalendarView,
+},
 
   //ruta welcome
   { path: '/welcome', name: 'Welcome', component: WelcomeView  , meta: { requiresAuth: true }},
