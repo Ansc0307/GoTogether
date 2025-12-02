@@ -1,6 +1,6 @@
 <!-- /views/ItineraryView.vue -->
 <template>
-  <div>
+  <div class="space-y-6">
     <div class="flex items-center justify-between">
       <h1 class="text-3xl font-bold text-gray-800">Itinerario del Viaje</h1>
       <button
@@ -13,7 +13,7 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-2 bg-background-light/60 rounded-2xl p-6">
       <!-- Columna principal: Itinerario por días -->
       <section class="lg:col-span-2 space-y-8">
         <div v-if="groups.length === 0" class="text-gray-500">
@@ -26,7 +26,7 @@
           class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden"
         >
           <!-- Encabezado de día -->
-          <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-200 bg-gray-50">
+          <div class="flex items-center gap-4 px-5 py-4 border-b border-gray-200 bg-primary/5">
             <div class="text-center">
               <div class="text-xs uppercase text-gray-500">{{ grp.weekday }}</div>
               <div class="text-2xl font-bold text-gray-900">{{ grp.day }}</div>
@@ -41,7 +41,7 @@
             <li
               v-for="t in grp.items"
               :key="t.id"
-              class="flex items-start gap-4 px-5 py-4 hover:bg-gray-50"
+              class="flex items-start gap-4 px-5 py-4 hover:bg-primary/5"
             >
               <div class="w-20 shrink-0 text-right">
                 <div class="text-sm font-medium text-gray-900">
@@ -67,7 +67,7 @@
       <!-- Columna lateral: Próximos eventos -->
       <aside class="space-y-6">
         <div class="bg-white rounded-xl border border-gray-200 shadow-sm">
-          <div class="px-5 py-4 border-b border-gray-200">
+          <div class="px-5 py-4 border-b border-gray-200 bg-primary/5">
             <h4 class="font-semibold text-gray-800">Próximos Eventos</h4>
           </div>
           <ul class="divide-y divide-gray-100">
