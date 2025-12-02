@@ -140,7 +140,7 @@ const navigationItems = computed(() => {
       //{ key: 'voting', label: 'Votaciones', href: '/voting' },
       //{ key: 'expenses', label: 'Gastos', href: '/presupuesto' },
       //{ key: 'tasks', label: 'Tareas', href: '/tareas' },
-      { key: 'itinerary', label: 'Itinerario', href: '/itinerario' },
+      { key: 'calander', label: 'Calender', href: '/calender' },
       //{ key: 'maps', label: 'Mapas', href: '/maps' },
       ...(props.userRole === 'organizer' ? [
         { key: 'manage', label: 'Gestionar', href: '/manage' }
@@ -155,7 +155,7 @@ const navigationItems = computed(() => {
     //{ key: 'voting', label: 'Votaciones', href: '/voting' },
     //{ key: 'expenses', label: 'Presupuesto', href: '/presupuesto' },
     //{ key: 'tasks', label: 'Tareas', href: '/tareas' },
-    { key: 'itinerary', label: 'Itinerario', href: '/itinerario' },
+    { key: 'calander', label: 'Calender', href: '/calender' },
     //{ key: 'maps', label: 'Mapas', href: '/maps' }
   ]
 })
