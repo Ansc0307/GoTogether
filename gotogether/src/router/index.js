@@ -12,6 +12,7 @@ import VotingList from '../views/VotingList.vue'
 
 // tareas 
 import TasksView from '../views/TasksView.vue'
+import ItineraryView from '../views/ItineraryView.vue'
 
 // viajes (RF5)
 import TripsView from '../views/trips/TripsView.vue'
@@ -89,6 +90,11 @@ const routes = [
         path: "presupuesto",
         name: "trip-presupuesto",
         component: Presupuesto,
+      },
+      {
+        path: "itinerario",
+        name: "trip-itinerario",
+        component: ItineraryView,
       },
       {
         path: "presupuesto/agregar-gasto",
