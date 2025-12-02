@@ -3,7 +3,8 @@
     v-if="visible"
     class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-center items-center overflow-y-auto py-8"
   >
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-8 relative animate-fadeIn">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-4 sm:p-6 md:p-8 mx-4 relative animate-fadeIn">
+
       <!-- Botón Cerrar -->
       <button
         @click="$emit('close')"
@@ -24,10 +25,10 @@
       <form
         v-if="!cargando"
         @submit.prevent="crearViaje"
-        class="grid grid-cols-1 md:grid-cols-2 gap-10"
+        class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-2"
       >
         <!-- SECCIÓN 1: Detalles del viaje -->
-        <section class="space-y-4">
+        <section class="space-y-4 ">
           <h3 class="section-title">Detalles del viaje</h3>
           <!-- Nombre -->
           <div>
@@ -173,7 +174,7 @@
         </section>
 
         <!-- Botones -->
-        <div class="flex flex-col sm:flex-row gap-3">
+        <div class="flex flex-col sm:flex-row gap-3 md:col-span-2 mt-6">
           <button
             type="button"
             @click="$emit('close')"
