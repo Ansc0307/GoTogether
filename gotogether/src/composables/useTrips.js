@@ -8,7 +8,7 @@ export const useTrips = () => {
   const isSendingInvites = ref(false);
   const error = ref(null);
   
-  const createTripWithInvitations = async (tripFormData, invitedMembers, aliasMap = {}, selfAlias = '') => {
+  const createTripWithInvitations = async (tripFormData, invitedMembers, aliasMap = {}, selfAlias = '', shouldSendEmails = true) => {
     isLoading.value = true;
     error.value = null;
     
@@ -17,6 +17,9 @@ export const useTrips = () => {
       const user = auth.currentUser;
       const userEmail = user?.email;
       const userName = user?.displayName || 'Usuario Explorador';
+      
+      // Usar selfAlias si existe, sino userName
+      const displayName = selfAlias || userName;
       
       // 1. Preparar alias (incluir self alias si existe)
       const finalAliasMap = { ...aliasMap };
@@ -28,13 +31,22 @@ export const useTrips = () => {
       const trip = await tripService.createTrip(
         tripFormData,
         userEmail,
-        userName,
+        displayName, // Usar displayName aquí también
         invitedMembers,
         finalAliasMap
       );
       
-      // 3. Enviar invitaciones (si hay miembros)
-      if (invitedMembers.length > 0) {
+      // 3. Preparar datos del viaje para el email
+      const tripDataForEmail = {
+        description: "", // No hay campo en formulario
+        destination: tripFormData.destinoEspecifico || '',
+        startDate: tripFormData.fechaInicio,
+        endDate: tripFormData.fechaFin,
+        budget: tripFormData.presupuesto
+      };
+      
+      // 4. Enviar invitaciones SOLO si shouldSendEmails es true
+      if (invitedMembers.length > 0 && shouldSendEmails) {
         isSendingInvites.value = true;
         
         // Enviar en segundo plano
@@ -44,8 +56,10 @@ export const useTrips = () => {
               invitedMembers,
               trip.id,
               trip.name,
-              userName,
-              aliasMap
+              displayName, // Pasar displayName, no userName
+              userEmail,   // Pasar el email del usuario
+              aliasMap,
+              tripDataForEmail // Pasar los datos del viaje
             );
             
             const successful = results.filter(r => r.success).length;
