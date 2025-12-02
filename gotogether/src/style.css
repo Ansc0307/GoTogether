@@ -1,3 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Botones base */
+.btn {
+  @apply font-medium px-4 py-2 rounded-lg transition;
+}
+
+.btn-primary {
+  @apply btn bg-primary text-white hover:bg-primary/90;
+}
+
+.btn-outline {
+  @apply btn border border-gray-300 text-gray-700 hover:bg-gray-50;
+}
+
+/* Inputs base */
+.input {
+  @apply w-full border border-gray-300 rounded-lg px-3 py-2 
+         focus:ring-2 focus:ring-primary focus:outline-none;
+}
+
+.label {
+  @apply block text-gray-700 font-medium mb-1;
+}
+
+/* Títulos de sección */
+.section-title {
+  @apply text-lg font-semibold text-gray-800;
+}
+
+/* Alertas */
+.alert {
+  @apply p-3 rounded-lg text-sm;
+}
+
+.alert-blue {
+  @apply alert bg-blue-50 border border-blue-200 text-blue-700;
+}
+
+.alert-yellow {
+  @apply alert bg-yellow-50 border border-yellow-200 text-yellow-700;
+}

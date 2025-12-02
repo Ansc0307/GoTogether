@@ -317,10 +317,10 @@ const crearViaje = async () => {
       
       if (miembros.value.length > 0) {
         if (enviarInvitaciones.value) {
-          message += `\n✅ Se enviaron invitaciones a ${miembros.value.length} persona(s).`;
-          message += `\n📧 Revisa la carpeta de spam si no ves los emails.`;
+          message += `\n Se enviaron invitaciones a ${miembros.value.length} persona(s).`;
+          message += `\n Revisa la carpeta de spam si no ves los emails.`;
         } else {
-          message += `\n👥 Se agregaron ${miembros.value.length} colaborador(es) (sin enviar invitaciones).`;
+          message += `\n Se agregaron ${miembros.value.length} colaborador(es) (sin enviar invitaciones).`;
         }
       }
       
@@ -334,11 +334,11 @@ const crearViaje = async () => {
       emit("close");
     } else {
       console.error('❌ Error en createTripWithInvitations:', result.error);
-      alert("❌ Error al crear el viaje: " + result.error);
+      alert("Error al crear el viaje: " + result.error);
     }
   } catch (error) {
     console.error('💥 Error inesperado en crearViaje:', error);
-    alert("💥 Ocurrió un error inesperado: " + error.message);
+    alert("Ocurrió un error inesperado: " + error.message);
   }
 };
 
@@ -366,50 +366,29 @@ const resetForm = () => {
   from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* Scrollbar personalizado */
-::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
-::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #aaa; }
-
-.section-title {
-  @apply text-lg font-semibold text-gray-800;
+/* Scrollbar específico para la lista de miembros */
+::-webkit-scrollbar-track { 
+  background: #f1f1f1; 
+  border-radius: 3px; 
 }
 
-.label {
-  @apply block text-gray-700 font-medium mb-1;
+::-webkit-scrollbar-thumb { 
+  background: #ccc; 
+  border-radius: 3px; 
 }
 
-.input {
-  @apply w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 
-         focus:ring-primary focus:outline-none;
+::-webkit-scrollbar-thumb:hover { 
+  background: #aaa; 
 }
 
-.btn-primary {
-  @apply bg-primary text-white font-semibold px-4 py-2 rounded-lg 
-         hover:bg-primary/90 transition;
-}
-
-.btn-outline {
-  @apply border border-gray-300 text-gray-700 font-medium px-4 py-2 
-         rounded-lg hover:bg-gray-50 transition;
-}
-
-.alert-blue {
-  @apply flex items-center p-3 bg-blue-50 border border-blue-200 
-         rounded-lg text-blue-700 text-sm;
-}
-
-.alert-yellow {
-  @apply p-3 bg-yellow-50 border border-yellow-200 rounded-lg 
-         text-yellow-700 text-sm;
-}
-
+/* Estilo específico del member-item */
 .member-item {
-  @apply bg-gray-50 border border-gray-200 rounded-lg p-3 flex 
-         justify-between items-center;
+  @apply bg-gray-50 border border-gray-200 rounded-lg p-3 
+         flex justify-between items-center;
 }
 </style>
