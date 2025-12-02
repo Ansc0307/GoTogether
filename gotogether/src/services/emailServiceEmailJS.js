@@ -13,7 +13,7 @@ class EmailService {
   async sendTripInvitation(toEmail, tripName, inviterName, inviterEmail, tripId, inviterAlias = '', tripData = {}) {
     try {
       const displayName = inviterAlias || inviterName;
-      const tripUrl = `${window.location.origin}/trips/${tripId}`;
+      const tripUrl = `${window.location.origin}/trips/${tripId}/tareas`;
       
       console.log(`📤 Enviando a: ${toEmail}`);
       console.log('📋 Datos del viaje:', tripData);

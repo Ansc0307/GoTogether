@@ -1,128 +1,127 @@
 <template>
-  <div v-if="visible" class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 backdrop-blur-sm overflow-y-auto py-8">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative animate-fadeIn my-auto">
-      <!-- Botón cerrar -->
-      <button @click="$emit('close')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition z-10">
+  <div
+    v-if="visible"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-center items-center overflow-y-auto py-8"
+  >
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-8 relative animate-fadeIn">
+      <!-- Botón Cerrar -->
+      <button
+        @click="$emit('close')"
+        class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+      >
         <span class="material-symbols-outlined text-2xl">close</span>
       </button>
-      <!-- Encabezado -->
-      <div class="sticky top-0 bg-white pt-2 pb-4 -mx-8 px-8 border-b">
-        <h2 class="text-2xl font-bold text-gray-800 text-center mb-1">
-          Organiza un nuevo viaje
-        </h2>
-        <p class="text-center text-gray-500 text-sm">
-          Planifica tu próxima aventura
-        </p>
+
+      <!-- Header -->
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Organiza un nuevo viaje</h2>
+        <p class="text-gray-500 text-sm">Planifica tu próxima aventura</p>
       </div>
 
-      <!-- 🔹 Spinner -->
       <LoadingSpinner v-if="cargando" message="Guardando tu viaje..." />
 
-      <!-- Indicadores -->
-      <div v-if="sendingEmails" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-        <div class="flex items-center">
-          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-          <span class="text-blue-700 text-sm">Enviando {{ miembros.length }} invitación(es)...</span>
-        </div>
-      </div>
-
-      <div v-if="miembros.length > 0 && !enviarInvitaciones" class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <div class="flex items-center">
-          <span class="text-yellow-700 text-sm">⚠️ Se agregarán {{ miembros.length }} colaborador(es) sin enviar invitaciones por email.</span>
-        </div>
-      </div>
-
-      <!-- Formulario -->
-      <form v-if="!cargando" @submit.prevent="crearViaje" class="space-y-4 mt-4">
-        <!-- Nombre del viaje -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">Nombre del viaje *</label>
-          <input v-model="nuevoViaje.nombre" type="text" placeholder="Ej. Aventura en los Andes" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none" required />
-        </div>
-
-        <!-- Destino -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">Destino específico</label>
-          <input v-model="nuevoViaje.destinoEspecifico" type="text" placeholder="Ej. Salar de Uyuni, Lago Titicaca" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"/>
-        </div>
-
-        <!-- Fechas - EN DOS COLUMNAS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- FORM -->
+      <form
+        v-if="!cargando"
+        @submit.prevent="crearViaje"
+        class="grid grid-cols-1 md:grid-cols-2 gap-10"
+      >
+        <!-- SECCIÓN 1: Detalles del viaje -->
+        <section class="space-y-4">
+          <h3 class="section-title">Detalles del viaje</h3>
+          <!-- Nombre -->
           <div>
-            <label class="block text-gray-700 font-medium mb-1">Fecha inicio *</label>
+            <label class="label">Nombre del viaje *</label>
             <input
-              v-model="nuevoViaje.fechaInicio"
-              type="date"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+              v-model="nuevoViaje.nombre"
+              type="text"
+              placeholder="Ej. Aventura en los Andes"
+              class="input"
               required
             />
           </div>
+
+          <!-- Destino -->
           <div>
-            <label class="block text-gray-700 font-medium mb-1">Fecha fin *</label>
+            <label class="label">Destino específico</label>
             <input
-              v-model="nuevoViaje.fechaFin"
-              type="date"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-              required
+              v-model="nuevoViaje.destinoEspecifico"
+              type="text"
+              placeholder="Ej. Salar de Uyuni, Lago Titicaca"
+              class="input"
             />
           </div>
-        </div>
 
-        <!-- Presupuesto -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">Presupuesto base (opcional)</label>
-          <div class="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-            <span class="text-gray-500 mr-2">Bs.</span>
-            <input
-              v-model="nuevoViaje.presupuesto"
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="0.00"
-              class="flex-1 outline-none border-none bg-transparent"
-            />
-          </div>
-        </div>
-
-        <!-- Alias propio -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">Tu alias (opcional)</label>
-          <input
-            v-model="selfAlias"
-            type="text"
-            placeholder="Cómo quieres que te vean (ej. Ana)"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-          />
-        </div>
-
-        <!-- Separador -->
-        <div class="border-t pt-4">
-          <h3 class="text-lg font-semibold text-gray-800 mb-3">👥 Invitar colaboradores</h3>
-          
-          <!-- Agregar miembro - EN DOS COLUMNAS -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+          <!-- Fechas -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-gray-700 text-sm mb-1">Correo electrónico</label>
+              <label class="label">Fecha inicio *</label>
+              <input v-model="nuevoViaje.fechaInicio" type="date" class="input" required />
+            </div>
+            <div>
+              <label class="label">Fecha fin *</label>
+              <input v-model="nuevoViaje.fechaFin" type="date" class="input" required />
+            </div>
+          </div>
+
+          <!-- Presupuesto -->
+          <div>
+            <label class="label">Presupuesto base (opcional)</label>
+            <div class="input flex items-center">
+              <span class="text-gray-500 mr-2">Bs.</span>
+              <input
+                v-model="nuevoViaje.presupuesto"
+                type="number"
+                min="0"
+                step="0.01"
+                class="flex-1 bg-transparent border-none outline-none"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 2: Alias + Colaboradores -->
+        <section class="space-y-4">
+          <!-- Alias propio movido aquí -->
+          <h3 class="section-title">Detalles de los integrantes</h3>
+          <div>
+            <label class="label">Tu alias (opcional)</label>
+            <input
+              v-model="selfAlias"
+              type="text"
+              placeholder="Cómo quieres que te vean"
+              class="input"
+            />
+          </div>
+
+          <!-- Colaboradores -->
+          <h3 class="section-title">Invitar colaboradores</h3>
+
+          <!-- Agregar -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="label">Correo electrónico</label>
               <input
                 v-model="correoMiembro"
                 type="email"
                 placeholder="correo@ejemplo.com"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                class="input"
               />
             </div>
+
             <div>
-              <label class="block text-gray-700 text-sm mb-1">Alias (opcional)</label>
+              <label class="label">Alias (opcional)</label>
               <div class="flex gap-2">
                 <input
                   v-model="aliasMiembro"
                   type="text"
-                  placeholder="Nombre para mostrar"
-                  class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                  placeholder="Nombre a mostrar"
+                  class="input"
                 />
                 <button
                   type="button"
                   @click="agregarMiembro"
-                  class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 text-sm whitespace-nowrap"
+                  class="btn-primary whitespace-nowrap"
                 >
                   + Agregar
                 </button>
@@ -130,97 +129,69 @@
             </div>
           </div>
 
-          <!-- Lista de miembros agregados - MEJOR DISEÑO -->
-          <div v-if="miembros.length > 0" class="mt-4">
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-gray-700 text-sm font-medium">
-                {{ miembros.length }} colaborador(es) agregado(s)
+          <!-- Lista -->
+          <div v-if="miembros.length > 0" class="space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-700">
+                {{ miembros.length }} colaborador(es)
               </span>
-              <button
-                type="button"
-                @click="limpiarMiembros"
-                class="text-red-500 hover:text-red-700 text-sm"
-              >
+              <button @click="limpiarMiembros" type="button" class="text-red-500 text-sm">
                 Limpiar todos
               </button>
             </div>
-            
-            <!-- Grid de 2 columnas para miembros -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-2">
+
+            <!-- Lista scrollable -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
               <div
                 v-for="(correo, index) in miembros"
                 :key="correo"
-                class="bg-gray-50 border border-gray-200 rounded-lg p-3 flex justify-between items-center"
+                class="member-item"
               >
                 <div class="truncate">
-                  <div class="font-medium text-gray-800 text-sm">
+                  <div class="font-medium text-sm">
                     {{ aliasMap[correo] || 'Sin alias' }}
                   </div>
-                  <div class="text-gray-500 text-xs truncate">
-                    {{ correo }}
-                  </div>
+                  <div class="text-xs text-gray-500 truncate">{{ correo }}</div>
                 </div>
                 <button
-                  type="button"
+                  class="text-gray-400 hover:text-red-500"
                   @click="eliminarMiembro(index)"
-                  class="text-gray-400 hover:text-red-500 text-lg ml-2 flex-shrink-0"
-                  title="Eliminar"
                 >
                   ×
                 </button>
               </div>
             </div>
 
-            <!-- Checkbox para enviar emails -->
-            <div class="mt-4 pt-4 border-t">
-              <label class="flex items-start space-x-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  v-model="enviarInvitaciones"
-                  class="mt-1 rounded border-gray-300 text-primary focus:ring-primary"
-                />
-                <div>
-                  <span class="text-gray-700 font-medium">
-                    📧 Enviar invitaciones por correo
-                  </span>
-                  <p class="text-gray-500 text-xs mt-1">
-                    Cada colaborador recibirá un email con el enlace para unirse al viaje.
-                    <span class="text-yellow-600 font-medium">
-                      Desmarca esta opción si estás usando emails de prueba.
-                    </span>
-                  </p>
-                </div>
-              </label>
-            </div>
+            <!-- Checkbox enviar emails -->
+            <label class="flex items-start gap-3 border-t cursor-pointer">
+              <input type="checkbox" v-model="enviarInvitaciones" class="mt-1" />
+              <div>
+                <span class="font-medium text-gray-700">📧 Enviar invitaciones</span>
+              </div>
+            </label>
           </div>
+        </section>
+
+        <!-- Botones -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button
+            type="button"
+            @click="$emit('close')"
+            class="btn-outline"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            :disabled="cargando || sendingEmails"
+            class="btn-primary flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-base">explore</span>
+            Crear Viaje
+          </button>
         </div>
 
-        <!-- Botones de acción -->
-        <div class="pt-4 border-t">
-          <div class="flex flex-col sm:flex-row gap-3">
-            <button
-              type="button"
-              @click="$emit('close')"
-              class="flex-1 border border-gray-300 text-gray-700 font-medium py-3 rounded-lg hover:bg-gray-50 transition"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              :disabled="cargando || sendingEmails"
-              class="flex-1 bg-primary text-white font-semibold py-3 rounded-lg hover:bg-primary/90 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span v-if="cargando" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
-              <span v-else class="material-symbols-outlined text-base">explore</span>
-              {{ cargando ? 'Creando viaje...' : 'Crear Viaje' }}
-            </button>
-          </div>
-          
-          <!-- Info adicional -->
-          <p class="text-gray-500 text-xs text-center mt-3">
-            * Campos obligatorios. Las invitaciones por email usan EmailJS (200 emails/mes gratis).
-          </p>
-        </div>
       </form>
     </div>
   </div>
@@ -331,33 +302,6 @@ const crearViaje = async () => {
   // Determinar miembros para invitación
   const miembrosParaInvitacion = enviarInvitaciones.value ? miembros.value : [];
 
-  // 🔍 DEBUG DETALLADO - MOSTRAR TODOS LOS DATOS
-  console.log('🔍 === DEBUG COMPLETO TripForm.vue ===');
-  console.log('📋 DATOS DEL FORMULARIO:');
-  console.log('- Nombre viaje:', nuevoViaje.value.nombre);
-  console.log('- Destino específico:', nuevoViaje.value.destinoEspecifico);
-  console.log('- Fecha inicio:', nuevoViaje.value.fechaInicio, '(tipo:', typeof nuevoViaje.value.fechaInicio + ')');
-  console.log('- Fecha fin:', nuevoViaje.value.fechaFin, '(tipo:', typeof nuevoViaje.value.fechaFin + ')');
-  console.log('- Presupuesto:', nuevoViaje.value.presupuesto, '(tipo:', typeof nuevoViaje.value.presupuesto + ')');
-  console.log('');
-  
-  console.log('👤 DATOS DEL USUARIO:');
-  console.log('- Self alias:', selfAlias.value);
-  console.log('');
-  
-  console.log('👥 DATOS DE INVITADOS:');
-  console.log('- Miembros totales:', miembros.value);
-  console.log('- Miembros para invitación:', miembrosParaInvitacion);
-  console.log('- Alias map:', JSON.parse(JSON.stringify(aliasMap.value))); // Convertir Proxy a objeto
-  console.log('- Enviar emails?', enviarInvitaciones.value);
-  console.log('');
-  
-  console.log('📦 ESTRUCTURA COMPLETA DEL OBJETO:');
-  console.log('nuevoViaje.value =', JSON.parse(JSON.stringify(nuevoViaje.value)));
-  console.log('aliasMap.value =', JSON.parse(JSON.stringify(aliasMap.value)));
-  console.log('selfAlias.value =', selfAlias.value);
-  console.log('🔍 === FIN DEBUG ===');
-
   try {
     const result = await createTripWithInvitations(
       nuevoViaje.value,
@@ -426,21 +370,46 @@ const resetForm = () => {
 }
 
 /* Scrollbar personalizado */
-::-webkit-scrollbar {
-  width: 6px;
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+.section-title {
+  @apply text-lg font-semibold text-gray-800;
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
+.label {
+  @apply block text-gray-700 font-medium mb-1;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 3px;
+.input {
+  @apply w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 
+         focus:ring-primary focus:outline-none;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #aaa;
+.btn-primary {
+  @apply bg-primary text-white font-semibold px-4 py-2 rounded-lg 
+         hover:bg-primary/90 transition;
+}
+
+.btn-outline {
+  @apply border border-gray-300 text-gray-700 font-medium px-4 py-2 
+         rounded-lg hover:bg-gray-50 transition;
+}
+
+.alert-blue {
+  @apply flex items-center p-3 bg-blue-50 border border-blue-200 
+         rounded-lg text-blue-700 text-sm;
+}
+
+.alert-yellow {
+  @apply p-3 bg-yellow-50 border border-yellow-200 rounded-lg 
+         text-yellow-700 text-sm;
+}
+
+.member-item {
+  @apply bg-gray-50 border border-gray-200 rounded-lg p-3 flex 
+         justify-between items-center;
 }
 </style>
