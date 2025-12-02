@@ -47,6 +47,15 @@
           Votaciones
         </RouterLink>
       </li>
+            <li>
+        <RouterLink
+          :to="`/trips/${tripId}/itinerario`"
+          class="hover:text-primary"
+          active-class="text-primary border-b-2 border-primary pb-1"
+        >
+          Itinerario
+        </RouterLink>
+      </li>
 
       <!-- Botón de edición solo para organizadores -->
       <li v-if="isOrganizer">

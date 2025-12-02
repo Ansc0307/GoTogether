@@ -12,6 +12,7 @@ import VotingList from '../views/VotingList.vue'
 
 // tareas 
 import TasksView from '../views/TasksView.vue'
+import ItineraryView from '../views/ItineraryView.vue'
 
 // Calendario
 import CalendarView from '../views/CalendarView.vue'
@@ -92,6 +93,11 @@ const routes = [
         path: "presupuesto",
         name: "trip-presupuesto",
         component: Presupuesto,
+      },
+      {
+        path: "itinerario",
+        name: "trip-itinerario",
+        component: ItineraryView,
       },
       {
         path: "presupuesto/agregar-gasto",
