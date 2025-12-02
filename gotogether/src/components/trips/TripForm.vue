@@ -1,4 +1,3 @@
-<!-- /components/trips/TripForm.vue -->
 <template>
   <div
     v-if="visible"
@@ -25,6 +24,13 @@
 
       <!-- 🔹 Spinner -->
       <LoadingSpinner v-if="cargando" message="Guardando tu viaje..." />
+
+      <div v-if="sendingEmails" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <div class="flex items-center">
+          <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+          <span class="text-blue-700 text-sm">Enviando invitaciones...</span>
+        </div>
+      </div>
 
       <!-- Formulario -->
       <form v-else @submit.prevent="crearViaje" class="space-y-4">
@@ -104,32 +110,32 @@
         <!-- Invitar miembros -->
         <div>
           <label class="block text-gray-700 font-medium mb-1">Invita a colaboradores</label>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
-                <input
-                  v-model="correoMiembro"
-                  type="email"
-                  placeholder="Correo del colaborador"
-                  class="col-span-1 md:col-span-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-                />
-                <input
-                  v-model="aliasMiembro"
-                  type="text"
-                  placeholder="Alias (ej. Ana, Carlos)"
-                  class="col-span-1 md:col-span-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-                />
-                <button
-                  type="button"
-                  @click="agregarMiembro"
-                  class="col-span-1 md:col-span-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90"
-                >
-                  Agregar
-                </button>
-              </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
+            <input
+              v-model="correoMiembro"
+              type="email"
+              placeholder="Correo del colaborador"
+              class="col-span-1 md:col-span-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+            <input
+              v-model="aliasMiembro"
+              type="text"
+              placeholder="Alias (ej. Ana, Carlos)"
+              class="col-span-1 md:col-span-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+            <button
+              type="button"
+              @click="agregarMiembro"
+              class="col-span-1 md:col-span-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90"
+            >
+              Agregar
+            </button>
+          </div>
 
           <!-- 🔹 Contenedor scrollable horizontal -->
-          <div v-if="nuevoViaje.miembros.length" class="invite-scroll mt-3">
+          <div v-if="miembros.length" class="invite-scroll mt-3">
             <span
-              v-for="(correo, index) in nuevoViaje.miembros"
+              v-for="(correo, index) in miembros"
               :key="correo"
               class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full flex items-center gap-2 whitespace-nowrap"
             >
@@ -146,13 +152,15 @@
           </div>
         </div>
 
-        <!-- Botón crear -->
+        <!-- Botón crear viaje -->
         <button
           type="submit"
-          class="w-full mt-4 bg-primary text-white font-semibold py-2 rounded-lg hover:bg-primary/90 transition flex items-center justify-center gap-2"
+          :disabled="cargando || sendingEmails"
+          class="w-full mt-4 bg-primary text-white font-semibold py-2 rounded-lg hover:bg-primary/90 transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span class="material-symbols-outlined text-base">explore</span>
-          Crear Viaje
+          <span v-if="cargando" class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+          <span v-else class="material-symbols-outlined text-base">explore</span>
+          {{ cargando ? 'Creando viaje...' : 'Crear Viaje' }}
         </button>
       </form>
     </div>
@@ -161,109 +169,104 @@
 
 <script setup>
 import { ref } from "vue";
-import { db } from "../../firebase/firebaseConfig";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { useTrips } from "@/composables/useTrips";
 import LoadingSpinner from "../budget/LoadingSpinner.vue";
 
 const props = defineProps({ visible: Boolean });
 const emit = defineEmits(["close"]);
 
+// Estado local del formulario
 const nuevoViaje = ref({
   nombre: "",
   destinoEspecifico: "",
   fechaInicio: "",
   fechaFin: "",
   presupuesto: "",
-  miembros: [], // array de correos
 });
 
-// aliasMap: objeto donde la llave es el correo y el valor es el alias
 const aliasMap = ref({});
-
-const cargando = ref(false);
-
 const correoMiembro = ref("");
 const aliasMiembro = ref("");
-// alias para el propio creador
 const selfAlias = ref("");
+const miembros = ref([]); // Solo emails
 
+// Composable para la lógica
+const { 
+  isLoading: cargando, 
+  isSendingInvites: sendingEmails, 
+  createTripWithInvitations,
+  reset 
+} = useTrips();
+
+// Manejo de miembros
 const agregarMiembro = () => {
   const correo = correoMiembro.value.trim();
   const alias = aliasMiembro.value.trim();
+  
   if (!correo) return;
-  if (!nuevoViaje.value.miembros.includes(correo)) {
-    nuevoViaje.value.miembros.push(correo);
-    if (alias) aliasMap.value[correo] = alias;
-  } else {
-    // Si ya existe el correo pero actualizamos alias
-    if (alias) aliasMap.value[correo] = alias;
+  
+  if (!miembros.value.includes(correo)) {
+    miembros.value.push(correo);
   }
+  
+  if (alias) {
+    aliasMap.value[correo] = alias;
+  }
+  
   correoMiembro.value = "";
   aliasMiembro.value = "";
 };
 
 const eliminarMiembro = (index) => {
-  const correo = nuevoViaje.value.miembros[index];
-  if (correo && aliasMap.value[correo]) delete aliasMap.value[correo];
-  nuevoViaje.value.miembros.splice(index, 1);
+  const correo = miembros.value[index];
+  if (correo && aliasMap.value[correo]) {
+    delete aliasMap.value[correo];
+  }
+  miembros.value.splice(index, 1);
 };
 
+// Crear viaje
 const crearViaje = async () => {
   if (!nuevoViaje.value.nombre.trim()) {
     return alert("Por favor, ingresa el nombre del viaje.");
   }
 
-  cargando.value = true; // 🔹 Muestra el spinner
+  const result = await createTripWithInvitations(
+    nuevoViaje.value,
+    miembros.value,
+    aliasMap.value,
+    selfAlias.value
+  );
 
-  try {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const userEmail = user?.email || "default@user.com";
-    const userName = user?.displayName || "Usuario Explorador";
-
-    // si el usuario ingresó un alias para sí mismo, incluirlo en el map
-    if (selfAlias.value && selfAlias.value.trim()) {
-      aliasMap.value[userEmail] = selfAlias.value.trim();
+  if (result.success) {
+    let message = "¡Viaje creado exitosamente!";
+    if (miembros.value.length > 0) {
+      message += `\nSe enviaron invitaciones a ${miembros.value.length} persona(s).`;
     }
-
-    await addDoc(collection(db, "trips"), {
-      name: nuevoViaje.value.nombre,
-      description: "",
-      destination: nuevoViaje.value.destinoEspecifico || "",
-      startDate: nuevoViaje.value.fechaInicio,
-      endDate: nuevoViaje.value.fechaFin,
-      budget: parseFloat(nuevoViaje.value.presupuesto) || 0,
-      createdBy: userEmail,
-      createdByName: userName,
-      members: [userEmail, ...nuevoViaje.value.miembros],
-      alias: { ...(aliasMap.value || {}) },
-      createdAt: Timestamp.now(),
-    });
-
-    // Simulación de pequeña espera para UX
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    alert("¡Viaje creado exitosamente!");
+    
+    alert(message);
+    resetForm();
     emit("close");
-
-    // Reset
-    nuevoViaje.value = {
-      nombre: "",
-      destinoEspecifico: "",
-      fechaInicio: "",
-      fechaFin: "",
-      presupuesto: "",
-      miembros: [],
-    };
-    aliasMap.value = {};
-    selfAlias.value = "";
-  } catch (error) {
-    console.error("Error al crear el viaje:", error);
-    alert("Hubo un error al guardar el viaje.");
-  } finally {
-    cargando.value = false; // 🔹 Oculta el spinner
+  } else {
+    alert("Error: " + result.error);
   }
+};
+
+// Resetear formulario
+const resetForm = () => {
+  nuevoViaje.value = {
+    nombre: "",
+    destinoEspecifico: "",
+    fechaInicio: "",
+    fechaFin: "",
+    presupuesto: "",
+  };
+  aliasMap.value = {};
+  miembros.value = [];
+  correoMiembro.value = "";
+  aliasMiembro.value = "";
+  selfAlias.value = "";
+  reset();
 };
 </script>
 
