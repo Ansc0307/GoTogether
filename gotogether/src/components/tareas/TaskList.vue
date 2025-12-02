@@ -8,14 +8,14 @@
         @click="generarPDF"
         class="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700"
       >
-        📄 Generar PDF
+        Generar PDF
       </button>
 
       <button
         @click="copiarEnlace"
         class="px-4 py-2 bg-gray-700 text-white rounded-lg shadow hover:bg-gray-800"
       >
-        🔗 Copiar enlace del viaje
+        Copiar enlace del viaje
       </button>
     </div>
 

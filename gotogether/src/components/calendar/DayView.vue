@@ -52,7 +52,7 @@
 
       <!-- TAREAS -->
       <section>
-        <h3 class="text-lg font-semibold mb-3">📝 Tareas</h3>
+        <h3 class="text-lg font-semibold mb-3">Tareas</h3>
 
         <div v-if="dayTasks.length === 0" class="text-gray-500 text-sm">
           No hay tareas para hoy.
@@ -74,7 +74,7 @@
 
       <!-- TRIPS -->
       <section>
-        <h3 class="text-lg font-semibold mb-3">✈️ Viajes</h3>
+        <h3 class="text-lg font-semibold mb-3">Viajes</h3>
 
         <div v-if="dayTrips.length === 0" class="text-gray-500 text-sm">
           No hay viajes en esta fecha.
@@ -95,7 +95,7 @@
 
       <!-- VOTES -->
       <section>
-        <h3 class="text-lg font-semibold mb-3">🗳️ Votaciones</h3>
+        <h3 class="text-lg font-semibold mb-3">Votaciones</h3>
 
         <div v-if="dayVotes.length === 0" class="text-gray-500 text-sm">
           No hay votaciones con deadline hoy.
