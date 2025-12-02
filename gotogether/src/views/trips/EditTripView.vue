@@ -1,7 +1,7 @@
 <!-- views/trips/EditTripView.vue -->
 <template>
   <div class="container mx-auto p-4 max-w-4xl">
-    <!-- Header del viaje -->
+    <!-- Header -->
     <div class="mb-8">
       <h1 class="text-2xl font-bold text-gray-800 mb-2">Editar Viaje</h1>
       <div class="flex flex-wrap items-center gap-2 text-gray-600">
@@ -25,33 +25,22 @@
       </div>
     </div>
 
-    <!-- Contenido principal -->
-    <div v-else>
-      <!-- Componente del formulario -->
-      <EditTripForm
-        :trip-data="tripData"
-        :trip-id="tripId"
-        @saved="handleSaveSuccess"
-        @delete-requested="showDeleteModal = true"
-      />
-    </div>
-
-    <!-- Modal de confirmación de eliminación -->
-    <DeleteTripModal
-      v-if="showDeleteModal"
-      :trip-name="tripData?.name"
+    <!-- Formulario -->
+    <EditTripForm
+      v-else
+      :trip-data="tripData"
       :trip-id="tripId"
-      @confirm="handleDeleteConfirmed"
-      @cancel="showDeleteModal = false"
+      @saved="handleSaveSuccess"
+      @delete-requested="showDeleteModal = true"
     />
 
-    <!-- Toast de notificación -->
-    <ToastNotification
-      v-if="toast.show"
-      :type="toast.type"
-      :message="toast.message"
-      :details="toast.details"
-      @close="toast.show = false"
+    <!-- Modal de eliminación -->
+    <DeleteTripModal
+      v-if="showDeleteModal"
+      :trip-id="tripId"
+      :trip-name="tripData?.name"
+      @confirm="handleDeleteConfirmed"
+      @cancel="showDeleteModal = false"
     />
   </div>
 </template>
@@ -59,87 +48,67 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { db } from '@/firebase/firebaseConfig'
-import { doc, getDoc } from 'firebase/firestore'
+import { useTrips } from '@/composables/useTrips'
 import EditTripForm from '@/components/trips/EditTripForm.vue'
 import DeleteTripModal from '@/components/trips/DeleteTripModal.vue'
-import ToastNotification from '@/components/ui/ToastNotification.vue'
 
 const router = useRouter()
 const route = useRoute()
 const tripId = route.params.id
 
-// Estado
+const { fetchTrip, deleteTrip } = useTrips()
+
 const loading = ref(true)
 const tripData = ref(null)
 const showDeleteModal = ref(false)
-const toast = ref({
-  show: false,
-  type: 'success',
-  message: '',
-  details: ''
-})
 
-// Cargar datos del viaje
+// Cargar datos
 const loadTripData = async () => {
-  try {
-    loading.value = true
-    const tripRef = doc(db, 'trips', tripId)
-    const tripSnap = await getDoc(tripRef)
-    
-    if (tripSnap.exists()) {
-      tripData.value = tripSnap.data()
-    } else {
-      showToast('error', 'Viaje no encontrado')
-      router.push('/misviajes')
-    }
-  } catch (error) {
-    console.error('Error cargando viaje:', error)
-    showToast('error', 'Error al cargar el viaje', error.message)
-  } finally {
-    loading.value = false
-  }
-}
-
-// Manejar éxito de guardado
-const handleSaveSuccess = (message) => {
-  showToast('success', message)
-  loadTripData() // Recargar datos actualizados
-}
-
-// Manejar confirmación de eliminación
-const handleDeleteConfirmed = () => {
-  showDeleteModal.value = false
-  showToast('success', 'Viaje eliminado correctamente')
+  const result = await fetchTrip(tripId)
   
-  // Redirigir después de un momento
-  setTimeout(() => {
+  if (result.success) {
+    tripData.value = result.trip
+  } else {
+    alert(`Error: ${result.error}`)
     router.push('/misviajes')
-  }, 1500)
+  }
+  loading.value = false
 }
 
-// Formatear fecha
+// Manejar éxito al guardar - RECARGA LA PÁGINA
+const handleSaveSuccess = async (message) => {
+  // Mostrar mensaje de éxito
+  alert(message)
+  
+  // Recargar datos del viaje
+  await loadTripData()
+  
+  // Recargar también la página completa si quieres
+  // window.location.reload()
+}
+
+// Manejar eliminación
+const handleDeleteConfirmed = async () => {
+  const result = await deleteTrip(tripId)
+  
+  if (result.success) {
+    alert('Viaje eliminado exitosamente')
+    router.push('/misviajes')
+  } else {
+    alert(`Error: ${result.error}`)
+  }
+  showDeleteModal.value = false
+}
+
+// Formatear fechas
 const formatDateRange = (start, end) => {
   if (!start || !end) return 'Fechas no definidas'
-  
   const format = (dateStr) => {
     const date = new Date(dateStr)
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
   }
-  
   return `${format(start)} - ${format(end)}`
 }
 
-// Mostrar toast
-const showToast = (type, message, details = '') => {
-  toast.value = { show: true, type, message, details }
-  setTimeout(() => {
-    toast.value.show = false
-  }, 5000)
-}
-
-// Cargar datos al montar
-onMounted(() => {
-  loadTripData()
-})
+onMounted(() => loadTripData())
 </script>

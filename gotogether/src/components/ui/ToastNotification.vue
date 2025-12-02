@@ -1,70 +1,45 @@
 <!-- components/ui/ToastNotification.vue -->
 <template>
-  <Transition name="toast">
+  <div
+    v-if="visible"
+    class="fixed bottom-4 right-4 z-50 animate-fadeIn"
+  >
     <div 
-      v-if="visible"
-      class="fixed bottom-4 right-4 z-50 max-w-sm w-full"
+      class="p-4 rounded-lg border shadow-lg max-w-sm"
+      :class="toastClasses"
     >
-      <div 
-        class="p-4 rounded-lg shadow-lg border flex items-start gap-3 animate-slideIn"
-        :class="toastClasses"
-      >
-        <!-- Icono -->
-        <span class="material-symbols-outlined flex-shrink-0 mt-0.5">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined">
           {{ icon }}
         </span>
-        
-        <!-- Contenido -->
-        <div class="flex-1 min-w-0">
+        <div class="flex-1">
           <p class="font-medium">{{ message }}</p>
-          <p v-if="details" class="text-sm opacity-90 mt-1">{{ details }}</p>
+          <p v-if="details" class="text-sm mt-1 opacity-90">{{ details }}</p>
         </div>
-        
-        <!-- Botón cerrar -->
-        <button 
-          @click="close"
-          class="text-gray-400 hover:text-gray-600 flex-shrink-0 mt-0.5"
-        >
+        <button @click="close" class="text-gray-400 hover:text-gray-600">
           <span class="material-symbols-outlined text-base">close</span>
         </button>
       </div>
     </div>
-  </Transition>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 
 const props = defineProps({
-  type: {
-    type: String,
-    default: 'info',
-    validator: (value) => ['success', 'error', 'warning', 'info'].includes(value)
-  },
-  message: {
-    type: String,
-    required: true
-  },
-  details: {
-    type: String,
-    default: ''
-  },
-  duration: {
-    type: Number,
-    default: 5000
-  },
-  show: {
-    type: Boolean,
-    default: false
-  }
+  type: { type: String, default: 'info' },
+  message: { type: String, required: true },
+  details: { type: String, default: '' },
+  show: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['close'])
 
 const visible = ref(props.show)
-let timeoutId = null
+let timeout
 
-// Iconos según tipo
+// Icono según tipo
 const icon = computed(() => {
   switch (props.type) {
     case 'success': return 'check_circle'
@@ -74,95 +49,46 @@ const icon = computed(() => {
   }
 })
 
-// Clases CSS según tipo
+// Clases CSS
 const toastClasses = computed(() => {
-  const base = 'bg-white border'
-  
   switch (props.type) {
-    case 'success':
-      return `${base} border-green-200 text-green-800`
-    case 'error':
-      return `${base} border-red-200 text-red-800`
-    case 'warning':
-      return `${base} border-yellow-200 text-yellow-800`
-    default:
-      return `${base} border-blue-200 text-blue-800`
+    case 'success': return 'bg-green-50 border-green-200 text-green-800'
+    case 'error': return 'bg-red-50 border-red-200 text-red-800'
+    case 'warning': return 'bg-yellow-50 border-yellow-200 text-yellow-800'
+    default: return 'bg-blue-50 border-blue-200 text-blue-800'
   }
 })
 
-// Cerrar notificación
+// Cerrar
 const close = () => {
   visible.value = false
-  if (timeoutId) {
-    clearTimeout(timeoutId)
-    timeoutId = null
-  }
+  clearTimeout(timeout)
   emit('close')
 }
 
-// Auto-cerrar después de la duración
-const startAutoClose = () => {
-  if (props.duration > 0) {
-    timeoutId = setTimeout(close, props.duration)
-  }
+// Auto-cerrar después de 5 segundos
+const startTimer = () => {
+  timeout = setTimeout(close, 5000)
 }
 
 // Watch para mostrar/ocultar
 watch(() => props.show, (newVal) => {
   visible.value = newVal
-  if (newVal) {
-    startAutoClose()
-  } else if (timeoutId) {
-    clearTimeout(timeoutId)
-    timeoutId = null
-  }
+  if (newVal) startTimer()
 })
 
-// Inicializar
 onMounted(() => {
-  if (visible.value) {
-    startAutoClose()
-  }
-})
-
-// Limpiar timeout al desmontar
-onUnmounted(() => {
-  if (timeoutId) {
-    clearTimeout(timeoutId)
-  }
+  if (visible.value) startTimer()
 })
 </script>
 
 <style scoped>
-/* Animaciones */
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
 }
 
-.animate-slideIn {
-  animation: slideIn 0.3s ease-out;
-}
-
-/* Transición Vue */
-.toast-enter-active,
-.toast-leave-active {
-  transition: opacity 0.3s, transform 0.3s;
-}
-
-.toast-enter-from {
-  opacity: 0;
-  transform: translateX(100%);
-}
-
-.toast-leave-to {
-  opacity: 0;
-  transform: translateX(100%);
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
