@@ -142,7 +142,7 @@
             </div>
 
             <!-- Lista scrollable -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-48 overflow-y-auto pr-1">
+            <div class="flex gap-2 overflow-x-auto py-1 pr-1 max-w-full">
               <div
                 v-for="(correo, index) in miembros"
                 :key="correo"
@@ -167,7 +167,7 @@
             <label class="flex items-start gap-3 border-t cursor-pointer">
               <input type="checkbox" v-model="enviarInvitaciones" class="mt-1" />
               <div>
-                <span class="font-medium text-gray-700">📧 Enviar invitaciones</span>
+                <span class="font-medium text-gray-700">Enviar invitaciones</span>
               </div>
             </label>
           </div>
@@ -371,7 +371,6 @@ const resetForm = () => {
 }
 
 /* Scrollbar personalizado */
-::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
 ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #aaa; }
