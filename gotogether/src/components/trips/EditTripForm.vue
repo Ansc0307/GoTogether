@@ -1,4 +1,4 @@
-// ...existing code...
+
 <template>
   <div
     v-if="visible"

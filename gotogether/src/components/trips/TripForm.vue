@@ -1,13 +1,11 @@
-<!-- /components/trips/TripForm.vue -->
 <template>
   <div
     v-if="visible"
-    class="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50 backdrop-blur-sm"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-center items-center overflow-y-auto py-8"
   >
-    <div
-      class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative animate-fadeIn"
-    >
-      <!-- Botón cerrar -->
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-4 sm:p-6 md:p-8 mx-4 relative animate-fadeIn">
+
+      <!-- Botón Cerrar -->
       <button
         @click="$emit('close')"
         class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
@@ -15,145 +13,186 @@
         <span class="material-symbols-outlined text-2xl">close</span>
       </button>
 
-      <!-- Encabezado -->
-      <h2 class="text-2xl font-bold text-gray-800 text-center mb-1">
-        Organiza un nuevo viaje
-      </h2>
-      <p class="text-center text-gray-500 text-sm mb-6">
-        Planifica tu próxima aventura
-      </p>
+      <!-- Header -->
+      <div class="text-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Organiza un nuevo viaje</h2>
+        <p class="text-gray-500 text-sm">Planifica tu próxima aventura</p>
+      </div>
 
-      <!-- 🔹 Spinner -->
       <LoadingSpinner v-if="cargando" message="Guardando tu viaje..." />
 
-      <!-- Formulario -->
-      <form v-else @submit.prevent="crearViaje" class="space-y-4">
-        <!-- Nombre del viaje -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">Nombre del viaje</label>
-          <input
-            v-model="nuevoViaje.nombre"
-            type="text"
-            placeholder="Ej. Aventura en los Andes"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-            required
-          />
-        </div>
-
-        <!-- Destino -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">Destino específico</label>
-          <input
-            v-model="nuevoViaje.destinoEspecifico"
-            type="text"
-            placeholder="Ej. Salar de Uyuni, Lago Titicaca"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-          />
-        </div>
-
-        <!-- Fechas -->
-        <div class="grid grid-cols-2 gap-3">
+      <!-- FORM -->
+      <form
+        v-if="!cargando"
+        @submit.prevent="crearViaje"
+        class="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-2"
+      >
+        <!-- SECCIÓN 1: Detalles del viaje -->
+        <section class="space-y-4 ">
+          <h3 class="section-title">Detalles del viaje</h3>
+          <!-- Nombre -->
           <div>
-            <label class="block text-gray-700 font-medium mb-1">Fecha de inicio</label>
+            <label class="label">Nombre del viaje *</label>
             <input
-              v-model="nuevoViaje.fechaInicio"
-              type="date"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+              v-model="nuevoViaje.nombre"
+              type="text"
+              placeholder="Ej. Aventura en los Andes"
+              class="input"
               required
             />
           </div>
 
+          <!-- Destino -->
           <div>
-            <label class="block text-gray-700 font-medium mb-1">Fecha fin</label>
+            <label class="label">Destino específico</label>
             <input
-              v-model="nuevoViaje.fechaFin"
-              type="date"
-              class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-              required
+              v-model="nuevoViaje.destinoEspecifico"
+              type="text"
+              placeholder="Ej. Salar de Uyuni, Lago Titicaca"
+              class="input"
             />
           </div>
-        </div>
 
-        <!-- Presupuesto -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">Presupuesto base (opcional)</label>
-          <div class="flex items-center border border-gray-300 rounded-lg px-3 py-2">
-            <span class="text-gray-500 mr-2">Bs.</span>
+          <!-- Fechas -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="label">Fecha inicio *</label>
+              <input v-model="nuevoViaje.fechaInicio" type="date" class="input" required />
+            </div>
+            <div>
+              <label class="label">Fecha fin *</label>
+              <input v-model="nuevoViaje.fechaFin" type="date" class="input" required />
+            </div>
+          </div>
+
+          <!-- Presupuesto -->
+          <div>
+            <label class="label">Presupuesto base (opcional)</label>
+            <div class="input flex items-center">
+              <span class="text-gray-500 mr-2">Bs.</span>
+              <input
+                v-model="nuevoViaje.presupuesto"
+                type="number"
+                min="0"
+                step="0.01"
+                class="flex-1 bg-transparent border-none outline-none"
+              />
+            </div>
+          </div>
+        </section>
+
+        <!-- SECCIÓN 2: Alias + Colaboradores -->
+        <section class="space-y-4">
+          <!-- Alias propio movido aquí -->
+          <h3 class="section-title">Detalles de los integrantes</h3>
+          <div>
+            <label class="label">Tu alias (opcional)</label>
             <input
-              v-model="nuevoViaje.presupuesto"
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="0.00"
-              class="flex-1 outline-none border-none bg-transparent"
+              v-model="selfAlias"
+              type="text"
+              placeholder="Cómo quieres que te vean"
+              class="input"
             />
           </div>
-        </div>
 
-        <!-- Alias propio -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">Tu alias</label>
-          <input
-            v-model="selfAlias"
-            type="text"
-            placeholder="Cómo quieres que te vean (ej. Ana)"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-          />
-        </div>
+          <!-- Colaboradores -->
+          <h3 class="section-title">Invitar colaboradores</h3>
 
-        <!-- Invitar miembros -->
-        <div>
-          <label class="block text-gray-700 font-medium mb-1">Invita a colaboradores</label>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center">
-                <input
-                  v-model="correoMiembro"
-                  type="email"
-                  placeholder="Correo del colaborador"
-                  class="col-span-1 md:col-span-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
-                />
+          <!-- Agregar -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="label">Correo electrónico</label>
+              <input
+                v-model="correoMiembro"
+                type="email"
+                placeholder="correo@ejemplo.com"
+                class="input"
+              />
+            </div>
+
+            <div>
+              <label class="label">Alias (opcional)</label>
+              <div class="flex gap-2">
                 <input
                   v-model="aliasMiembro"
                   type="text"
-                  placeholder="Alias (ej. Ana, Carlos)"
-                  class="col-span-1 md:col-span-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:outline-none"
+                  placeholder="Nombre a mostrar"
+                  class="input"
                 />
                 <button
                   type="button"
                   @click="agregarMiembro"
-                  class="col-span-1 md:col-span-1 bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90"
+                  class="btn-primary whitespace-nowrap"
                 >
-                  Agregar
+                  + Agregar
                 </button>
               </div>
-
-          <!-- 🔹 Contenedor scrollable horizontal -->
-          <div v-if="nuevoViaje.miembros.length" class="invite-scroll mt-3">
-            <span
-              v-for="(correo, index) in nuevoViaje.miembros"
-              :key="correo"
-              class="bg-primary/10 text-primary text-sm px-3 py-1 rounded-full flex items-center gap-2 whitespace-nowrap"
-            >
-              <span class="font-medium">{{ aliasMap[correo] ? aliasMap[correo] + ' ·' : '' }}</span>
-              <span class="truncate">{{ correo }}</span>
-              <button
-                type="button"
-                @click="eliminarMiembro(index)"
-                class="text-gray-400 hover:text-red-500 text-xs"
-              >
-                ✕
-              </button>
-            </span>
+            </div>
           </div>
+
+          <!-- Lista -->
+          <div v-if="miembros.length > 0" class="space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-sm font-medium text-gray-700">
+                {{ miembros.length }} colaborador(es)
+              </span>
+              <button @click="limpiarMiembros" type="button" class="text-red-500 text-sm">
+                Limpiar todos
+              </button>
+            </div>
+
+            <!-- Lista scrollable -->
+            <div class="flex gap-2 overflow-x-auto py-1 pr-1 max-w-full">
+              <div
+                v-for="(correo, index) in miembros"
+                :key="correo"
+                class="member-item"
+              >
+                <div class="truncate">
+                  <div class="font-medium text-sm">
+                    {{ aliasMap[correo] || 'Sin alias' }}
+                  </div>
+                  <div class="text-xs text-gray-500 truncate">{{ correo }}</div>
+                </div>
+                <button
+                  class="text-gray-400 hover:text-red-500"
+                  @click="eliminarMiembro(index)"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+
+            <!-- Checkbox enviar emails -->
+            <label class="flex items-start gap-3 border-t cursor-pointer">
+              <input type="checkbox" v-model="enviarInvitaciones" class="mt-1" />
+              <div>
+                <span class="font-medium text-gray-700">Enviar invitaciones</span>
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <!-- Botones -->
+        <div class="flex flex-col sm:flex-row gap-3 md:col-span-2 mt-6">
+          <button
+            type="button"
+            @click="$emit('close')"
+            class="btn-outline"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            :disabled="cargando || sendingEmails"
+            class="btn-primary flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-base">explore</span>
+            Crear Viaje
+          </button>
         </div>
 
-        <!-- Botón crear -->
-        <button
-          type="submit"
-          class="w-full mt-4 bg-primary text-white font-semibold py-2 rounded-lg hover:bg-primary/90 transition flex items-center justify-center gap-2"
-        >
-          <span class="material-symbols-outlined text-base">explore</span>
-          Crear Viaje
-        </button>
       </form>
     </div>
   </div>
@@ -161,109 +200,164 @@
 
 <script setup>
 import { ref } from "vue";
-import { db } from "../../firebase/firebaseConfig";
-import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { useTrips } from "@/composables/useTrips";
 import LoadingSpinner from "../budget/LoadingSpinner.vue";
 
 const props = defineProps({ visible: Boolean });
 const emit = defineEmits(["close"]);
 
+// Estado del formulario
 const nuevoViaje = ref({
   nombre: "",
   destinoEspecifico: "",
   fechaInicio: "",
   fechaFin: "",
   presupuesto: "",
-  miembros: [], // array de correos
 });
 
-// aliasMap: objeto donde la llave es el correo y el valor es el alias
 const aliasMap = ref({});
-
-const cargando = ref(false);
-
 const correoMiembro = ref("");
 const aliasMiembro = ref("");
-// alias para el propio creador
 const selfAlias = ref("");
+const miembros = ref([]);
+const enviarInvitaciones = ref(true); // Por defecto SÍ envía emails
 
+// Composable para la lógica
+const { 
+  isLoading: cargando, 
+  isSendingInvites: sendingEmails, 
+  createTripWithInvitations,
+  reset 
+} = useTrips();
+
+// Manejo de miembros
 const agregarMiembro = () => {
-  const correo = correoMiembro.value.trim();
+  const correo = correoMiembro.value.trim().toLowerCase();
   const alias = aliasMiembro.value.trim();
-  if (!correo) return;
-  if (!nuevoViaje.value.miembros.includes(correo)) {
-    nuevoViaje.value.miembros.push(correo);
-    if (alias) aliasMap.value[correo] = alias;
-  } else {
-    // Si ya existe el correo pero actualizamos alias
-    if (alias) aliasMap.value[correo] = alias;
+  
+  if (!correo) {
+    alert("Por favor, ingresa un correo electrónico");
+    return;
   }
+  
+  // Validar formato de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(correo)) {
+    alert("Por favor, ingresa un correo electrónico válido");
+    return;
+  }
+  
+  if (!miembros.value.includes(correo)) {
+    miembros.value.push(correo);
+  }
+  
+  if (alias) {
+    aliasMap.value[correo] = alias;
+  }
+  
+  // Limpiar inputs
   correoMiembro.value = "";
   aliasMiembro.value = "";
+  
+  // Hacer focus en el input de email
+  setTimeout(() => {
+    document.querySelector('input[type="email"]')?.focus();
+  }, 10);
 };
 
 const eliminarMiembro = (index) => {
-  const correo = nuevoViaje.value.miembros[index];
-  if (correo && aliasMap.value[correo]) delete aliasMap.value[correo];
-  nuevoViaje.value.miembros.splice(index, 1);
+  const correo = miembros.value[index];
+  if (correo && aliasMap.value[correo]) {
+    delete aliasMap.value[correo];
+  }
+  miembros.value.splice(index, 1);
 };
 
-const crearViaje = async () => {
-  if (!nuevoViaje.value.nombre.trim()) {
-    return alert("Por favor, ingresa el nombre del viaje.");
+const limpiarMiembros = () => {
+  if (miembros.value.length > 0) {
+    if (confirm(`¿Eliminar todos los ${miembros.value.length} colaboradores?`)) {
+      miembros.value = [];
+      aliasMap.value = {};
+    }
   }
+};
 
-  cargando.value = true; // 🔹 Muestra el spinner
+// Crear viaje
+const crearViaje = async () => {
+  // Validaciones
+  if (!nuevoViaje.value.nombre.trim()) {
+    alert("Por favor, ingresa el nombre del viaje.");
+    return;
+  }
+  
+  if (!nuevoViaje.value.fechaInicio || !nuevoViaje.value.fechaFin) {
+    alert("Por favor, ingresa las fechas de inicio y fin.");
+    return;
+  }
+  
+  if (nuevoViaje.value.fechaInicio > nuevoViaje.value.fechaFin) {
+    alert("La fecha de inicio no puede ser posterior a la fecha de fin.");
+    return;
+  }
+  
+  // Determinar miembros para invitación
+  const miembrosParaInvitacion = enviarInvitaciones.value ? miembros.value : [];
 
   try {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    const userEmail = user?.email || "default@user.com";
-    const userName = user?.displayName || "Usuario Explorador";
+    const result = await createTripWithInvitations(
+      nuevoViaje.value,
+      miembrosParaInvitacion, // Solo envía emails si el checkbox está activado
+      aliasMap.value,
+      selfAlias.value,
+      enviarInvitaciones.value // Pasar si debe enviar emails
+    );
 
-    // si el usuario ingresó un alias para sí mismo, incluirlo en el map
-    if (selfAlias.value && selfAlias.value.trim()) {
-      aliasMap.value[userEmail] = selfAlias.value.trim();
+    if (result.success) {
+      let message = "¡Viaje creado exitosamente!";
+      
+      if (miembros.value.length > 0) {
+        if (enviarInvitaciones.value) {
+          message += `\n Se enviaron invitaciones a ${miembros.value.length} persona(s).`;
+          message += `\n Revisa la carpeta de spam si no ves los emails.`;
+        } else {
+          message += `\n Se agregaron ${miembros.value.length} colaborador(es) (sin enviar invitaciones).`;
+        }
+      }
+      
+      // Mostrar alerta con mejor formato
+      alert(message);
+      
+      // Log adicional para depuración
+      console.log('🎉 Viaje creado exitosamente:', result.trip);
+      
+      resetForm();
+      emit("close");
+    } else {
+      console.error('❌ Error en createTripWithInvitations:', result.error);
+      alert("Error al crear el viaje: " + result.error);
     }
-
-    await addDoc(collection(db, "trips"), {
-      name: nuevoViaje.value.nombre,
-      description: "",
-      destination: nuevoViaje.value.destinoEspecifico || "",
-      startDate: nuevoViaje.value.fechaInicio,
-      endDate: nuevoViaje.value.fechaFin,
-      budget: parseFloat(nuevoViaje.value.presupuesto) || 0,
-      createdBy: userEmail,
-      createdByName: userName,
-      members: [userEmail, ...nuevoViaje.value.miembros],
-      alias: { ...(aliasMap.value || {}) },
-      createdAt: Timestamp.now(),
-    });
-
-    // Simulación de pequeña espera para UX
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    alert("¡Viaje creado exitosamente!");
-    emit("close");
-
-    // Reset
-    nuevoViaje.value = {
-      nombre: "",
-      destinoEspecifico: "",
-      fechaInicio: "",
-      fechaFin: "",
-      presupuesto: "",
-      miembros: [],
-    };
-    aliasMap.value = {};
-    selfAlias.value = "";
   } catch (error) {
-    console.error("Error al crear el viaje:", error);
-    alert("Hubo un error al guardar el viaje.");
-  } finally {
-    cargando.value = false; // 🔹 Oculta el spinner
+    console.error('💥 Error inesperado en crearViaje:', error);
+    alert("Ocurrió un error inesperado: " + error.message);
   }
+};
+
+// Resetear formulario
+const resetForm = () => {
+  nuevoViaje.value = {
+    nombre: "",
+    destinoEspecifico: "",
+    fechaInicio: "",
+    fechaFin: "",
+    presupuesto: "",
+  };
+  aliasMap.value = {};
+  miembros.value = [];
+  correoMiembro.value = "";
+  aliasMiembro.value = "";
+  selfAlias.value = "";
+  enviarInvitaciones.value = true;
+  reset();
 };
 </script>
 
@@ -272,27 +366,29 @@ const crearViaje = async () => {
   from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
 
-/* 🔹 Scroll horizontal para los colaboradores */
-.invite-scroll {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding-bottom: 6px;
-  scrollbar-width: thin;
-  scrollbar-color: #ccc transparent;
+/* Scrollbar específico para la lista de miembros */
+::-webkit-scrollbar-track { 
+  background: #f1f1f1; 
+  border-radius: 3px; 
 }
 
-.invite-scroll::-webkit-scrollbar {
-  height: 6px;
+::-webkit-scrollbar-thumb { 
+  background: #ccc; 
+  border-radius: 3px; 
 }
 
-.invite-scroll::-webkit-scrollbar-thumb {
-  background-color: #ccc;
-  border-radius: 3px;
+::-webkit-scrollbar-thumb:hover { 
+  background: #aaa; 
+}
+
+/* Estilo específico del member-item */
+.member-item {
+  @apply bg-gray-50 border border-gray-200 rounded-lg p-3 
+         flex justify-between items-center;
 }
 </style>
