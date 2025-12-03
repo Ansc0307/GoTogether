@@ -123,7 +123,18 @@ const routes = [
         path: "votaciones/:votingId",
         name: "trip-votaciones-detail",
         component: () => import('../views/voting/VotingDetail.vue'),
-      }
+      },
+
+      {
+        path: "edicion-viaje",
+        name: "edit-trip",
+        component: () => import('../views/trips/EditTripView.vue'),
+      },
+      {
+        path: "integrantes",
+        name: "members-trip",
+        component: () => import('../views/trips/MembersView.vue'),
+      },
     ],
   },
   
