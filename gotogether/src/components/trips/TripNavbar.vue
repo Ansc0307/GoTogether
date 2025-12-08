@@ -47,7 +47,7 @@
           Votaciones
         </RouterLink>
       </li>
-            <li>
+      <li>
         <RouterLink
           :to="`/trips/${tripId}/itinerario`"
           class="hover:text-primary"
@@ -59,22 +59,25 @@
 
       <!-- Botón de edición solo para organizadores -->
       <li v-if="isOrganizer">
-        <button
-          @click="showEditModal = true"
-          class="hover:text-primary font-semibold"
+        <RouterLink
+          :to="`/trips/${tripId}/edicion-viaje`"
+          class="hover:text-primary"
+          active-class="text-primary border-b-2 border-primary pb-1"
         >
-          Edición Viaje
-        </button>
+          Editar Viaje
+        </RouterLink>
+      </li>
+      <li v-if="isOrganizer">
+        <RouterLink
+          :to="`/trips/${tripId}/integrantes`"
+          class="hover:text-primary"
+          active-class="text-primary border-b-2 border-primary pb-1"
+        >
+          Integrantes
+        </RouterLink>
       </li>
     </ul>
 
-    <!-- Modal de edición -->
-    <EditTripForm
-      v-if="showEditModal"
-      :visible="showEditModal"
-      :trip-id="tripId"
-      @close="showEditModal = false"
-    />
   </nav>
 </template>
 
