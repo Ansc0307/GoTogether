@@ -52,6 +52,10 @@
               <strong>{{ userInfo.displayName || 'Usuario' }}</strong>
               <small>{{ userInfo.email }}</small>
             </div>
+            <button @click="randomizeAvatar" class="action-btn" :disabled="loadingAvatar">
+              <span v-if="loadingAvatar">Generando...</span>
+              <span v-else>¡Cambia tu foto!</span>
+            </button>
             <button @click="$emit('logout-click')" class="logout-btn">
               Cerrar Sesión
             </button>
@@ -105,6 +109,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { getAuth, updateProfile } from 'firebase/auth'
 import logoImg from '../assets/logo.png'
 
 const props = defineProps({
@@ -126,6 +131,42 @@ const emit = defineEmits([
   'signup-click',
   'logout-click'
 ])
+
+//cambiar icono
+const loadingAvatar = ref(false)
+const avatarKey = ref(0) // Usado para forzar recarga de imagen
+
+const randomizeAvatar = async () => {
+  const auth = getAuth()
+  if (!auth.currentUser) return
+
+  loadingAvatar.value = true
+  
+  // Estilos divertidos de DiceBear que encajan con viajes
+  const styles = ['adventurer', 'avataaars', 'big-smile', 'micah', 'open-peeps', 'notionists']
+  const randomStyle = styles[Math.floor(Math.random() * styles.length)]
+  const randomSeed = Math.random().toString(36).substring(7)
+  
+  // Nueva URL
+  const newPhotoURL = `https://api.dicebear.com/7.x/${randomStyle}/svg?seed=${randomSeed}&backgroundColor=b6e3f4,c0aede,d1d4f9`
+
+  try {
+    await updateProfile(auth.currentUser, {
+      photoURL: newPhotoURL
+    })
+    
+    // Actualizamos la key para que Vue repinte la imagen inmediatamente
+    avatarKey.value++ 
+    
+    // Opcional: Forzar recarga completa si quieres asegurar que se vea en todos lados
+    // window.location.reload() 
+  } catch (error) {
+    console.error("Error cambiando look:", error)
+    alert("No se pudo cambiar el look 😔")
+  } finally {
+    loadingAvatar.value = false
+  }
+}
 
 // Local state
 const mobileMenuOpen = ref(false)
@@ -557,5 +598,24 @@ const initials = (name = '') => {
 }
 .logout-btn:hover {
   background-color: #fee2e2;
+}
+/* 👇 Estilo para el nuevo botón (agregalo al final) */
+.action-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  width: 100%;
+  text-align: left;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  color: #1313ec; /* Tu color primario */
+  transition: background-color 0.2s;
+  cursor: pointer;
+  margin-top: 0.25rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.action-btn:hover {
+  background-color: #f0f9ff;
 }
 </style>
