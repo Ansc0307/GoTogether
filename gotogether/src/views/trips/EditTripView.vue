@@ -50,7 +50,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useTrips } from '@/composables/useTrips'
 import EditTripForm from '@/components/trips/EditTripForm.vue'
-import DeleteTripModal from '@/components/trips/DeleteTripModal.vue'
+import DeleteTripModal from '../../components/modals/DeleteTripModal.vue'
 
 const router = useRouter()
 const route = useRoute()

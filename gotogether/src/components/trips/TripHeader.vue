@@ -15,6 +15,22 @@
         {{ formatDate(trip.startDate) }} – {{ formatDate(trip.endDate) }}
       </p>
 
+      <!-- SECCIÓN DEL ALIAS DEL USUARIO LOGUEADO -->
+      <div 
+        v-if="currentUserInTrip && !isLoadingAlias"
+        class="mt-3 mb-2 p-2 bg-white/10 backdrop-blur-sm rounded-lg inline-flex items-center gap-2 self-start"
+      >
+        <span class="text-sm text-gray-300">Tú apareces como:</span>
+        <span class="font-bold text-white">{{ userAlias || userDisplayName }}</span>
+        <button
+          @click="openEditAliasModal"
+          class="ml-1 p-1 hover:bg-white/20 rounded transition"
+          title="Cambiar mi alias"
+        >
+          <span class="material-symbols-outlined text-base">edit</span>
+        </button>
+      </div>
+
       <!-- Miembros -->
       <div class="flex items-center mt-3">
         <div class="flex -space-x-2">
@@ -37,13 +53,32 @@
       </div>
     </div>
   </div>
+
+  <!-- MODAL (llamado como componente) -->
+  <EditarMiAliasModal
+    v-if="showAliasModal"
+    :tripId="trip.id"
+    :tripName="trip.name"
+    :currentAlias="userAlias"
+    :userEmail="currentUserEmail"
+    :userDisplayName="userDisplayName"
+    @close="showAliasModal = false"
+    @alias-updated="handleAliasUpdated"
+  />
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
-import { db } from "../../firebase/firebaseConfig";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { ref, watch, onMounted, computed } from "vue";
+import { db, auth } from "../../firebase/firebaseConfig";
+import { 
+  collection, 
+  getDocs, 
+  query, 
+  where,
+  doc,
+  getDoc
+} from "firebase/firestore";
+import EditarMiAliasModal from "../modals/EditarMiAliasModal.vue";
 
 const props = defineProps({
   trip: {
@@ -52,11 +87,75 @@ const props = defineProps({
   },
 });
 
-const auth = getAuth();
 const displayedMembers = ref([]);
 const maxDisplay = 4;
+const showAliasModal = ref(false);
+const userAlias = ref(null);
+const isLoadingAlias = ref(false);
+const currentUserEmail = ref("");
 
-// 🔥 Busca los datos de usuario (nombre y foto) en la colección 'users'
+// Computed: ¿El usuario actual está en el viaje?
+const currentUserInTrip = computed(() => {
+  if (!auth.currentUser || !props.trip?.members) return false;
+  return props.trip.members.includes(auth.currentUser.email);
+});
+
+// Computed: Nombre de display del usuario
+const userDisplayName = computed(() => {
+  if (auth.currentUser?.displayName) return auth.currentUser.displayName;
+  if (auth.currentUser?.email) return auth.currentUser.email.split("@")[0];
+  return "Usuario";
+});
+
+// Cargar alias personalizado del usuario en este viaje (CORREGIDO)
+const loadUserAlias = async () => {
+  if (!auth.currentUser || !props.trip?.id) {
+    userAlias.value = null;
+    return;
+  }
+
+  isLoadingAlias.value = true;
+  try {
+    const tripRef = doc(db, "trips", props.trip.id);
+    const tripSnap = await getDoc(tripRef);
+    
+    if (tripSnap.exists()) {
+      const tripData = tripSnap.data();
+      
+      // 🔍 CORRECCIÓN: Buscar en el campo 'alias' que es donde se guarda
+      if (tripData.alias && tripData.alias[auth.currentUser.email]) {
+        // Estructura correcta: alias como objeto {email: alias}
+        userAlias.value = tripData.alias[auth.currentUser.email];
+      } else {
+        userAlias.value = null; // No tiene alias personalizado
+      }
+    } else {
+      userAlias.value = null;
+    }
+  } catch (error) {
+    console.error("Error cargando alias:", error);
+    userAlias.value = null;
+  } finally {
+    isLoadingAlias.value = false;
+  }
+};
+
+// Abrir modal de edición
+const openEditAliasModal = () => {
+  currentUserEmail.value = auth.currentUser?.email || "";
+  showAliasModal.value = true;
+};
+
+// Manejar actualización de alias
+const handleAliasUpdated = (newAlias) => {
+  userAlias.value = newAlias;
+  // Recargar datos después de actualizar
+  setTimeout(() => {
+    loadUserAlias();
+  }, 500);
+};
+
+// 👥 Busca datos de usuarios para avatares
 const fetchMembersData = async () => {
   try {
     if (!props.trip.members || props.trip.members.length === 0) {
@@ -69,13 +168,11 @@ const fetchMembersData = async () => {
     const q = query(usersRef, where("email", "in", membersEmails));
     const snapshot = await getDocs(q);
 
-    // Crear un mapa email -> userData
     const userMap = {};
     snapshot.forEach((doc) => {
       userMap[doc.data().email] = doc.data();
     });
 
-    // Generar la lista visual (con fallback si no hay en BD)
     displayedMembers.value = membersEmails.map((email) => ({
       email,
       name: userMap[email]?.name || email.split("@")[0],
@@ -85,9 +182,6 @@ const fetchMembersData = async () => {
     console.error("Error al cargar miembros:", error);
   }
 };
-
-onMounted(fetchMembersData);
-watch(() => props.trip.members, fetchMembersData, { deep: true });
 
 // 📅 Formato de fechas
 const formatDate = (date) => {
@@ -101,10 +195,10 @@ const formatDate = (date) => {
 };
 
 const getUserAvatar = (member) => {
-  // Si es el usuario actual de Firebase
+  // Si es el usuario actual
   if (auth.currentUser && member.email === auth.currentUser.email) {
     return auth.currentUser.photoURL || 
-      `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(member.email)}`
+      `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(member.email)}`;
   }
 
   // Si el miembro tiene foto guardada en Firestore
@@ -114,4 +208,18 @@ const getUserAvatar = (member) => {
   const seed = member.email || member.name || "default";
   return `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(seed)}&backgroundType=gradientLinear&backgroundColor=b6e3f4,c0aede,d1d4f9`;
 };
+
+// 🔄 Watchers y lifecycle
+onMounted(async () => {
+  if (auth.currentUser) {
+    currentUserEmail.value = auth.currentUser.email;
+    if (currentUserInTrip.value) {
+      await loadUserAlias();
+    }
+  }
+  await fetchMembersData();
+});
+
+watch(() => props.trip.members, fetchMembersData, { deep: true });
+watch(() => props.trip.id, loadUserAlias);
 </script>

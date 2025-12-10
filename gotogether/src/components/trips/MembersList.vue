@@ -46,68 +46,42 @@
         </div>
 
         <!-- Acciones -->
-        <div class="flex items-center gap-3">
-          <!-- Editar alias -->
-          <div v-if="!member.isOrganizer" class="relative group">
-            <input
-              :value="member.alias"
-              @input="updateAlias(member.email, $event.target.value)"
-              type="text"
-              class="border rounded px-3 py-2 text-sm w-32 focus:ring-2 focus:ring-primary focus:border-transparent"
-              placeholder="Editar alias"
-            />
-            <span class="absolute -top-8 left-0 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">
-              Escribe y presiona Enter
-            </span>
-          </div>
+        <div class="flex items-center gap-2">
+          <!-- Botón editar -->
+          <button
+            v-if="!member.isOrganizer"
+            @click="$emit('edit-member', member)"
+            class="text-blue-500 hover:text-blue-700 p-2 rounded-lg hover:bg-blue-50 transition"
+            title="Editar alias"
+          >
+            <span class="material-symbols-outlined text-base">edit</span>
+          </button>
 
           <!-- Botón eliminar -->
           <button
             v-if="!member.isOrganizer"
-            @click="$emit('remove-member', member.email)"
-            class="text-red-500 hover:text-red-700 px-3 py-2 rounded hover:bg-red-50 transition"
+            @click="$emit('remove-member', member)"
+            class="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition"
             title="Eliminar del viaje"
           >
             <span class="material-symbols-outlined text-base">delete</span>
           </button>
 
-          <span v-if="member.isOrganizer" class="text-sm text-gray-400 px-3">
+          <span v-if="member.isOrganizer" class="text-sm text-gray-400 px-2">
             Organizador
           </span>
         </div>
       </div>
     </div>
-
-    <!-- Nota -->
-    <div v-if="members.length > 0" class="mt-6 pt-4 border-t border-gray-100">
-      <p class="text-sm text-gray-500">
-        <span class="material-symbols-outlined text-sm align-middle mr-1">info</span>
-        Los organizadores no pueden ser eliminados. Haz clic en el alias para editarlo.
-      </p>
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
-const props = defineProps({
+defineProps({
   members: Array
 })
 
-const emit = defineEmits(['remove-member', 'update-alias'])
-
-let timeoutId = null
-
-// Actualizar alias con debounce (espera 500ms después de escribir)
-const updateAlias = (email, alias) => {
-  clearTimeout(timeoutId)
-  timeoutId = setTimeout(() => {
-    if (alias.trim() && alias.trim() !== props.members.find(m => m.email === email)?.alias) {
-      emit('update-alias', email, alias.trim())
-    }
-  }, 500)
-}
+defineEmits(['edit-member', 'remove-member'])
 
 // Obtener iniciales
 const getInitials = (name) => {
