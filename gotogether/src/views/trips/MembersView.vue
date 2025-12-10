@@ -1,23 +1,32 @@
-<!-- views/trips/MembersView.vue -->
 <template>
-  <div class="container mx-auto p-4 max-w-4xl">
-    <h1 class="text-2xl font-bold text-gray-800 mb-4">Integrantes</h1>
+  <div class="container mx-auto p-3 sm:p-4 max-w-4xl">
+    <!-- Encabezado con mejor spacing -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-6">
+      <h1 class="text-xl sm:text-2xl font-bold text-gray-800">Integrantes</h1>
+      <button @click="showAddModal = true" class="btn-primary w-full sm:w-auto text-sm sm:text-base py-2">
+        + Agregar integrante
+      </button>
+    </div>
 
     <div v-if="loading" class="text-center py-12">
       <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto"></div>
       <p class="mt-3 text-gray-600">Cargando...</p>
     </div>
 
-    <div v-else>
-      <button @click="showAddModal = true" class="btn-primary mb-6">
-        + Agregar integrante
-      </button>
-
-      <MembersList
-        :members="membersList"
-        @edit-member="openEditModal"
-        @remove-member="openRemoveModal"
-      />
+    <div v-else class="space-y-4">
+      <!-- Contador de miembros -->
+      <div class="text-sm text-gray-600 px-2">
+        Total: {{ membersList.length }} integrante{{ membersList.length !== 1 ? 's' : '' }}
+      </div>
+      
+      <!-- Lista en contenedor scrollable si hay muchos -->
+      <div class="max-h-[calc(100vh-200px)] overflow-y-auto pr-1">
+        <MembersList
+          :members="membersList"
+          @edit-member="openEditModal"
+          @remove-member="openRemoveModal"
+        />
+      </div>
     </div>
 
     <!-- Modal agregar -->
