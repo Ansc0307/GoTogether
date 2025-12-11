@@ -79,7 +79,7 @@ const getStatusIcon = computed(() => {
 const getStatusText = computed(() => {
   if (percentage.value > 90) return 'Crítico'
   if (percentage.value > 70) return 'Atención'
-  return 'Saludable'
+  return ' '
 })
 
 const statusColor = computed(() => {

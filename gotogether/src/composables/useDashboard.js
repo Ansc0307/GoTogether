@@ -2,12 +2,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuth } from './useAuth'
 import { useCalendarData } from './useCalendarData'
-import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore'
+import { collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '@/firebase/firebaseConfig'
 
 export function useDashboard() {
   const { user } = useAuth()
-  const { tareas, trips, votes, loadTasks, loadTrips, loadVotes } = useCalendarData()
+  const { tareas, trips, votes, loadTasks, loadTrips } = useCalendarData()
   
   const dashboardData = ref({
     totalTrips: 0,
@@ -22,11 +22,20 @@ export function useDashboard() {
     trips: dashboardData.value.totalTrips,
     active: dashboardData.value.upcomingTrips.length,
     pendingTasks: tareas.value.length,
-    votesPending: votes.value.filter(v => new Date(v.deadline) > new Date()).length
+    votesPending: votes.value.filter(v => {
+      if (!v || !v.deadline) return false
+      const deadline = v.deadline?.toDate ? v.deadline.toDate() : new Date(v.deadline)
+      return deadline > new Date()
+    }).length
   }))
 
   const loadUserTrips = async () => {
     try {
+      if (!user.value?.email) {
+        console.log('No hay usuario autenticado')
+        return
+      }
+
       const q = query(
         collection(db, 'trips'),
         where('members', 'array-contains', user.value.email)
@@ -41,11 +50,13 @@ export function useDashboard() {
       
       // Filtrar viajes próximos (próximos 30 días)
       const today = new Date()
+      today.setHours(0, 0, 0, 0)
       const nextMonth = new Date()
       nextMonth.setDate(nextMonth.getDate() + 30)
       
       dashboardData.value.upcomingTrips = userTrips
         .filter(trip => {
+          if (!trip.startDate) return false
           const startDate = new Date(trip.startDate)
           return startDate >= today && startDate <= nextMonth
         })
@@ -53,7 +64,7 @@ export function useDashboard() {
         .slice(0, 5)
 
       // Cargar estado de presupuestos para estos viajes
-      await loadBudgetStatus(userTrips.slice(0, 5))
+      await loadBudgetStatus(userTrips.slice(0, 3))
 
     } catch (error) {
       console.error('Error loading trips:', error)
@@ -78,7 +89,7 @@ export function useDashboard() {
           )
           const expensesSnapshot = await getDocs(expensesQuery)
           
-          const total = budgetSnapshot.empty ? 0 : budgetSnapshot.docs[0].data().total || 0
+          const total = budgetSnapshot.empty ? 0 : budgetSnapshot.docs[0]?.data()?.total || 0
           const spent = expensesSnapshot.docs.reduce((sum, doc) => sum + (doc.data().monto || 0), 0)
           
           return {
@@ -86,7 +97,7 @@ export function useDashboard() {
             tripName: trip.name,
             total,
             spent,
-            status: spent / total > 0.9 ? 'critical' : spent / total > 0.7 ? 'warning' : 'healthy'
+            status: total === 0 ? 'healthy' : spent / total > 0.9 ? 'critical' : spent / total > 0.7 ? 'warning' : 'healthy'
           }
         } catch (err) {
           console.error(`Error loading budget for trip ${trip.id}:`, err)
@@ -109,7 +120,7 @@ export function useDashboard() {
         .map(task => ({
           id: task.id,
           type: 'task',
-          title: task.title,
+          title: task.title || 'Tarea sin título',
           description: `Tarea: ${task.description || 'Sin descripción'}`,
           date: task.fechaLimite,
           tripName: task.tripName,
@@ -118,11 +129,16 @@ export function useDashboard() {
         .slice(0, 5)
 
       const recentVotes = votes.value
-        .filter(v => new Date(v.deadline) > new Date())
+        .filter(v => v && v.deadline)
+        .map(vote => {
+          const deadline = vote.deadline?.toDate ? vote.deadline.toDate() : new Date(vote.deadline)
+          return { ...vote, deadline }
+        })
+        .filter(v => v.deadline > new Date())
         .map(vote => ({
           id: vote.id,
           type: 'vote',
-          title: vote.title,
+          title: vote.title || 'Votación sin título',
           description: 'Votación activa',
           date: vote.deadline,
           tripName: vote.tripName,
@@ -142,11 +158,16 @@ export function useDashboard() {
   const loadDashboard = async () => {
     loading.value = true
     try {
+      // Verificar que haya usuario autenticado
+      if (!user.value?.email) {
+        console.log('No hay usuario para cargar dashboard')
+        return
+      }
+
       // Cargar datos del calendario primero
       await Promise.all([
         loadTrips(user.value.email),
-        loadTasks(user.value.email),
-        loadVotes([], {})
+        loadTasks(user.value.email)
       ])
       
       // Luego cargar datos específicos del dashboard
@@ -161,15 +182,6 @@ export function useDashboard() {
     }
   }
 
-  onMounted(() => {
-    if (user.value) {
-      loadDashboard()
-    }
-  })
-
-  // Escuchar cambios en el usuario
-  const watchUser = computed(() => user.value)
-  
   return {
     dashboardData,
     stats,

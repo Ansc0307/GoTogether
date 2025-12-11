@@ -26,11 +26,11 @@
       <div class="flex items-center space-x-2">
         <div class="flex -space-x-2">
           <div 
-            v-for="(member, index) in trip.members?.slice(0, 3)" 
+            v-for="(member, index) in tripMembers" 
             :key="index"
             class="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-700 border border-white dark:border-gray-900 flex items-center justify-center text-xs"
           >
-            {{ member[0]?.toUpperCase() }}
+            {{ getInitial(member) }}
           </div>
           <div 
             v-if="trip.members?.length > 3"
@@ -39,7 +39,7 @@
             +{{ trip.members.length - 3 }}
           </div>
         </div>
-        <span class="text-xs text-gray-500">{{ trip.members?.length }} miembros</span>
+        <span class="text-xs text-gray-500">{{ trip.members?.length || 0 }} miembros</span>
       </div>
       <span class="text-sm font-medium px-2 py-1 rounded" :class="budgetColor">
         Bs. {{ formatBudget(trip.budget) }}
@@ -51,7 +51,7 @@
 <script setup>
 import { computed } from 'vue'
 
-defineProps({
+const props = defineProps({
   trip: {
     type: Object,
     required: true
@@ -70,6 +70,18 @@ const formatBudget = (budget) => {
   if (!budget) return '0'
   return parseFloat(budget).toLocaleString('es-BO')
 }
+
+const getInitial = (email) => {
+  if (!email) return '?'
+  return email[0]?.toUpperCase() || '?'
+}
+
+const tripMembers = computed(() => {
+  if (!props.trip.members) return []
+  return Array.isArray(props.trip.members) 
+    ? props.trip.members.slice(0, 3) 
+    : []
+})
 
 const budgetColor = computed(() => {
   const budget = parseFloat(props.trip.budget) || 0

@@ -17,10 +17,13 @@
             <button @click="refresh" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
               <span class="material-symbols-outlined text-gray-600 dark:text-gray-400">refresh</span>
             </button>
-            <router-link to="/crear-viaje" class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+            <button 
+              @click="openTripForm"
+              class="inline-flex items-center px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+            >
               <span class="material-symbols-outlined mr-2 text-sm">add</span>
               Nuevo Viaje
-            </router-link>
+            </button>
           </div>
         </div>
       </div>
@@ -75,14 +78,17 @@
               <div v-else class="text-center py-8">
                 <span class="material-symbols-outlined text-gray-400 text-4xl mb-3">travel</span>
                 <p class="text-gray-500 dark:text-gray-400">No tienes viajes próximos</p>
-                <router-link to="/crear-viaje" class="inline-block mt-3 text-primary hover:text-primary/80">
-                  Crear mi primer viaje
-                </router-link>
+                <button 
+                  @click="openTripForm"
+                  class="inline-block mt-3 text-primary hover:text-primary/80"
+                >
+                  Crear un nuevo viaje
+                </button>
               </div>
             </div>
 
             <!-- Estado de presupuestos -->
-            <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+            <div v-if="budgetStatus.length > 0" class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
               <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center mb-6">
                 <span class="material-symbols-outlined mr-2 text-primary">account_balance_wallet</span>
                 Estado de Presupuestos
@@ -100,7 +106,7 @@
           <!-- Columna derecha - Actividad -->
           <section class="space-y-8">
             <!-- Actividad reciente -->
-            <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+            <div v-if="recentActivity.length > 0" class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
               <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center mb-6">
                 <span class="material-symbols-outlined mr-2 text-primary">history</span>
                 Actividad Reciente
@@ -115,7 +121,7 @@
             </div>
 
             <!-- Tareas pendientes -->
-            <div class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
+            <div v-if="pendingTasks.length > 0" class="bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-800 p-6">
               <div class="flex items-center justify-between mb-6">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center">
                   <span class="material-symbols-outlined mr-2 text-primary">assignment</span>
@@ -137,22 +143,32 @@
         </div>
       </div>
     </main>
+
+    <!-- Modal de crear viaje (igual al de TripsView) -->
+    <TripForm :visible="mostrarFormulario" @close="mostrarFormulario = false" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 import { useDashboard } from '@/composables/useDashboard'
+import TripForm from '@/components/trips/TripForm.vue'
 import StatsCard from '@/components/dashboard/StatsCard.vue'
 import TripCard from '@/components/dashboard/TripCard.vue'
 import BudgetStatusCard from '@/components/dashboard/BudgetStatusCard.vue'
 import ActivityItem from '@/components/dashboard/ActivityItem.vue'
 import TaskItem from '@/components/dashboard/TaskItem.vue'
 
-const { dashboardData, stats, loading, refresh } = useDashboard()
+const router = useRouter()
+const { user } = useAuth()
+const { dashboardData, stats, loading, refresh, tareas } = useDashboard()
+
+const mostrarFormulario = ref(false)
 
 const userName = computed(() => {
-  return 'Usuario' // Esto debería venir de useAuth
+  return user.value?.displayName || 'Usuario'
 })
 
 const greetingMessage = computed(() => {
@@ -193,12 +209,18 @@ const statsCards = computed(() => [
   }
 ])
 
-const upcomingTrips = computed(() => dashboardData.value.upcomingTrips)
-const recentActivity = computed(() => dashboardData.value.recentActivity)
-const budgetStatus = computed(() => dashboardData.value.budgetStatus)
-const pendingTasks = computed(() => dashboardData.value.pendingTasks || [])
+const upcomingTrips = computed(() => dashboardData.value.upcomingTrips || [])
+const recentActivity = computed(() => dashboardData.value.recentActivity || [])
+const budgetStatus = computed(() => dashboardData.value.budgetStatus || [])
+const pendingTasks = computed(() => tareas.value || [])
+
+const openTripForm = () => {
+  mostrarFormulario.value = true
+}
 
 onMounted(() => {
-  refresh()
+  if (user.value) {
+    refresh()
+  }
 })
 </script>
