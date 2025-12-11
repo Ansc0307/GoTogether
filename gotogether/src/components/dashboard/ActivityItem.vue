@@ -1,14 +1,19 @@
 <template>
-  <div class="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+  <div 
+    class="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer group"
+    @click="handleClick"
+  >
     <!-- Icono de actividad -->
-    <div class="p-2 rounded-lg mt-1" :class="activityType.bg">
+    <div class="p-2 rounded-lg mt-1 flex-shrink-0" :class="activityType.bg">
       <span class="material-symbols-outlined text-sm" :class="activityType.icon">{{ activityType.iconName }}</span>
     </div>
     
     <!-- Contenido de la actividad -->
     <div class="flex-1 min-w-0">
       <div class="flex items-start justify-between">
-        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{ activity.title }}</p>
+        <p class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-primary transition-colors">
+          {{ activity.title }}
+        </p>
         <span class="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap ml-2">
           {{ formatTimeAgo(activity.date) }}
         </span>
@@ -28,12 +33,19 @@
         </span>
       </div>
     </div>
+    
+    <!-- Flecha para indicar que es clickeable -->
+    <span class="material-symbols-outlined text-gray-400 group-hover:text-primary text-sm transition-colors">
+      arrow_forward
+    </span>
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const props = defineProps({
   activity: {
     type: Object,
@@ -45,7 +57,9 @@ const props = defineProps({
       description: '',
       date: new Date(),
       tripName: '',
-      status: ''
+      status: '',
+      tripId: '', // Para redirección
+      fullTask: null // Para datos completos
     })
   }
 })
@@ -78,8 +92,16 @@ const activityType = computed(() => {
 })
 
 const formatTimeAgo = (date) => {
+  if (!date) return 'Reciente'
+  
   const now = new Date()
-  const activityDate = new Date(date)
+  const activityDate = date?.toDate ? date.toDate() : new Date(date)
+  
+  // Validar fecha
+  if (isNaN(activityDate.getTime())) {
+    return 'Reciente'
+  }
+  
   const diffMs = now - activityDate
   const diffMins = Math.floor(diffMs / 60000)
   const diffHours = Math.floor(diffMins / 60)
@@ -105,5 +127,16 @@ const getStatusClass = (status) => {
   }
   
   return statusClasses[status.toLowerCase()] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+}
+
+const handleClick = () => {
+  if (props.activity.type === 'task' && props.activity.tripId) {
+    // Redirigir a la vista de tareas del viaje específico
+    router.push(`/trips/${props.activity.tripId}/tareas`)
+  } else if (props.activity.type === 'vote' && props.activity.tripId) {
+    // Redirigir a la vista de votaciones del viaje específico
+    router.push(`/trips/${props.activity.tripId}/votaciones`)
+  }
+  // Para otros tipos de actividad, no hacer nada o redirigir a una vista general
 }
 </script>

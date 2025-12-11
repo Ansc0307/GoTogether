@@ -1,11 +1,14 @@
 <template>
-  <div class="group p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-primary/50 hover:shadow-sm transition-all duration-200">
+  <div 
+    class="group p-4 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-primary/50 hover:shadow-sm transition-all duration-200 cursor-pointer"
+    @click="handleClick"
+  >
     <div class="flex items-start justify-between">
       <div class="flex-1 min-w-0">
         <!-- Título y prioridad -->
         <div class="flex items-center space-x-2 mb-2">
           <h4 class="font-medium text-gray-900 dark:text-white truncate group-hover:text-primary transition-colors">
-            {{ task.title }}
+            {{ task.title || task.nombre || 'Tarea sin título' }}
           </h4>
           <span class="text-xs font-medium px-2 py-0.5 rounded-full" :class="priorityClass">
             {{ getPriorityText }}
@@ -13,15 +16,15 @@
         </div>
         
         <!-- Descripción -->
-        <p v-if="task.description" class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-          {{ task.description }}
+        <p v-if="task.description || task.descripcion" class="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+          {{ task.description || task.descripcion }}
         </p>
         
         <!-- Metadatos -->
         <div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           <div class="flex items-center space-x-4">
             <!-- Fecha límite -->
-            <span class="flex items-center" :class="deadlineClass">
+            <span v-if="task.fechaLimite" class="flex items-center" :class="deadlineClass">
               <span class="material-symbols-outlined text-xs mr-1">schedule</span>
               <span>{{ formatDate(task.fechaLimite) }}</span>
             </span>
@@ -33,36 +36,11 @@
             </span>
           </div>
           
-          <!-- Acciones -->
-          <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button 
-              v-if="!task.completed"
-              @click="markAsComplete"
-              class="p-1 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded"
-              title="Marcar como completada"
-            >
-              <span class="material-symbols-outlined text-sm">check_circle</span>
-            </button>
-            <button 
-              @click="$emit('view')"
-              class="p-1 text-primary hover:bg-primary/10 rounded"
-              title="Ver detalles"
-            >
-              <span class="material-symbols-outlined text-sm">visibility</span>
-            </button>
-          </div>
+          <!-- Indicador de click -->
+          <span class="material-symbols-outlined text-gray-400 group-hover:text-primary text-sm transition-colors">
+            arrow_forward
+          </span>
         </div>
-      </div>
-      
-      <!-- Checkbox para completar -->
-      <div class="ml-4 flex-shrink-0">
-        <button 
-          @click="toggleComplete"
-          class="w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all"
-          :class="[task.completed ? completeClass : incompleteClass]"
-        >
-          <span v-if="task.completed" class="material-symbols-outlined text-sm">check</span>
-        </button>
       </div>
     </div>
     
@@ -84,7 +62,9 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const props = defineProps({
   task: {
     type: Object,
@@ -92,17 +72,18 @@ const props = defineProps({
     default: () => ({
       id: '',
       title: '',
+      nombre: '',
       description: '',
+      descripcion: '',
       fechaLimite: new Date(),
-      priority: 'medium', // 'low', 'medium', 'high', 'urgent'
+      priority: 'medium',
       completed: false,
       tripName: '',
+      tripId: '', // Para redirección
       subtasks: []
     })
   }
 })
-
-const emit = defineEmits(['complete', 'view'])
 
 const getPriorityText = computed(() => {
   const priorities = {
@@ -125,7 +106,15 @@ const priorityClass = computed(() => {
 })
 
 const formatDate = (date) => {
-  const taskDate = new Date(date)
+  if (!date) return ''
+  
+  const taskDate = date?.toDate ? date.toDate() : new Date(date)
+  
+  // Validar fecha
+  if (isNaN(taskDate.getTime())) {
+    return 'Sin fecha'
+  }
+  
   const today = new Date()
   const tomorrow = new Date(today)
   tomorrow.setDate(tomorrow.getDate() + 1)
@@ -151,7 +140,14 @@ const formatDate = (date) => {
 }
 
 const deadlineClass = computed(() => {
-  const taskDate = new Date(props.task.fechaLimite)
+  if (!props.task.fechaLimite) return 'text-gray-500 dark:text-gray-400'
+  
+  const taskDate = props.task.fechaLimite?.toDate ? 
+                   props.task.fechaLimite.toDate() : 
+                   new Date(props.task.fechaLimite)
+  
+  if (isNaN(taskDate.getTime())) return 'text-gray-500 dark:text-gray-400'
+  
   const today = new Date()
   const diffDays = Math.ceil((taskDate - today) / (1000 * 60 * 60 * 24))
   
@@ -161,25 +157,16 @@ const deadlineClass = computed(() => {
   return 'text-gray-500 dark:text-gray-400'
 })
 
-const completeClass = computed(() => 
-  'border-green-500 bg-green-500 text-white'
-)
-
-const incompleteClass = computed(() => 
-  'border-gray-300 dark:border-gray-600 hover:border-primary'
-)
-
 const completedSubtasks = computed(() => {
   if (!props.task.subtasks) return 0
   return props.task.subtasks.filter(subtask => subtask.completed).length
 })
 
-const markAsComplete = () => {
-  emit('complete', props.task.id)
-}
-
-const toggleComplete = () => {
-  emit('complete', props.task.id)
+const handleClick = () => {
+  if (props.task.tripId) {
+    // Redirigir a la vista de tareas del viaje específico
+    router.push(`/trips/${props.task.tripId}/tareas`)
+  }
 }
 </script>
 

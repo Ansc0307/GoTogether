@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useAuth } from './useAuth'
 import { useCalendarData } from './useCalendarData'
-import { collection, query, where, getDocs } from 'firebase/firestore'
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebase/firebaseConfig'
 
 export function useDashboard() {
@@ -115,17 +115,49 @@ export function useDashboard() {
 
   const loadRecentActivity = async () => {
     try {
-      // Usamos datos de tareas y votaciones del composable useCalendarData
+      // Cargar alias para las tareas
+      const tripAliasMap = {}
+      
+      // Obtener alias de cada viaje
+      const tripPromises = tareas.value.map(async (task) => {
+        if (!task.tripId || tripAliasMap[task.tripId]) return
+        
+        try {
+          const tripRef = doc(db, 'trips', task.tripId)
+          const tripSnap = await getDoc(tripRef)
+          if (tripSnap.exists()) {
+            tripAliasMap[task.tripId] = {
+              name: tripSnap.data().name,
+              alias: tripSnap.data().alias || {}
+            }
+          }
+        } catch (error) {
+          console.error(`Error loading trip ${task.tripId}:`, error)
+        }
+      })
+      
+      await Promise.allSettled(tripPromises)
+
+      // Usamos datos de tareas y votaciones
       const recentTasks = tareas.value
-        .map(task => ({
-          id: task.id,
-          type: 'task',
-          title: task.title || 'Tarea sin título',
-          description: `Tarea: ${task.description || 'Sin descripción'}`,
-          date: task.fechaLimite,
-          tripName: task.tripName,
-          status: 'pendiente'
-        }))
+        .map(task => {
+          const tripInfo = tripAliasMap[task.tripId]
+          const responsableAlias = tripInfo?.alias?.[task.responsable] || 
+                                  task.responsable?.split('@')[0] || 
+                                  'Responsable'
+          
+          return {
+            id: task.id,
+            type: 'task',
+            title: task.nombre || 'Tarea sin título',  // Cambiado de 'title' a 'nombre'
+            description: `Responsable: ${responsableAlias}`,
+            date: task.fechaLimite,
+            tripName: tripInfo?.name || task.tripName || 'Viaje',
+            status: 'pendiente',
+            tripId: task.tripId, // Agregar tripId para redirección
+            fullTask: task // Guardar la tarea completa para uso posterior
+          }
+        })
         .slice(0, 5)
 
       const recentVotes = votes.value
@@ -142,7 +174,9 @@ export function useDashboard() {
           description: 'Votación activa',
           date: vote.deadline,
           tripName: vote.tripName,
-          status: 'activo'
+          status: 'activo',
+          tripId: vote.tripId,
+          fullVote: vote
         }))
         .slice(0, 5)
 
@@ -182,12 +216,20 @@ export function useDashboard() {
     }
   }
 
+  // Llamar cuando el componente se monta
+  const initDashboard = () => {
+    if (user.value) {
+      loadDashboard()
+    }
+  }
+
   return {
     dashboardData,
     stats,
     loading,
     loadDashboard,
     refresh: loadDashboard,
+    initDashboard,
     tareas, // Exponer para que DashboardView pueda usarlas directamente
     votes   // Exponer para que DashboardView pueda usarlas directamente
   }
